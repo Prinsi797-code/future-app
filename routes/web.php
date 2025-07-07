@@ -31,6 +31,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showMobileForm'])->name('mobile.form');
 Route::post('/send-otp', [AuthController::class, 'sendOtp'])->name('send.otp');
+
+Route::get('/create-password/{email}', [AuthController::class, 'showPasswordForm'])->name('password.form');
+Route::post('/create-password', [AuthController::class, 'createPassword'])->name('create.password');
+
 Route::get('/verify-otp/{email}', [AuthController::class, 'showOtpForm'])->name('otp.form');
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
 Route::get('/choose-role/{user_id}', [AuthController::class, 'chooseRole'])->name('choose.role');

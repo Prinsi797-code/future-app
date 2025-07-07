@@ -137,7 +137,8 @@
                         </p>
                         <p>Have a question or want to pitch your idea?
                             Just drop us an email. We’re fully digital, always listening, and ready to support innovation
-                            from anywhere.</p>
+                            from anywhere..
+                        </p>
                         <p class="mt-4"><strong>Contact:</strong><br>
                             Email: info@futuretaikun.com</p>
                     </div>

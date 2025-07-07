@@ -41,30 +41,34 @@
                                     <div class="d-flex flex-wrap align-items-center">
                                         <div class="form-check me-4 mb-2">
                                             <input type="radio" name="role" id="role_investor" value="investor"
-                                                class="form-check-input" {{ old('role') === 'investor' ? 'checked' : '' }}
-                                                required>
+                                                class="form-check-input" {{ old('role') === 'investor' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="role_investor">Investor</label>
                                         </div>
                                         <div class="form-check me-4 mb-2">
                                             <input type="radio" name="role" id="role_entrepreneur" value="entrepreneur"
                                                 class="form-check-input"
-                                                {{ old('role') === 'entrepreneur' ? 'checked' : '' }} required>
+                                                {{ old('role') === 'entrepreneur' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="role_entrepreneur">Entrepreneur</label>
                                         </div>
-                                        <div class="form-check mb-2">
+                                        {{-- <div class="form-check mb-2">
                                             <input type="radio" name="role" id="role_admin" value="admin"
                                                 class="form-check-input" {{ old('role') === 'admin' ? 'checked' : '' }}
                                                 required>
                                             <label class="form-check-label" for="role_admin">Admin</label>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">Login</button>
                         </form>
-                        <div class="mt-3">
-                            <a href="{{ route('password.request') }}" class="text-primary mt-2">Forgot Password?</a>
+                        <div class="d-flex justify-content-between">
+                            <div class="mt-3">
+                                <a href="{{ route('password.request') }}" class="text-primary mt-2">Forgot Password?</a>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ route('mobile.form') }}" class="text-primary mt-2">SignUp</a>
+                            </div>
                         </div>
                     </div>
                 </div>

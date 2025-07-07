@@ -1517,8 +1517,7 @@
                                         <input type="file" class="form-control" id="video_upload" name="video_upload"
                                             accept="video/mp4,video/x-m4v,video/avi,video/webm">
                                         <div class="text-danger mt-1 d-none" id="video_upload_error"></div>
-                                        <small class="text-muted">Upload one video file (MP4, AVI, or WebM, max
-                                            10MB)</small>
+                                        <small class="text-muted">Upload one video file (MP4, AVI, or WebM)</small>
                                     </div>
                                 </div>
                             </div>
@@ -3240,7 +3239,7 @@
                 if (!isValidVideo(videoUpload.files[0])) {
                     if (document.getElementById('video_upload_error')) {
                         document.getElementById('video_upload_error').textContent =
-                            'Please upload a valid video file (mp4, mov, avi, webm, max 100MB)';
+                            'Please upload a valid video file (mp4, mov, avi, webm)';
                         document.getElementById('video_upload_error').classList.remove('d-none');
                     }
                     isValid = false;

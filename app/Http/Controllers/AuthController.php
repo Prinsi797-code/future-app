@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\CleanupInvestorUser;
+use App\Mail\SendUserLoginInfoMail;
 use App\Models\DummyEntrepreneur;
 use App\Models\DummyInvestor;
 use App\Models\Entrepreneur;
 use App\Models\Investor;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Twilio\Rest\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -447,7 +449,47 @@ class AuthController extends Controller
             'otp_expires_at' => null,
         ]);
 
+        return redirect()->route('password.form', ['email' => $user->email]);
+        // $redirectRole = $user->role1 ?? $user->role;
+        // Redirect based on role
+        // if ($redirectRole === 'entrepreneur') {
+        //   return redirect()->route('entrepreneur.form', ['user_id' => $user->id]);
+        //} else {
+        //  return redirect()->route('investor.form', ['user_id' => $user->id]);
+        // }
+    }
+
+
+    public function showPasswordForm($email)
+    {
+        return view('Auth.password', ['email' => $email]);
+    }
+
+    public function createPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:8',
+            'password_confirmation' => 'required|same:password',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['password' => 'Invalid password or password confirmation']);
+        }
+
+        $plainPassword = $request->password;
+
+        $user->update([
+            'password' => Hash::make($request->password),
+            'is_verified' => true,
+        ]);
+
         $redirectRole = $user->role1 ?? $user->role;
+
+        Mail::to($user->email)->send(new SendUserLoginInfoMail($user->name, $user->email, $plainPassword));
+
+        Log::info('Email sent successfully to:', ['email' => $user->email]);
         // Redirect based on role
         if ($redirectRole === 'entrepreneur') {
             return redirect()->route('entrepreneur.form', ['user_id' => $user->id]);
@@ -455,6 +497,28 @@ class AuthController extends Controller
             return redirect()->route('investor.form', ['user_id' => $user->id]);
         }
     }
+
+    public function showPassword($request)
+    {
+        $request->validate([
+            'password' => 'required|min:8',
+            'password_confirmation' => 'required|same:password',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['password' => 'Invalid password or password confirmation']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+            'is_verified' => true,
+        ]);
+
+        return redirect()->route('password.form', ['email' => $user->email]);
+    }
+
 
     public function chooseRole($user_id)
     {
@@ -488,7 +552,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('mobile.form');
+        return redirect()->route('/login');
     }
 
     public function getUser(Request $request)

@@ -179,6 +179,80 @@
             font-size: 11px !important;
         }
     }
+
+    .search-container {
+        background: #343a40;
+        color: white;
+        padding: 1.5rem 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-tabs {
+        height: 45px;
+    }
+
+    .search-form {
+        height: 45px;
+    }
+
+    /* Mobile specific styles */
+    @media (max-width: 768px) {
+        .search-container {
+            padding: 1rem 0.75rem;
+        }
+
+        .mobile-stack {
+            flex-direction: column !important;
+            gap: 1rem;
+        }
+
+        .filter-tabs {
+            width: 100%;
+            height: auto;
+        }
+
+        .btn-group {
+            width: 100%;
+            display: flex;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.25rem;
+            white-space: nowrap;
+        }
+
+        .search-form {
+            width: 100%;
+            height: auto;
+        }
+
+        .search-input {
+            height: 45px !important;
+            border-radius: 4px 0 0 4px !important;
+        }
+
+        .search-btn {
+            height: 45px !important;
+            border-radius: 0 4px 4px 0 !important;
+            min-width: 50px;
+        }
+    }
+
+    /* Desktop specific styles */
+    @media (min-width: 769px) {
+        .desktop-flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .desktop-search-wrapper {
+            padding-left: 5px;
+        }
+    }
 </style>
 <?php
 // Number formatting function - add this at the top of your blade file or in a helper
@@ -210,30 +284,26 @@ function formatNumber($number)
     <body class="bg-light">
         <div class="container-fluid">
             <div class="row">
-                <div class="bg-dark text-white py-4 px-3 rounded mb-4">
+                <div class="search-container">
                     <h3 class="mb-4 text-center fw-bold">Browse Business Idea In Future Taikun</h3>
 
-                    <div class="d-flex justify-content-center align-items-center flex-wrap">
-                        <div class="d-flex" style="height: 45px;">
+                    <!-- Desktop Layout -->
+                    <div class="d-none d-md-flex desktop-flex">
+                        <div class="d-flex filter-tabs">
                             <!-- Filter Tabs -->
                             <div class="btn-group" role="group">
                                 <a href="{{ route('search', ['filter' => 'latest']) }}"
-                                    class="btn btn-light {{ request('filter') == 'latest' || !request('filter') ? 'active' : '' }}">
-                                    Latest
-                                </a>
+                                    class="btn btn-light active {{ request('filter') == 'latest' || !request('filter') ? 'active' : '' }}">Latest</a>
                                 <a href="{{ route('search', ['filter' => 'trending']) }}"
-                                    class="btn btn-light {{ request('filter') == 'trending' ? 'active' : '' }}">
-                                    Trending
-                                </a>
+                                    class="btn btn-light {{ request('filter') == 'trending' ? 'active' : '' }}">Trending</a>
                                 <a href="{{ route('search', ['filter' => 'alreadyfunded']) }}"
-                                    class="btn btn-light {{ request('filter') == 'alreadyfunded' ? 'active' : '' }}">
-                                    Already Funded
-                                </a>
+                                    class="btn btn-light {{ request('filter') == 'alreadyfunded' ? 'active' : '' }}">Already
+                                    Funded</a>
                             </div>
 
                             <!-- Search Form -->
-                            <div style="padding-left: 5px;">
-                                <form action="{{ route('search') }}" method="GET" class="d-flex" style="height: 45px;">
+                            <div class="desktop-search-wrapper">
+                                <form action="{{ route('search') }}" method="GET" class="d-flex search-form">
                                     <input type="hidden" name="filter" value="{{ request('filter') }}">
                                     <input type="text" name="query" class="form-control border-start-0"
                                         placeholder="Search by business name, country, or capital..."
@@ -244,6 +314,35 @@ function formatNumber($number)
                                     </button>
                                 </form>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Layout -->
+                    <div class="d-md-none mobile-stack">
+                        <!-- Filter Tabs for Mobile -->
+                        <div class="filter-tabs">
+                            <div class="btn-group w-100" role="group">
+                                <a href="{{ route('search', ['filter' => 'latest']) }}"
+                                    class="btn btn-light active {{ request('filter') == 'latest' || !request('filter') ? 'active' : '' }}">Latest</a>
+                                <a href="{{ route('search', ['filter' => 'trending']) }}"
+                                    class="btn btn-light {{ request('filter') == 'trending' ? 'active' : '' }}">Trending</a>
+                                <a href="{{ route('search', ['filter' => 'alreadyfunded']) }}"
+                                    class="btn btn-light {{ request('filter') == 'alreadyfunded' ? 'active' : '' }}">Already
+                                    Funded</a>
+                            </div>
+                        </div>
+
+                        <!-- Search Form for Mobile -->
+                        <div class="search-form">
+                            <form action="{{ route('search') }}" method="GET" class="d-flex">
+                                <input type="hidden" name="filter" value="{{ request('filter') }}">
+                                <input type="text" name="query" class="form-control search-input"
+                                    placeholder="Search by business name, country, or capital..."
+                                    value="{{ request('query') }}">
+                                <button type="submit" class="btn btn-primary search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

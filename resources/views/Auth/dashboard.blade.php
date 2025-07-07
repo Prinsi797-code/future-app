@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="row">
-        @if (session('selected_role') === 'investor')
+        @if (session('selected_role') === 'admin')
             {{-- @if (Auth::user()->role !== 'investor') --}}
             <div class="col-md-6 mb-4">
                 <a href="{{ route('admin.investors') }}" style="text-decoration: none;">

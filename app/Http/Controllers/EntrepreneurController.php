@@ -585,14 +585,14 @@ class EntrepreneurController extends Controller
             ]);
 
             // Generate password and update user
-            $emailNamePart = strstr($request->email, '@', true);
-            $randomDigits = rand(100, 999);
-            $generatedPassword = $emailNamePart . '@' . $randomDigits;
+            // $emailNamePart = strstr($request->email, '@', true);
+            // $randomDigits = rand(100, 999);
+            // $generatedPassword = $emailNamePart . '@' . $randomDigits;
 
-            $user->name = $request->full_name;
-            $user->email = $request->email;
-            $user->password = Hash::make($generatedPassword);
-            $user->save();
+            // $user->name = $request->full_name;
+            // $user->email = $request->email;
+            // $user->password = Hash::make($generatedPassword);
+            // $user->save();
 
             $companyNames = $request->company_name ?? [];
             $marketCapitals = $request->more_market_capital ?? []; // Use the form field name
@@ -618,9 +618,9 @@ class EntrepreneurController extends Controller
                 $dummyEntrepreneur->delete();
             }
             // Send email
-            Mail::to($user->email)->send(new SendUserLoginInfoMail($user->name, $user->email, $generatedPassword));
+            // Mail::to($user->email)->send(new SendUserLoginInfoMail($user->name, $user->email, $user->password));
 
-            Log::info('Email sent successfully to:', ['email' => $user->email]);
+            // Log::info('Email sent successfully to:', ['email' => $user->email]);
 
             Auth::logout();
             $request->session()->invalidate();
@@ -1717,7 +1717,7 @@ class EntrepreneurController extends Controller
                 }
             } elseif ($step == 4) {
                 $validationRules = [
-                    'video_upload' => 'nullable|file|mimes:mp4,mov,avi,webm|max:102400',
+                    'video_upload' => 'nullable|file|mimes:mp4,mov,avi,webm',
                     'agreed_to_terms' => 'nullable|accepted',
                 ];
             }

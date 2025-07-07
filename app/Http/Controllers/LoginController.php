@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -37,32 +38,64 @@ class LoginController extends Controller
     // }
     public function loginProcess(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'role' => 'required|in:investor,entrepreneur,admin', // Validate selected role
-        ]);
+        Log::info("loginProcess", []); // Context as empty array for simple message
+
+        // Check if role is provided in request (for non-admin users)
+        $roleRequired = $request->has('role');
+        Log::info("role", ['roleRequired' => $roleRequired]);
+        if ($roleRequired) {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+                'role' => 'required|in:investor,entrepreneur',
+            ]);
+        } else {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+        }
 
         $credentials = $request->only('email', 'password');
-        $selectedRole = $request->input('role');
+
+        Log::info("data", ['credentials' => $credentials]); // Wrap credentials in array
+
 
         // Attempt authentication
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
+            // Check if user is admin (no role selection needed)
+            if ($user->role === 'admin' || $user->role1 === 'admin') {
+                session(['selected_role' => 'admin']);
+                return redirect()->route('admin.dashboard');
+            }
+
+            // For non-admin users, role selection is required
+            if (!$roleRequired) {
+                Auth::logout();
+                return back()->withErrors(['role' => 'Please select your role to continue.'])->withInput();
+            }
+
+            $selectedRole = $request->input('role');
+
             // Check if the selected role matches either role or role1
             $validRole = ($user->role === $selectedRole) || ($user->role1 === $selectedRole);
 
+            Log::info("validate role", ['validRole' => $validRole]); // Wrap boolean in array
+
             if ($validRole) {
                 if ($selectedRole === 'investor' && $user->investor && $user->investor->approved == 1) {
-                    session(['selected_role' => $selectedRole]); // Store selected role in session
+                    session(['selected_role' => $selectedRole]);
                     return redirect()->route('admin.dashboard');
                 } elseif ($selectedRole === 'entrepreneur') {
-                    session(['selected_role' => $selectedRole]); // Store selected role in session
+                    session(['selected_role' => $selectedRole]);
+                    if (!$user->entrepreneur) {
+                        // Profile not complete, redirect to form
+                        return redirect()->route('entrepreneur.form', ['user_id' => $user->id]);
+                    }
+                    // Profile is complete, redirect to edit page
                     return redirect()->route('entrepreneur.edit');
-                } elseif ($selectedRole === 'admin') {
-                    session(['selected_role' => $selectedRole]); // Store selected role in session
-                    return redirect()->route('admin.dashboard');
                 } elseif ($selectedRole === 'investor' && (!$user->investor || $user->investor->approved != 1)) {
                     Auth::logout();
                     return back()->withErrors(['email' => 'You are not approved. Please wait for approval.'])->withInput();
@@ -75,7 +108,24 @@ class LoginController extends Controller
 
         return back()->withErrors(['email' => 'Invalid Credentials'])->withInput();
     }
+    /**
+     * Check if entrepreneur profile is complete
+     */
+    private function isEntrepreneurProfileComplete($entrepreneur)
+    {
+        if (!$entrepreneur) {
+            return false;
+        }
 
+        // Add your conditions here to check if profile is complete
+        // Example: check if required fields are filled
+        return !empty($entrepreneur->company_name) &&
+            !empty($entrepreneur->business_type) &&
+            !empty($entrepreneur->description);
+
+        // You can add more fields as per your requirements
+        // return $entrepreneur->is_profile_complete === 1; // if you have a flag
+    }
     // change password 
     public function showChangePasswordForm()
     {

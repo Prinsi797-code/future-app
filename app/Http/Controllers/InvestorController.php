@@ -458,14 +458,14 @@ class InvestorController extends Controller
 
             Log::info('Investor and companies saved.', ['id' => $investor->id]);
 
-            $emailNamePart = strstr($request->email, '@', true); // e.g., "tilvaprinsi"
-            $randomDigits = rand(100, 999); // generates random number between 100–999
-            $generatedPassword = $emailNamePart . '@' . $randomDigits;
+            // $emailNamePart = strstr($request->email, '@', true); // e.g., "tilvaprinsi"
+            // $randomDigits = rand(100, 999); // generates random number between 100–999
+            // $generatedPassword = $emailNamePart . '@' . $randomDigits;
 
-            $user->name = $request->full_name;
-            $user->email = $request->email;
-            $user->password = Hash::make($generatedPassword);
-            $user->save();
+            // $user->name = $request->full_name;
+            // $user->email = $request->email;
+            // $user->password = Hash::make($generatedPassword);
+            // $user->save();
 
             $dummyInvestor = DummyInvestor::where('user_id', $request->user_id)->first();
             if ($dummyInvestor) {
@@ -473,7 +473,7 @@ class InvestorController extends Controller
                 $dummyInvestor->delete();
             }
 
-            Mail::to($user->email)->send(new SendUserLoginInfoMail($user->name, $user->email, $generatedPassword));
+            // Mail::to($user->email)->send(new SendUserLoginInfoMail($user->name, $user->email, $generatedPassword));
 
             Auth::logout();
             $request->session()->invalidate();
