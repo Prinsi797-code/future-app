@@ -605,6 +605,7 @@ class InvestorController extends Controller
                 'counter_reason' => 'nullable|string', // Replaced 'required_if' with 'nullable'
             ]);
             $entrepreneur = Entrepreneur::findOrFail($request->entrepreneur_id);
+            $country = $entrepreneur->country;
             // \Log::info('Entrepreneur data: ', $entrepreneur->toArray()); // Log entrepreneur as array
 
             // Check if already marked interested
@@ -637,7 +638,8 @@ class InvestorController extends Controller
                         $request->offer_type === 'counter' ? $request->counter_market_capital : null,
                         $request->offer_type === 'counter' ? $request->counter_your_stake : null,
                         $request->offer_type === 'counter' ? $request->counter_company_value : null,
-                        $request->offer_type === 'counter' ? $request->counter_reason : null
+                        $request->offer_type === 'counter' ? $request->counter_reason : null,
+                        $country
                     ));
             } catch (\Exception $mailException) {
                 \Log::error('Mail sending failed: ' . $mailException->getMessage());

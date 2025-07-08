@@ -22,12 +22,13 @@ class InterestedNotification extends Mailable
     public $counter_your_stake;
     public $counter_company_value;
     public $counter_reason;
+    public $country; // Add country property
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($investorName, $offer_type, $market_capital = null, $your_stake = null, $company_value = null, $remark_reason = null, $counter_market_capital = null, $counter_your_stake = null, $counter_company_value = null, $counter_reason = null)
+    public function __construct($investorName, $offer_type, $market_capital = null, $your_stake = null, $company_value = null, $remark_reason = null, $counter_market_capital = null, $counter_your_stake = null, $counter_company_value = null, $counter_reason = null, $country = null)
     {
         $this->investorName = $investorName;
         $this->offer_type = $offer_type;
@@ -39,6 +40,7 @@ class InterestedNotification extends Mailable
         $this->counter_your_stake = $counter_your_stake;
         $this->counter_company_value = $counter_company_value;
         $this->counter_reason = $counter_reason;
+        $this->country = $country;// Add country parameter
     }
 
     /**

@@ -443,7 +443,7 @@
                                         <input type="text" class="form-control" name="current_address"
                                             id="current_address"
                                             value="{{ old('current_address', $enterprent->current_address ?? '') }}"
-                                            placeholder="123 High Street, London, SW1A 1AA, UK" required>
+                                            placeholder="123 High Street, London, SW1A 1AA, UK">
                                         <label for="current_address">Current Address *</label>
                                         <div class="text-danger mt-1 d-none" id="current_address_error"></div>
                                     </div>
@@ -500,7 +500,7 @@
                                         <input type="text" pattern="[0-9]{5,6}" inputmode="numeric" maxlength="6"
                                             class="form-control" name="pin_code"
                                             value="{{ old('pin_code', $enterprent->pin_code ?? '') }}"
-                                            placeholder="520963" required>
+                                            placeholder="520963">
                                         <label class="from-label">Pin/Zip Code *</label>
                                         <div class="text-danger mt-1 d-done" id="pin_code_error"></div>
                                     </div>
@@ -519,7 +519,7 @@
                                         <label class="form-label">Date of Birth *</label>
                                         <input type="text" class="form-control" name="dob" id="dob"
                                             value ="{{ old('dob', $enterprent->dob ?? '') }}" placeholder="Select date"
-                                            readonly required>
+                                            readonly>
                                         <div class="text-danger mt-1 d-none" id="dob_error"></div>
                                     </div>
                                 </div>
@@ -547,7 +547,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
-                                            <select class="form-select" name="qualification" id="qualification" required>
+                                            <select class="form-select" name="qualification" id="qualification">
                                                 <option value="">Select Qualification</option>
                                                 @foreach ($qualifications as $qualification)
                                                     <option value="{{ $qualification }}"
@@ -606,7 +606,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="business_name"
                                                     value="{{ old('business_name', $enterprent->business_name ?? '') }}"
-                                                    placeholder="Nexora Ventures" required>
+                                                    placeholder="Nexora Ventures">
                                                 <label class="form-label" id="business_name_label">Business Idea Name
                                                     *</label>
                                                 <div class="text-danger mt-1 d-none" id="business_name_error"></div>
@@ -617,7 +617,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="brand_name"
                                                     value="{{ old('brand_name', $enterprent->brand_name ?? '') }}"
-                                                    placeholder="Tech & SaaS" required>
+                                                    placeholder="Tech & SaaS">
                                                 <label class="form-label" id="brand_name_label">Business Brand Name
                                                     *</label>
                                                 <div class="text-danger mt-1 d-none" id="brand_name_error"></div>
@@ -628,8 +628,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="business_address"
                                                     value="{{ old('business_address', $enterprent->business_address ?? '') }}"
-                                                    placeholder="Nexora Ventures Ltd.2 Farringdon Street London.."
-                                                    required>
+                                                    placeholder="Nexora Ventures Ltd.2 Farringdon Street London..">
                                                 <label class="form-label" id="proposed_business_address_label">Proposed
                                                     Business Address
                                                     *</label>
@@ -937,7 +936,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="y_business_name"
                                                     value="{{ old('y_business_name', $enterprent->y_business_name ?? '') }}"
-                                                    placeholder="Nexora Ventures" required>
+                                                    placeholder="Nexora Ventures">
                                                 <label class="form-label" id="y_business_name_label">Business Name
                                                     *</label>
                                                 <div class="text-danger mt-1 d-none" id="y_business_name_error"></div>
@@ -948,7 +947,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="y_brand_name"
                                                     value="{{ old('y_brand_name', $enterprent->y_brand_name ?? '') }}"
-                                                    placeholder="Tech & SaaS" required>
+                                                    placeholder="Tech & SaaS">
                                                 <label class="form-label" id="y_brand_name_label">Brand Name
                                                     *</label>
                                                 <div class="text-danger mt-1 d-none" id="y_brand_name_error"></div>
@@ -1045,7 +1044,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="y_zipcode"
                                                     value="{{ old('y_zipcode', $enterprent->y_zipcode ?? '') }}"
-                                                    placeholder="852963" required>
+                                                    placeholder="852963">
                                                 <label class="form-label" id="y_zipcode_label">Business Pin / Zip Code
                                                     *</label>
                                                 <div class="text-danger mt-1 d-none" id="y_zipcode_error"></div>
@@ -1076,7 +1075,7 @@
                                                 <input type="tel" class="form-control" name="business_mobile"
                                                     placeholder="7419638520"
                                                     value="{{ old('business_mobile', $enterprent->business_mobile ?? '') }}"
-                                                    maxlength="12" required>
+                                                    maxlength="12">
                                             </div>
                                             <div class="text-danger mt-1 d-none" id="business_mobile_error"></div>
                                             <div class="text-danger mt-1 d-none" id="business_mobile_error"></div>
@@ -2175,18 +2174,18 @@
                     '+974': 8 // Qatar
                 };
 
-                const countryValue = country && country.value ? country.value.trim() : '';
-                if (!country || !countryValue) {
-                    if (countryError) {
-                        countryError.textContent = 'Country is required';
-                        countryError.classList.remove('d-none');
-                    }
-                    isValid = false;
-                } else {
-                    if (countryError) {
-                        countryError.classList.add('d-none');
-                    }
-                }
+                //const countryValue = country && country.value ? country.value.trim() : '';
+                //if (!country || !countryValue) {
+                //    if (countryError) {
+                //      countryError.textContent = 'Country is required';
+                //  countryError.classList.remove('d-none');
+                //}
+                //isValid = false;
+                // } else {
+                // if (countryError) {
+                //countryError.classList.add('d-none');
+                //}
+                // }
                 // State Validation
                 if (!state.value) {
                     document.getElementById('state_error').textContent = 'State is required';
@@ -2299,25 +2298,25 @@
                 }
 
 
-                if (!current_address.value.trim()) {
-                    document.getElementById('current_address_error').textContent = 'Address is required';
-                    document.getElementById('current_address_error').classList.remove('d-done');
-                    isValid = false;
-                }
+                //if (!current_address.value.trim()) {
+                //document.getElementById('current_address_error').textContent = 'Address is required';
+                //document.getElementById('current_address_error').classList.remove('d-done');
+                //  isValid = false;
+                //  }
 
-                if (!qualification) {
-                    document.getElementById('qualification_error').textContent =
-                        'Please select a qualification';
-                    document.getElementById('qualification_error').classList.remove('d-none');
-                    isValid = false;
-                }
-                if (!dob.value.trim()) {
-                    document.getElementById('dob_error').textContent = 'Date of birth is required';
-                    document.getElementById('dob_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('dob_error').classList.add('d-none');
-                }
+                // if (!qualification) {
+                // document.getElementById('qualification_error').textContent =
+                //    'Please select a qualification';
+                //  document.getElementById('qualification_error').classList.remove('d-none');
+                //  isValid = false;
+                //  }
+                //if (!dob.value.trim()) {
+                // document.getElementById('dob_error').textContent = 'Date of birth is required';
+                //  document.getElementById('dob_error').classList.remove('d-none');
+                // isValid = false;
+                // } else {
+                //    document.getElementById('dob_error').classList.add('d-none');
+                //  }
 
             } else if (step === 3) {
                 if (!registerBusiness) {
@@ -2384,12 +2383,12 @@
                     loanError.textContent = '';
 
                     // Validate required fields
-                    if (!businessName.value.trim()) {
-                        document.getElementById('business_name_error').textContent =
-                            'Proposed business name is required';
-                        document.getElementById('business_name_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    //if (!businessName.value.trim()) {
+                    //document.getElementById('business_name_error').textContent =
+                    // 'Proposed business name is required';
+                    // document.getElementById('business_name_error').classList.remove('d-none');
+                    //  isValid = false;
+                    // }
 
                     const companyGroups = document.querySelectorAll('.company-group');
                     let companyValid = true;
@@ -2423,50 +2422,50 @@
                     const BusinessCountryValue = businessCountry && businessCountry.value ? businessCountry
                         .value.trim() :
                         '';
-                    if (!businessCountry || !BusinessCountryValue) {
-                        if (businessCountryError) {
-                            businessCountryError.textContent = 'Country is required';
-                            businessCountryError.classList.remove('d-none');
-                        }
-                        isValid = false;
-                    } else {
-                        if (businessCountryError) {
-                            businessCountryError.classList.add('d-none');
-                        }
-                    }
+                    //if (!businessCountry || !BusinessCountryValue) {
+                    //if (businessCountryError) {
+                    //     businessCountryError.textContent = 'Country is required';
+                    //     businessCountryError.classList.remove('d-none');
+                    //  }
+                    //   isValid = false;
+                    // } else {
+                    //   if (businessCountryError) {
+                    //   businessCountryError.classList.add('d-none');
+                    //  }
+                    //}
 
-                    if (!brandName.value.trim()) {
-                        document.getElementById('brand_name_error').textContent =
-                            'Proposed business brand is required';
-                        document.getElementById('brand_name_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    // if (!brandName.value.trim()) {
+                    // document.getElementById('brand_name_error').textContent =
+                    //   'Proposed business brand is required';
+                    // document.getElementById('brand_name_error').classList.remove('d-none');
+                    //  isValid = false;
+                    // }
 
-                    if (!proposedAddress.value.trim()) {
-                        document.getElementById('proposed_business_address_error').textContent =
-                            'Proposed business address is required';
-                        document.getElementById('proposed_business_address_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    // if (!proposedAddress.value.trim()) {
+                    //document.getElementById('proposed_business_address_error').textContent =
+                    //    'Proposed business address is required';
+                    // document.getElementById('proposed_business_address_error').classList.remove('d-none');
+                    //  isValid = false;
+                    // }
 
-                    if (!businessCity.value) {
-                        document.getElementById('business_city_error').textContent =
-                            'Business city is required';
-                        document.getElementById('business_city_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        document.getElementById('business_city_error').classList.add('d-none');
-                    }
+                    //if (!businessCity.value) {
+                    //  document.getElementById('business_city_error').textContent =
+                    // 'Business city is required';
+                    // document.getElementById('business_city_error').classList.remove('d-none');
+                    // isValid = false;
+                    // } else {
+                    //    document.getElementById('business_city_error').classList.add('d-none');
+                    //   }
 
                     // State Validation
-                    if (!businessState.value) {
-                        document.getElementById('business_state_error').textContent =
-                            'Business State is required';
-                        document.getElementById('business_state_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        document.getElementById('business_state_error').classList.add('d-none');
-                    }
+                    //if (!businessState.value) {
+                    //document.getElementById('business_state_error').textContent =
+                    //  'Business State is required';
+                    // document.getElementById('business_state_error').classList.remove('d-none');
+                    // isValid = false;
+                    // } else {
+                    //    document.getElementById('business_state_error').classList.add('d-none');
+                    //  }
 
 
                     if (pitchDeck.files.length > 0) {
@@ -2496,12 +2495,12 @@
                         });
                     }
 
-                    if (!businessDescribe.value.trim()) {
-                        document.getElementById('business_describe_error').textContent =
-                            'Proposed business description is required';
-                        document.getElementById('business_describe_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    //if (!businessDescribe.value.trim()) {
+                    //document.getElementById('business_describe_error').textContent =
+                    // 'Proposed business description is required';
+                    //document.getElementById('business_describe_error').classList.remove('d-none');
+                    // isValid = false;
+                    // }
 
                     //if (!ideaSummary.value.trim()) {
                     // document.getElementById('idea_summary_error').textContent = 'Business idea summary is required';
@@ -2509,74 +2508,98 @@
                     // isValid = false;
                     //}
 
-                    if (!industry) {
-                        document.getElementById('industry_error').textContent = 'Please select an industry';
-                        document.getElementById('industry_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        document.getElementById('industry_error').classList.add('d-none');
-                    }
+                    //# if (!industry) {
+                    //  document.getElementById('industry_error').textContent = 'Please select an industry';
+                    //  document.getElementById('industry_error').classList.remove('d-none');
+                    //  isValid = false;
+                    //  } else {
+                    //   document.getElementById('industry_error').classList.add('d-none');
+                    //  }
 
                     // Validate financial fields
-                    if (!investedAmount || !investedAmount.value.trim()) {
-                        investedAmountError.textContent = 'Invested amount is required';
-                        investedAmountError.classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d+(\.\d+)?$/.test(investedAmount.value.trim())) {
+                    //  if (!investedAmount || !investedAmount.value.trim()) {
+                    //  investedAmountError.textContent = 'Invested amount is required';
+                    // investedAmountError.classList.remove('d-none');
+                    // isValid = false;
+                    //} 
+                    const investedAmountValue = investedAmount.value.trim();
+
+                    if (investedAmountValue !== '' && !/^\d+(\.\d+)?$/.test(investedAmountValue)) {
                         investedAmountError.textContent = 'Please enter a valid number for invested amount';
                         investedAmountError.classList.remove('d-none');
                         isValid = false;
+                    } else {
+                        investedAmountError.classList.add('d-none'); // Hide error for blank or valid input
                     }
 
-                    if (!ownFund || !ownFund.value.trim()) {
-                        ownFundError.textContent = 'Own fund is required';
-                        ownFundError.classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d+(\.\d+)?$/.test(ownFund.value.trim())) {
+                    // if (!ownFund || !ownFund.value.trim()) {
+                    //   ownFundError.textContent = 'Own fund is required';
+                    //   ownFundError.classList.remove('d-none');
+                    //   isValid = false;
+                    //}
+                    const ownFundValue = ownFund.value.trim();
+
+                    if (ownFundValue !== '' && !/^\d+(\.\d+)?$/.test(ownFundValue)) {
                         ownFundError.textContent = 'Please enter a valid number for own fund';
                         ownFundError.classList.remove('d-none');
                         isValid = false;
+                    } else {
+                        ownFundError.classList.add('d-none');
                     }
 
-                    if (!loan || !loan.value.trim()) {
-                        loanError.textContent = 'Loan amount is required';
-                        loanError.classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d+(\.\d+)?$/.test(loan.value.trim())) {
+
+                    // if (!loan || !loan.value.trim()) {
+                    //  loanError.textContent = 'Loan amount is required';
+                    //   loanError.classList.remove('d-none');
+                    //   isValid = false;
+                    //}
+                    if (ownFundValue !== '' && !/^\d+(\.\d+)?$/.test(loan.value.trim())) {
                         loanError.textContent = 'Please enter a valid number for loan';
                         loanError.classList.remove('d-none');
                         isValid = false;
+                    } else {
+                        ownFundError.classList.add('d-none');
                     }
 
-                    if (!investmentField || !investmentField.value.trim() || parseFloat(investmentField
-                            .value) <= 0) {
-                        document.getElementById('market_capital_error').textContent =
-                            'Please enter the fund required amount';
-                        document.getElementById('market_capital_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    //if (!investmentField || !investmentField.value.trim() || parseFloat(investmentField
+                    // .value) <= 0) {
+                    // document.getElementById('market_capital_error').textContent =
+                    //    'Please enter the fund required amount';
+                    // document.getElementById('market_capital_error').classList.remove('d-none');
+                    // isValid = false;
+                    //  }
 
-                    if (!valuationField || !valuationField.value.trim() || parseFloat(valuationField.value) <=
-                        0) {
-                        document.getElementById('stake_funding_error').textContent =
-                            'Company valuation is required';
-                        document.getElementById('stake_funding_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    //if (!valuationField || !valuationField.value.trim() || parseFloat(valuationField.value) <=
+                    //0) {
+                    // document.getElementById('stake_funding_error').textContent =
+                    //     'Company valuation is required';
+                    //  document.getElementById('stake_funding_error').classList.remove('d-none');
+                    //  isValid = false;
+                    // }
 
                     // Validate equity offered
-                    if (!equityField || !equityField.value.trim()) {
-                        equityError.textContent = 'Equity offered is required';
-                        equityError.classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        const equityValue = parseFloat(equityField.value);
+                    //if (!equityField || !equityField.value.trim()) {
+                    //equityError.textContent = 'Equity offered is required';
+                    //equityError.classList.remove('d-none');
+                    // isValid = false;
+                    // }
+                    const equityRaw = equityField.value.trim();
+
+
+                    if (equityRaw !== '') {
+                        const equityValue = parseFloat(equityRaw);
+
                         if (isNaN(equityValue) || equityValue <= 0 || equityValue > 100) {
                             equityError.textContent = 'Equity offered must be between 1 and 100 percent';
                             equityError.classList.remove('d-none');
                             isValid = false;
+                        } else {
+                            equityError.classList.add('d-none');
                         }
+                    } else {
+                        equityError.classList.add('d-none'); // hide error if field is blank
                     }
+
 
                     // Validate business logo (optional)
                     if (businessLogo && businessLogo.files.length > 0) {
@@ -2594,12 +2617,7 @@
                     if (!productPhotos) {
                         console.error('Product photos input element not found');
                         isValid = false;
-                    } else if (productPhotos.files.length === 0) {
-                        productPhotos.removeAttribute('required');
-                        document.getElementById('product_photos_error').textContent =
-                            'At least one product photo is required.';
-                        document.getElementById('product_photos_error').classList.remove('d-none');
-                        isValid = false;
+
                     } else if (productPhotos.files.length > 3) {
                         document.getElementById('product_photos_error').textContent =
                             'Maximum 3 product photos allowed.';
@@ -2793,38 +2811,21 @@
                     const BusinessCountryValueY = businessCountryY && businessCountryY.value ? businessCountryY
                         .value
                         .trim() : '';
-                    if (!businessCountryY || !BusinessCountryValueY) {
-                        if (businessCountryErrorY) {
-                            businessCountryErrorY.textContent = 'Country is required';
-                            businessCountryErrorY.classList.remove('d-none');
-                        }
-                        isValid = false;
-                    } else {
-                        if (businessCountryErrorY) {
-                            businessCountryErrorY.classList.add('d-none');
-                        }
-                    }
 
-                    if (!countryCodeY.value.trim()) {
-                        document.getElementById('business_country_code_error').textContent =
-                            'Country code is required';
-                        document.getElementById('business_country_code_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        // document.getElementById('business_country_code_error').classList.add('d-none');
-                    }
+                    //if (!countryCodeY.value.trim()) {
+                    //   document.getElementById('business_country_code_error').textContent =
+                    //       'Country code is required';
+                    //   document.getElementById('business_country_code_error').classList.remove('d-none');
+                    //   isValid = false;
+                    // } else {
+                    // document.getElementById('business_country_code_error').classList.add('d-none');
+                    //  }
 
-                    if (!businessMobile.value.trim()) {
-                        document.getElementById('business_mobile_error').textContent =
-                            'mobile number is required';
-                        document.getElementById('business_mobile_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        const mobile = businessMobile.value.trim();
-                        const expectedLengthMo = mobileLengthMap[countryCodeY.value] ||
-                            10; // Default to 10 if country code not in map
-                        const mobilePattern = new RegExp(
-                            `^\\d{${expectedLengthMo}}$`); // Dynamic regex for exact digit length
+                    const mobile = businessMobile && businessMobile.value ? businessMobile.value.trim() : '';
+
+                    if (mobile !== '') {
+                        const expectedLengthMo = mobileLengthMap[countryCodeY.value] || 10; // Default to 10 digits
+                        const mobilePattern = new RegExp(`^\\d{${expectedLengthMo}}$`);
 
                         if (!mobilePattern.test(mobile)) {
                             document.getElementById('business_mobile_error').textContent =
@@ -2834,38 +2835,26 @@
                         } else {
                             document.getElementById('business_mobile_error').classList.add('d-none');
                         }
-                    }
-
-                    // Validate business name
-                    if (!businessNameY || !businessNameY.value.trim()) {
-                        document.getElementById('y_business_name_error').textContent =
-                            'Business name is required';
-                        document.getElementById('y_business_name_error').classList.remove('d-none');
-                        isValid = false;
-                    }
-
-                    // Validate brand name
-                    if (!brandNameY || !brandNameY.value.trim()) {
-                        document.getElementById('y_brand_name_error').textContent = 'Brand name is required';
-                        document.getElementById('y_brand_name_error').classList.remove('d-none');
-                        isValid = false;
-                    }
-
-                    // Validate business description
-                    if (!businessDescribeY || !businessDescribeY.value.trim()) {
-                        document.getElementById('y_describe_business_error').textContent =
-                            'Business description is required';
-                        document.getElementById('y_describe_business_error').classList.remove('d-none');
-                        isValid = false;
                     } else {
+                        document.getElementById('business_mobile_error').classList.add('d-none'); // No error if left blank
+                    }
+
+
+                    if (businessDescribeY) {
                         businessDescribeY.addEventListener('input', function() {
                             if (this.value.length > 75) {
                                 this.value = this.value.slice(0, 75);
+                                document.getElementById('y_describe_business_error').textContent =
+                                    'Maximum 75 characters allowed';
+                                document.getElementById('y_describe_business_error').classList.remove('d-none');
+                            } else {
+                                document.getElementById('y_describe_business_error').classList.add('d-none');
                             }
                         });
                     }
 
-                    if (pitchDeckY.files.length > 0) {
+
+                    if (pitchDeckY && pitchDeckY.files.length > 0) {
                         const file = pitchDeckY.files[0];
                         const validMimeY = file.type === "application/pdf";
                         const validExtensionY = file.name.toLowerCase().endsWith(".pdf");
@@ -2875,89 +2864,47 @@
                                 'Only PDF files are allowed.';
                             document.getElementById('y_pitch_deck_error').classList.remove('d-none');
                             isValid = false;
-                        } else if (file.size > 10 * 1024 * 1024) { // 10MB size check
+                        } else if (file.size > 10 * 1024 * 1024) {
                             document.getElementById('y_pitch_deck_error').textContent =
                                 'File size must be less than 10MB.';
                             document.getElementById('y_pitch_deck_error').classList.remove('d-none');
                             isValid = false;
+                        } else {
+                            document.getElementById('y_pitch_deck_error').classList.add('d-none');
                         }
-                    }
-
-                    if (!investmentFieldY || !investmentFieldY.value.trim() || parseFloat(investmentFieldY
-                            .value) <= 0) {
-                        document.getElementById('y_market_capital_error').textContent =
-                            'Please enter the fund required amount';
-                        document.getElementById('y_market_capital_error').classList.remove('d-none');
-                        isValid = false;
-                    }
-
-                    if (!valuationFieldY || !valuationFieldY.value.trim() || parseFloat(valuationFieldY
-                            .value) <= 0) {
-                        document.getElementById('y_stake_funding_error').textContent =
-                            'Company valuation is required';
-                        document.getElementById('y_stake_funding_error').classList.remove('d-none');
-                        isValid = false;
-                    }
-
-                    // Validate equity offered
-                    if (!equityFieldY || !equityFieldY.value.trim()) {
-                        equityErrorY.textContent = 'Equity offered is required';
-                        equityErrorY.classList.remove('d-none');
-                        isValid = false;
                     } else {
-                        const equityValueY = parseFloat(equityFieldY.value);
+                        document.getElementById('y_pitch_deck_error').classList.add('d-none');
+                    }
+
+
+                    const equityValueRaw = equityFieldY && equityFieldY.value ? equityFieldY.value.trim() : '';
+
+                    if (equityValueRaw !== '') {
+                        const equityValueY = parseFloat(equityValueRaw);
+
                         if (isNaN(equityValueY) || equityValueY <= 0 || equityValueY > 100) {
                             equityErrorY.textContent = 'Equity offered must be between 1 and 100 percent';
                             equityErrorY.classList.remove('d-none');
                             isValid = false;
+                        } else {
+                            equityErrorY.classList.add('d-none');
                         }
+                    } else {
+                        equityErrorY.classList.add('d-none');
                     }
 
-                    if (!investedAmountY || !investedAmountY.value.trim()) {
-                        investedAmountErrorY.textContent = 'Invested amount is required';
-                        investedAmountErrorY.classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d+(\.\d+)?$/.test(investedAmountY.value.trim())) {
-                        investedAmountErrorY.textContent = 'Please enter a valid number for invested amount';
-                        investedAmountErrorY.classList.remove('d-none');
-                        isValid = false;
-                    }
 
-                    // Validate business address
-                    if (!businessAddressY || !businessAddressY.value.trim()) {
-                        document.getElementById('y_business_address_error').textContent =
-                            'Business address is required';
-                        document.getElementById('y_business_address_error').classList.remove('d-none');
-                        isValid = false;
-                    }
 
-                    // Validate business state
-                    if (!businessStateY || !businessStateY.value) {
-                        document.getElementById('y_business_state_error').textContent =
-                            'Business state is required';
-                        document.getElementById('y_business_state_error').classList.remove('d-none');
-                        isValid = false;
-                    }
 
-                    // Validate business city
-                    if (!businessCityY || !businessCityY.value) {
-                        document.getElementById('y_business_city_error').textContent =
-                            'Business city is required';
-                        document.getElementById('y_business_city_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    const zipcodeValue = zipcodeY && zipcodeY.value ? zipcodeY.value.trim() : '';
 
-                    // Validate zip code
-                    if (!zipcodeY || !zipcodeY.value.trim()) {
-                        document.getElementById('y_zipcode_error').textContent = 'Pin/Zip code is required';
-                        document.getElementById('y_zipcode_error').classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d{5,6}$/.test(zipcodeY.value
-                            .trim())) { // Basic validation for 5-6 digit zip code
+                    if (zipcodeValue !== '' && !/^\d{5,6}$/.test(zipcodeValue)) {
                         document.getElementById('y_zipcode_error').textContent =
                             'Enter a valid 5-6 digit pin/zip code';
                         document.getElementById('y_zipcode_error').classList.remove('d-none');
                         isValid = false;
+                    } else {
+                        document.getElementById('y_zipcode_error').classList.add('d-none');
                     }
 
                     // Validate industry
@@ -2971,57 +2918,72 @@
                     }
 
                     // Validate own fund
-                    if (!ownFundY || !ownFundY.value.trim()) {
-                        document.getElementById('y_own_fund_error').textContent = 'Own fund is required';
-                        document.getElementById('y_own_fund_error').classList.remove('d-none');
-                        isValid = false;
-                    } else if (parseFloat(ownFundY.value) < 0 || isNaN(parseFloat(ownFundY.value))) {
-                        document.getElementById('y_own_fund_error').textContent =
-                            'Enter a valid non-negative number for own fund';
-                        document.getElementById('y_own_fund_error').classList.remove('d-none');
-                        isValid = false;
+                    const ownFundYValue = ownFundY && ownFundY.value ? ownFundY.value.trim() : '';
+
+                    if (ownFundYValue !== '') {
+                        const ownFundYNumber = parseFloat(ownFundYValue);
+
+                        if (isNaN(ownFundYNumber) || ownFundYNumber < 0) {
+                            document.getElementById('y_own_fund_error').textContent =
+                                'Enter a valid non-negative number for own fund';
+                            document.getElementById('y_own_fund_error').classList.remove('d-none');
+                            isValid = false;
+                        } else {
+                            document.getElementById('y_own_fund_error').classList.add('d-none');
+                        }
+                    } else {
+                        document.getElementById('y_own_fund_error').classList.add('d-none');
                     }
+
 
                     // Validate loan
-                    if (!loanY || !loanY.value.trim()) {
-                        document.getElementById('y_loan_error').textContent = 'Loan amount is required';
-                        document.getElementById('y_loan_error').classList.remove('d-none');
-                        isValid = false;
-                    } else if (parseFloat(loanY.value) < 0 || isNaN(parseFloat(loanY.value))) {
-                        document.getElementById('y_loan_error').textContent =
-                            'Enter a valid non-negative number for loan';
-                        document.getElementById('y_loan_error').classList.remove('d-none');
-                        isValid = false;
+                    const loanYValue = loanY && loanY.value ? loanY.value.trim() : '';
+
+                    if (loanYValue !== '') {
+                        const loanYAmount = parseFloat(loanYValue);
+
+                        if (isNaN(loanYAmount) || loanYAmount < 0) {
+                            document.getElementById('y_loan_error').textContent =
+                                'Enter a valid non-negative number for loan';
+                            document.getElementById('y_loan_error').classList.remove('d-none');
+                            isValid = false;
+                        } else {
+                            document.getElementById('y_loan_error').classList.add('d-none');
+                        }
+                    } else {
+                        document.getElementById('y_loan_error').classList.add('d-none');
                     }
 
-                    // Validate invested amount
-                    if (!investedAmountY || !investedAmountY.value.trim()) {
-                        document.getElementById('y_invested_amount_error').textContent =
-                            'Invested amount is required';
-                        document.getElementById('y_invested_amount_error').classList.remove('d-none');
-                        isValid = false;
-                    } else if (parseFloat(investedAmountY.value) < 0 || isNaN(parseFloat(investedAmountY
-                            .value))) {
-                        document.getElementById('y_invested_amount_error').textContent =
-                            'Enter a valid non-negative number for invested amount';
-                        document.getElementById('y_invested_amount_error').classList.remove('d-none');
-                        isValid = false;
-                    }
+                    const investedAmountYValue = investedAmountY && investedAmountY.value ? investedAmountY.value.trim() :
+                        '';
 
+                    if (investedAmountYValue !== '') {
+                        const amount = parseFloat(investedAmountYValue);
+
+                        if (isNaN(amount) || amount < 0) {
+                            document.getElementById('y_invested_amount_error').textContent =
+                                'Enter a valid non-negative number for invested amount';
+                            document.getElementById('y_invested_amount_error').classList.remove('d-none');
+                            isValid = false;
+                        } else {
+                            document.getElementById('y_invested_amount_error').classList.add('d-none');
+                        }
+                    } else {
+                        document.getElementById('y_invested_amount_error').classList.add('d-none');
+                    }
 
                     // Validate business mobile
-                    if (!businessMobile || !businessMobile.value.trim()) {
-                        document.getElementById('business_mobile_error').textContent =
-                            'Business mobile number is required';
-                        document.getElementById('business_mobile_error').classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d{10}$/.test(businessMobile.value
-                            .trim())) { // Basic 10-digit phone validation
+                    const businessMobileValue = businessMobile && businessMobile.value ? businessMobile.value.trim() : '';
+
+                    if (businessMobileValue !== '' && !/^\d{10}$/.test(businessMobileValue)) {
                         document.getElementById('business_mobile_error').textContent =
                             'Enter a valid 10-digit mobile number';
                         document.getElementById('business_mobile_error').classList.remove('d-none');
                         isValid = false;
+                    } else {
+                        document.getElementById('business_mobile_error').classList.add('d-none');
                     }
+
 
                     // Validate business email
                     if (!businessEmail) {
@@ -3031,9 +2993,10 @@
                         const emailValue = businessEmail.value.trim();
                         const emailRegex =
                             /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/;
-                    if (!emailValue || !businessEmail.validity.valid || !emailRegex.test(emailValue)) {
+
+                    if (emailValue !== '' && (!businessEmail.validity.valid || !emailRegex.test(emailValue))) {
                         businessEmailError.textContent =
-                            'Valid business email is required (e.g., john@example.com)';
+                            'Enter a valid business email (e.g., john@example.com)';
                         businessEmailError.classList.remove('d-none');
                         isValid = false;
                     } else {
@@ -3078,13 +3041,6 @@
                         errorElement.classList.add('d-none'); // Hide error if empty
                     }
                 }
-                // Validate business year
-                if (!businessYear || !businessYear.value) {
-                    document.getElementById('business_year_error').textContent =
-                        'Business start year is required';
-                    document.getElementById('business_year_error').classList.remove('d-none');
-                    isValid = false;
-                }
 
                 // Validate registration type
                 if (!registrationTypeofEntity) {
@@ -3094,86 +3050,49 @@
                     isValid = false;
                 }
 
-                // Validate tax registration number
-                if (!taxRegistrationNumber || !taxRegistrationNumber.value.trim()) {
-                    document.getElementById('tax_registration_number_error').textContent =
-                        'Tax registration number is required';
-                    document.getElementById('tax_registration_number_error').classList.remove('d-none');
-                    isValid = false;
-                }
-
                 // Validate founder number
-                if (!founderNumber || !founderNumber.value.trim() || parseInt(founderNumber.value) < 1) {
-                    document.getElementById('founder_number_error').textContent =
-                        'Number of founders is required';
-                    document.getElementById('founder_number_error').classList.remove('d-none');
-                    isValid = false;
-                } else if (parseInt(founderNumber.value) > 20) {
-                    document.getElementById('founder_number_error').textContent =
-                        'Number of founders cannot exceed 20';
-                    document.getElementById('founder_number_error').classList.remove('d-none');
-                    isValid = false;
-                }
+                const founderNumberValue = founderNumber && founderNumber.value ? founderNumber.value.trim() : '';
 
-                // Validate employee number
-                if (!employeeNumber || !employeeNumber.value.trim() || parseInt(employeeNumber.value) < 1) {
-                    document.getElementById('employee_number_error').textContent =
-                        'Number of employees is required';
-                    document.getElementById('employee_number_error').classList.remove('d-none');
-                    isValid = false;
-                } else if (parseInt(employeeNumber.value) > 2000) {
-                    document.getElementById('employee_number_error').textContent =
-                        'Number of employees cannot exceed 2000';
-                    document.getElementById('employee_number_error').classList.remove('d-none');
-                    isValid = false;
-                }
+                if (founderNumberValue !== '') {
+                    const founderCount = parseInt(founderNumberValue);
 
-                // Validate revenue from sales
-                if (!businessRevenue || !businessRevenue.value || parseFloat(businessRevenue.value) < 0) {
-                    document.getElementById('business_revenue1_error').textContent =
-                        'Enter valid revenue from sales';
-                    document.getElementById('business_revenue1_error').classList.remove('d-none');
-                    isValid = false;
-                }
-
-                // Validate gross profit
-                if (!businessRevenue2 || !businessRevenue2.value || parseFloat(businessRevenue2.value) <
-                    0) {
-                    document.getElementById('business_revenue2_error').textContent =
-                        'Enter valid gross profit';
-                    document.getElementById('business_revenue2_error').classList.remove('d-none');
-                    isValid = false;
-                }
-
-                // Validate net profit
-                if (!businessRevenue3 || !businessRevenue3.value || parseFloat(businessRevenue3.value) <
-                    0) {
-                    document.getElementById('business_revenue3_error').textContent =
-                        'Enter valid net profit';
-                    document.getElementById('business_revenue3_error').classList.remove('d-none');
-                    isValid = false;
+                    if (isNaN(founderCount) || founderCount < 1) {
+                        document.getElementById('founder_number_error').textContent =
+                            'Number of founders must be at least 1';
+                        document.getElementById('founder_number_error').classList.remove('d-none');
+                        isValid = false;
+                    } else if (founderCount > 20) {
+                        document.getElementById('founder_number_error').textContent =
+                            'Number of founders cannot exceed 20';
+                        document.getElementById('founder_number_error').classList.remove('d-none');
+                        isValid = false;
+                    } else {
+                        document.getElementById('founder_number_error').classList.add('d-none');
+                    }
+                } else {
+                    document.getElementById('founder_number_error').classList.add('d-none');
                 }
 
                 if (businessLogoY && businessLogoY.files.length > 0) {
                     const file = businessLogoY.files[0];
                     const validImage = ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type);
+
                     if (!validImage) {
                         document.getElementById('y_business_logo_error').textContent =
                             'Only JPG, JPEG, or PNG files allowed for business logo.';
                         document.getElementById('y_business_logo_error').classList.remove('d-none');
                         isValid = false;
+                    } else {
+                        document.getElementById('y_business_logo_error').classList.add('d-none');
                     }
+                } else {
+                    document.getElementById('y_business_logo_error').classList.add('d-none');
                 }
+
 
                 // Validate product photos (CRITICAL: Handle the focusability issue)
                 if (!productPhotosY) {
                     console.error('Product photos input element not found');
-                    isValid = false;
-                } else if (productPhotosY.files.length === 0) {
-                    productPhotosY.removeAttribute('required');
-                    document.getElementById('y_product_photos_error').textContent =
-                        'At least one product photo is required.';
-                    document.getElementById('y_product_photos_error').classList.remove('d-none');
                     isValid = false;
                 } else if (productPhotosY.files.length > 3) {
                     document.getElementById('y_product_photos_error').textContent =

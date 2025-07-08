@@ -28,17 +28,19 @@
                             </p>
 
                             <p style="font-size: 16px; color: #333; line-height: 1.6;">
-                                Our team is currently in the process of matching you with a suitable investor. You can
-                                expect to be contacted shortly for the next steps.
+                                You will now start receiving carefully curated startup pitches that match your
+                                investment preferences and criteria. Our team will be sending you potential investment
+                                opportunities shortly.
                             </p>
 
                             <p style="font-size: 16px; color: #333; line-height: 1.6;">
-                                Thank you for your patience and trust in our platform. We are excited to support your
-                                entrepreneurial journey.
+                                Thank you for joining Future Taikun as an investor. We look forward to connecting you
+                                with innovative startups and promising entrepreneurs.
                             </p>
 
                             <p style="font-size: 16px; color: #333; line-height: 1.6;">
-                                If you have any questions or need further assistance, please feel free to reach out.
+                                If you have any questions or need to update your investment preferences, please feel
+                                free to reach out to us.
                             </p>
 
                             <p style="font-size: 16px; color: #333; margin-top: 40px;">

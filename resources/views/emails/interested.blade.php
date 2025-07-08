@@ -27,9 +27,11 @@
                                     the following details:
                                 </p>
                                 <ul style="font-size: 16px; color: #333; line-height: 1.6;">
-                                    <li><strong>Fund Offered:</strong> ${{ number_format($market_capital, 2) }}</li>
+                                    <li><strong>Fund Offered:</strong> {{ $country === 'IN' ? '₹' : '$' }}
+                                        {{ number_format($market_capital, 2) }}</li>
                                     <li><strong>Equity Asked:</strong> {{ $your_stake }}%</li>
-                                    <li><strong>Valuation Considered:</strong> ${{ number_format($company_value, 2) }}
+                                    <li><strong>Valuation Considered:</strong>
+                                        {{ $country === 'IN' ? '₹' : '$' }}{{ number_format($company_value, 2) }}
                                     </li>
                                     <li><strong>Reason:</strong> {{ $remark_reason }}</li>
                                 </ul>
@@ -40,10 +42,12 @@
                                 </p>
                                 <ul style="font-size: 16px; color: #333; line-height: 1.6;">
                                     <li><strong>Counter Fund Offered:</strong>
-                                        ${{ number_format($counter_market_capital, 2) }}</li>
+                                        {{ $country === 'IN' ? '₹' : '$' }}{{ number_format($counter_market_capital, 2) }}
+                                    </li>
                                     <li><strong>Counter Equity Asked:</strong> {{ $counter_your_stake }}%</li>
                                     <li><strong>Counter Valuation Considered:</strong>
-                                        ${{ number_format($counter_company_value, 2) }}</li>
+                                        {{ $country === 'IN' ? '₹' : '$' }}
+                                        {{ number_format($counter_company_value, 2) }}</li>
                                     <li><strong>Reason:</strong> {{ $counter_reason }}</li>
                                 </ul>
                             @endif

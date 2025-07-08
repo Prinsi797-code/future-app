@@ -607,7 +607,12 @@
                                 <th scope="col" style="min-width: 100px;">Country</th>
                                 <th scope="col" style="min-width: 100px;">Business Name</th>
                                 {{-- <th scope="col" style="min-width: 80px;">Funding Requirement</th> --}}
-                                <th scope="col" style="min-width: 80px;">Pitch Video</th>
+                                @unless (session('selected_role') === 'investor')
+                                    <th scope="col" style="min-width: 80px;">Pitch Video</th>
+                                @endunless
+                                @unless (session('selected_role') === 'admin')
+                                    <th scope="col" style="min-width: 80px;">Pitch Video</th>
+                                @endunless
                                 @if (session('selected_role') === 'investor')
                                     <th scope="col" style="min-width: 80px;">Remark</th>
                                     <th scope="col" style="min-width: 80px;">Intrested</th>
@@ -655,17 +660,28 @@
                                     </td>
 
                                     {{-- <td>                                                                                                                                                                                                                                                                                                   </td> --}}
-
-                                    <td>
-                                        @if (!empty($entrepreneurs->video_upload))
-                                            <a href="{{ $entrepreneurs->video_upload }}" target="_blank">
-                                                Video Pitch
-                                            </a>
-                                        @else
-                                            <span class="text-muted">No video</span>
-                                        @endif
-                                    </td>
-
+                                    @unless (session('selected_role') === 'investor')
+                                        <td>
+                                            @if (!empty($entrepreneurs->video_upload))
+                                                <a href="{{ $entrepreneurs->video_upload }}" target="_blank">
+                                                    Video Pitch
+                                                </a>
+                                            @else
+                                                <span class="text-muted">No video</span>
+                                            @endif
+                                        </td>
+                                    @endunless
+                                    @unless (session('selected_role') === 'admin')
+                                        <td>
+                                            @if (!empty($entrepreneurs->pitch_video))
+                                                <a href="{{ $entrepreneurs->pitch_video }}" target="_blank">
+                                                    Video Pitch
+                                                </a>
+                                            @else
+                                                <span class="text-muted">No video</span>
+                                            @endif
+                                        </td>
+                                    @endunless
                                     @unless (session('selected_role') === 'investor')
                                         {{-- @unless (Auth::user()->role === 'investor') --}}
                                         <td>
@@ -789,15 +805,15 @@
                                     @endunless
                                     <td>
                                         <button class="btn btn-sm btn-primary view-details-btn"
-                                            data-id="{{ $entrepreneurs->id }}" data-name="{{ $entrepreneurs->full_name }}"
-                                            @unless (session('selected_role') === 'investor')                                                                                             data-email="{{ $entrepreneurs->email }}"
-
-                                                                                                                                                                                    data-countrycode="{{ $entrepreneurs->country_code }}"
-                                                                                                                                                                                    data-phone="{{ $entrepreneurs->phone_number }}"
-                                                                                                                                                                                    data-website="{{ $entrepreneurs->website_links }}"
-                                                                                                                                                                                    data-address="{{ $entrepreneurs->current_address }}"
-
-                                                                                                                                                                                @endunless
+                                            data-id="{{ $entrepreneurs->id }}"
+                                            data-name="{{ $entrepreneurs->full_name }}"
+                                            @unless (session('selected_role') === 'investor')
+            data-email="{{ $entrepreneurs->email }}"
+            data-countrycode="{{ $entrepreneurs->country_code }}"
+            data-phone="{{ $entrepreneurs->phone_number }}"
+            data-website="{{ $entrepreneurs->website_links }}"
+            data-address="{{ $entrepreneurs->current_address }}"
+        @endunless
                                             data-qualification="{{ $entrepreneurs->qualification }}"
                                             data-country="{{ $entrepreneurs->country }}"
                                             data-age="{{ $entrepreneurs->age }}" data-dob="{{ $entrepreneurs->dob }}"
@@ -806,63 +822,52 @@
                                             data-pincode="{{ $entrepreneurs->pin_code }}"
                                             data-industry="{{ $entrepreneurs->industry }}"
                                             data-registerbusiness="{{ $entrepreneurs->register_business }}"
-                                            @if ($entrepreneurs->register_business == 0) data-businessname= "{{ $entrepreneurs->business_name }}"
-                                            data-brandname= "{{ $entrepreneurs->brand_name }}"
-                                            data-businesscountry = "{{ $entrepreneurs->business_country }}"
-                                             data-businessstate="{{ $entrepreneurs->business_state }}"
+                                            @if ($entrepreneurs->register_business == 0) data-businessname="{{ $entrepreneurs->business_name }}"
+            data-brandname="{{ $entrepreneurs->brand_name }}"
+            data-businesscountry="{{ $entrepreneurs->business_country }}"
+            data-businessstate="{{ $entrepreneurs->business_state }}"
             data-businesscity="{{ $entrepreneurs->business_city }}"
             data-describe="{{ $entrepreneurs->business_describe }}"
             data-businessaddress="{{ $entrepreneurs->business_address }}"
             data-ownfund="{{ $entrepreneurs->own_fund }}" 
             data-loan="{{ $entrepreneurs->loan }}"
             data-amount="{{ $entrepreneurs->invested_amount }}" 
+            data-marketcapital="{{ $entrepreneurs->market_capital }}"
+            data-yourstake="{{ $entrepreneurs->your_stake }}"
+            data-stakefunding="{{ $entrepreneurs->stake_funding }}"
             data-product_photos="{{ implode(',', json_decode($entrepreneurs->product_photos, true)) }}"
-                                             data-business_logo="{{ str_replace('business_logos/', '', $entrepreneurs->business_logo) }}"
+            data-business_logo="{{ str_replace('business_logos/', '', $entrepreneurs->business_logo) }}"
             data-pitch_deck="{{ str_replace('pitch_decks/', '', $entrepreneurs->pitch_deck) }}" @endif
-                                            @if (session('selected_role') === 'investor' && $entrepreneurs->register_business == 0) data-product_photos="{{ implode(',', json_decode($entrepreneurs->product_photos, true)) }}"
-                                             data-business_logo="{{ str_replace('business_logos/', '', $entrepreneurs->business_logo) }}"
-            data-pitch_deck="{{ str_replace('pitch_decks/', '', $entrepreneurs->pitch_deck) }}" @endif
-                                            @unless (session('selected_role') === 'investor')
-            @if ($entrepreneurs->register_business == 0)
-                data-marketcapital="{{ $entrepreneurs->market_capital }}"
-                data-yourstake="{{ $entrepreneurs->your_stake }}"
-                data-stakefunding="{{ $entrepreneurs->stake_funding }}"
-                                                                                                                                                                                                                  
-                                                                                                                                                                                                   
-                                                                                                                                                            
-            @endif
-        @endunless
                                             @if ($entrepreneurs->register_business == 1) data-employee_number="{{ $entrepreneurs->employee_number }}"
-                                                                                                                                                                        data-founder="{{ $entrepreneurs->founder_number }}"
-                                                                                                                                                                                                    data-y_business_name="{{ $entrepreneurs->y_business_name }}"
-                                                                                                                                                                                                     @unless (session('selected_role') === 'investor')
-                                                                                                                                                                                                     data-businessemail="{{ $entrepreneurs->business_email }}"
-                                                                                                                                                                                                     data-businessmobile="{{ $entrepreneurs->business_mobile }}"
-                                                                                                                                                                                                     @endunless
-                                                                                                                                                                                                    data-taxregistrationnumber="{{ $entrepreneurs->tax_registration_number }}"
-                                                                                                                                                                                                    data-y_brand_name="{{ $entrepreneurs->y_brand_name }}"
-                                                                                                                                                                                                    data-businessyear="{{ $entrepreneurs->business_year }}"
-                                                                                                                                                                    data-yearcount="{{ $entrepreneurs->business_year_count }}"
-                                                                                                                                                                                                    data-y_describe_business="{{ $entrepreneurs->y_describe_business }}"
-                                                                                                                                                                                                    data-y_business_address="{{ $entrepreneurs->y_business_address }}"
-                                                                                                                                                                                                    data-y_business_country="{{ $entrepreneurs->y_business_country }}"
-                                                                                                                                                                                                    data-y_business_state="{{ $entrepreneurs->y_business_state }}"
-                                                                                                                                                                                                    data-y_business_city="{{ $entrepreneurs->y_business_city }}"
-                                                                                                                                                                                                    data-y_zipcode="{{ $entrepreneurs->y_zipcode }}"
-                                                                                                                                                                                                    data-y_type_industries="{{ $entrepreneurs->y_type_industries }}"
-                                                                                                                                                                                                    data-y_own_fund="{{ $entrepreneurs->y_own_fund }}"
-                                                                                                                                                                                                    data-y_loan="{{ $entrepreneurs->y_loan }}"
-                                                                                                                                                                                                    data-y_invested_amount="{{ $entrepreneurs->y_invested_amount }}"
-                                                                                                                                                                                                     data-revenue1="{{ $entrepreneurs->business_revenue1 }}"
-                                                                                                                                                                data-revenue2="{{ $entrepreneurs->business_revenue2 }}"
-                                                                                                                                                                data-revenue3="{{ $entrepreneurs->business_revenue3 }}"
-                                                                                                                                                                                                    
-                                                                                                                                                                                                   data-y_product_photos="{{ implode(',', json_decode($entrepreneurs->y_product_photos, true)) }}"
-                                                                                                                                                                                                    data-y_business_logo="{{ str_replace('y_business_logos/', '', $entrepreneurs->y_business_logo) }}"
-                                                                                                                                                            data-y_pitch_deck="{{ str_replace('y_pitch_decks/', '', $entrepreneurs->y_pitch_deck) }}" @endif
-                                            data-market_capital="{{ $entrepreneurs->y_market_capital }}"
-                                            data-your_stake="{{ $entrepreneurs->y_your_stake }}"
-                                            data-stake_funding="{{ $entrepreneurs->y_stake_funding }}">
+            data-founder="{{ $entrepreneurs->founder_number }}"
+            data-y_business_name="{{ $entrepreneurs->y_business_name }}"
+            @unless (session('selected_role') === 'investor')
+                data-businessemail="{{ $entrepreneurs->business_email }}"
+                data-businessmobile="{{ $entrepreneurs->business_mobile }}"
+            @endunless
+            data-taxregistrationnumber="{{ $entrepreneurs->tax_registration_number }}"
+            data-y_brand_name="{{ $entrepreneurs->y_brand_name }}"
+            data-businessyear="{{ $entrepreneurs->business_year }}"
+            data-yearcount="{{ $entrepreneurs->business_year_count }}"
+            data-y_describe_business="{{ $entrepreneurs->y_describe_business }}"
+            data-y_business_address="{{ $entrepreneurs->y_business_address }}"
+            data-y_business_country="{{ $entrepreneurs->y_business_country }}"
+            data-y_business_state="{{ $entrepreneurs->y_business_state }}"
+            data-y_business_city="{{ $entrepreneurs->y_business_city }}"
+            data-y_zipcode="{{ $entrepreneurs->y_zipcode }}"
+            data-y_type_industries="{{ $entrepreneurs->y_type_industries }}"
+            data-y_own_fund="{{ $entrepreneurs->y_own_fund }}"
+            data-y_loan="{{ $entrepreneurs->y_loan }}"
+            data-y_invested_amount="{{ $entrepreneurs->y_invested_amount }}"
+            data-revenue1="{{ $entrepreneurs->business_revenue1 }}"
+            data-revenue2="{{ $entrepreneurs->business_revenue2 }}"
+            data-revenue3="{{ $entrepreneurs->business_revenue3 }}"
+            data-y_product_photos="{{ implode(',', json_decode($entrepreneurs->y_product_photos, true)) }}"
+            data-y_business_logo="{{ str_replace('y_business_logos/', '', $entrepreneurs->y_business_logo) }}"
+            data-y_pitch_deck="{{ str_replace('y_pitch_decks/', '', $entrepreneurs->y_pitch_deck) }}"
+            data-market_capital="{{ $entrepreneurs->y_market_capital }}"
+            data-your_stake="{{ $entrepreneurs->y_your_stake }}"
+            data-stake_funding="{{ $entrepreneurs->y_stake_funding }}" @endif>
                                             View Details
                                         </button>
                                         @unless (session('selected_role') === 'investor')
@@ -2040,39 +2045,37 @@
                     // Add conditional fields if register_business is 0
                     if (button.dataset.registerbusiness === '0') {
                         profHTML += `
-    <div class="resume-section">
-        <h5 class="section-title mt-4">Unregistered Business Details</h5>
-        <div class="info-grid">
-            <div class="info-item"><span class="info-label">Business Name:</span> ${button.dataset.businessname || '-'}</div>
-            <div class="info-item"><span class="info-label">Brand Name:</span> ${button.dataset.brandname || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Country:</span> ${button.dataset.businesscountry || '-'}</div>
-            <div class="info-item"><span class="info-label">Business State:</span> ${button.dataset.businessstate || '-'}</div>
-            <div class="info-item"><span class="info-label">Business City:</span> ${button.dataset.businesscity || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Description:</span> ${button.dataset.describe || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Address:</span> ${button.dataset.businessaddress || '-'}</div>
-            <div class="info-item"><span class="info-label">Own Fund:</span> ${button.dataset.ownfund || '-'}</div>
-            <div class="info-item"><span class="info-label">Loan:</span> ${button.dataset.loan || '-'}</div>
-            <div class="info-item"><span class="info-label">Invested Amount:</span> ${button.dataset.amount || '-'}</div>
-              @unless (session('selected_role') === 'investor')
-                <div class="info-item"><span class="info-label">Fund Asked:</span> ${button.dataset.marketcapital || '-'}</div>
-                <div class="info-item"><span class="info-label">Equity Offered:</span> ${button.dataset.yourstake || '-'}</div>
-                <div class="info-item"><span class="info-label">Company Valuation:</span> ${button.dataset.stakefunding || '-'}</div>
-            @endunless
-            <div class="info-item"><span class="info-label">Product Photos:</span>
-                ${button.dataset.product_photos ? 
-                    button.dataset.product_photos.replace(/[\[\]']/g, '').split(',').map(photo => 
-                        `<img src="/storage/${photo.trim()}" alt="Product Photo" class="product-image">`
-                    ).join('') : '-'}
-            </div>
-            <div class="info-item"><span class="info-label">Business Logo:</span>
-                ${button.dataset.business_logo ? `<img src="/storage/business_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : '-'}
-            </div>
-            <div class="info-item"><span class="info-label">Business Summary:</span>
-                ${button.dataset.pitch_deck ? `<a href="/storage/pitch_decks/${button.dataset.pitch_deck.trim()}" download class="download-link">Download PDF</a>` : '-'}
-            </div>
+<div class="resume-section">
+    <h5 class="section-title mt-4">Unregistered Business Details</h5>
+    <div class="info-grid">
+        <div class="info-item"><span class="info-label">Business Name:</span> ${button.dataset.businessname || '-'}</div>
+        <div class="info-item"><span class="info-label">Brand Name:</span> ${button.dataset.brandname || '-'}</div>
+        <div class="info-item"><span class="info-label">Business Country:</span> ${button.dataset.businesscountry || '-'}</div>
+        <div class="info-item"><span class="info-label">Business State:</span> ${button.dataset.businessstate || '-'}</div>
+        <div class="info-item"><span class="info-label">Business City:</span> ${button.dataset.businesscity || '-'}</div>
+        <div class="info-item"><span class="info-label">Business Description:</span> ${button.dataset.describe || '-'}</div>
+        <div class="info-item"><span class="info-label">Business Address:</span> ${button.dataset.businessaddress || '-'}</div>
+        <div class="info-item"><span class="info-label">Own Fund:</span> ${button.dataset.ownfund || '-'}</div>
+        <div class="info-item"><span class="info-label">Loan:</span> ${button.dataset.loan || '-'}</div>
+        <div class="info-item"><span class="info-label">Invested Amount:</span> ${button.dataset.amount || '-'}</div>
+        <div class="info-item"><span class="info-label">Fund Asked:</span> ${button.dataset.marketcapital || '-'}</div>
+        <div class="info-item"><span class="info-label">Equity Offered:</span> ${button.dataset.yourstake || '-'}</div>
+        <div class="info-item"><span class="info-label">Company Valuation:</span> ${button.dataset.stakefunding || '-'}</div>
+        <div class="info-item"><span class="info-label">Product Photos:</span>
+            ${button.dataset.product_photos ? 
+                button.dataset.product_photos.replace(/[\[\]']/g, '').split(',').map(photo => 
+                    `<img src="/storage/${photo.trim()}" alt="Product Photo" class="product-image">`
+                ).join('') : '-'}
+        </div>
+        <div class="info-item"><span class="info-label">Business Logo:</span>
+            ${button.dataset.business_logo ? `<img src="/storage/business_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : '-'}
+        </div>
+        <div class="info-item"><span class="info-label">Business Summary:</span>
+            ${button.dataset.pitch_deck ? `<a href="/storage/pitch_decks/${button.dataset.pitch_deck.trim()}" download class="download-link">Download PDF</a>` : '-'}
         </div>
     </div>
-    `;
+</div>
+`;
                     }
 
                     // Add conditional fields if register_business is 1

@@ -34,7 +34,7 @@ class InvestorApprovedMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Congratulations! Your Profile Verified Complated',
+            subject: 'Congratulations! Your Profile Verified Completed',
         );
     }
 

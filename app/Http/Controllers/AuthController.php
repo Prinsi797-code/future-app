@@ -552,7 +552,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('/login');
+        return redirect()->route('mobile.form');
     }
 
     public function getUser(Request $request)
@@ -585,6 +585,9 @@ class AuthController extends Controller
         // Fetch users with pagination
         $users = $query->orderBy('created_at', 'desc')->paginate(10);
 
+        // Append query parameters to pagination links
+        $users->appends($request->only(['name', 'email', 'role']));
+
         // Log the retrieved users
         Log::info('Users retrieved', ['count' => $users->count()]);
 
@@ -596,6 +599,5 @@ class AuthController extends Controller
         ];
 
         return view('Auth.user', compact('users', 'filters'));
-
     }
 }
