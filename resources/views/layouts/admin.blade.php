@@ -111,6 +111,81 @@
             /* Minimum width to prevent cramping */
         }
 
+
+
+        .form-control::placeholder {
+            color: #b9b2b2;
+            opacity: 1;
+            /* Ensures color shows up */
+        }
+
+        /* For WebKit browsers (Chrome, Safari) */
+        .form-control::-webkit-input-placeholder {
+            color: #b9b2b2;
+        }
+
+        /* For Firefox */
+        .form-control::-moz-placeholder {
+            color: #b9b2b2;
+        }
+
+        /* For Internet Explorer */
+        .form-control:-ms-input-placeholder {
+            color: #b9b2b2;
+        }
+
+        /* For Microsoft Edge */
+        .form-control::-ms-input-placeholder {
+            color: #b9b2b2;
+        }
+
+        .container-custom {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        @media (max-width: 576px) {
+            .social-links {
+                gap: 10px;
+            }
+
+            .social-link {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+        }
+
+        #footer {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 576px) {
+            #footer {
+                display: block;
+            }
+        }
+
+        /* form filed ui changes*/
         .form-floating-custom {
             position: relative;
             margin-bottom: 1.5rem;
@@ -120,7 +195,7 @@
             padding: 1rem 0.75rem 0.5rem 0.75rem;
             border: 2px solid #dee2e6;
             border-radius: 8px;
-            background: transparent;
+            background: rgba(255, 255, 255, 0.15);
             font-size: 16px;
             transition: all 0.3s ease;
         }
@@ -135,7 +210,7 @@
         }
 
         .form-control::placeholder {
-            color: #b9b2b2;
+            color: rgb(185, 178, 178);
             opacity: 1;
             /* Ensures color shows up */
         }
@@ -188,10 +263,9 @@
         }
 
         .form-section {
-            background: white;
+
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .section-title {
@@ -200,6 +274,142 @@
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px solid #e9ecef;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            color: #333333;
+            padding: 20px 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .footer-section {
+            margin: 10px;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .social-link {
+            color: white;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .social-link:hover {
+            color: #ffffff;
+        }
+
+        .footer-text {
+
+            padding-top: 10px;
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .form-floating-custom {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-floating-custom .form-control {
+            padding: 1rem 0.75rem 0.5rem 0.75rem;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-floating-custom .form-select {
+            padding: 1rem 0.75rem 0.5rem 0.75rem;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: transparent;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: rgb(185, 178, 178);
+            opacity: 1;
+            /* Ensures color shows up */
+        }
+
+        /* For WebKit browsers (Chrome, Safari) */
+        .form-control::-webkit-input-placeholder {
+            color: #b9b2b2;
+        }
+
+        /* For Firefox */
+        .form-control::-moz-placeholder {
+            color: #b9b2b2;
+        }
+
+        /* For Internet Explorer */
+        .form-control:-ms-input-placeholder {
+            color: #b9b2b2;
+        }
+
+        /* For Microsoft Edge */
+        .form-control::-ms-input-placeholder {
+            color: #b9b2b2;
+        }
+
+        .form-floating-custom label {
+            position: absolute;
+            top: 0;
+            left: 12px;
+            transform: translateY(-50%);
+            background: white;
+            padding: 0 8px;
+            color: #6c757d;
+            font-size: 14px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1;
+            font-weight: 500;
+        }
+
+        .form-floating-custom select.form-control {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -213,20 +423,6 @@
                 <img src="{{ asset('/logo01.png') }}" alt="Logo" class="img-fluid" width="100px">
             </a>
         </div>
-
-        @if (session('selected_role') === 'investor')
-            <a href="{{ route('admin.entrepreneurs') }}"
-                class="{{ request()->is('admin/entrepreneurs*') ? 'active' : '' }}">
-                Entrepreneur
-            </a>
-            <a href="{{ route('change.password') }}" class="{{ request()->is('change-password') ? 'active' : '' }}">
-                Change Password
-            </a>
-            <form method="POST" action="{{ route('logout') }}" class="mt-5">
-                @csrf
-                <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
-            </form>
-        @endif
 
         @if (session('selected_role') === 'admin')
             <a href="{{ route('admin.investors') }}" class="{{ request()->is('admin/investors*') ? 'active' : '' }}">
@@ -246,9 +442,7 @@
                 @csrf
                 <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
             </form>
-        @endif
-
-        @if (session('selected_role') === 'entrepreneur')
+        @elseif (session('selected_role') === 'entrepreneur')
             <a href="{{ route('entrepreneur.edit') }}"
                 class="{{ request()->is('entrepreneur/edit*') ? 'active' : '' }}">
                 Profile Update
@@ -263,7 +457,41 @@
                 @csrf
                 <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
             </form>
+        @elseif (session('selected_role') === 'investor' && Auth::user()->investor && Auth::user()->investor->approved == 1)
+            <a href="{{ route('admin.entrepreneurs') }}"
+                class="{{ request()->is('admin/entrepreneurs*') ? 'active' : '' }}">
+                Entrepreneur
+            </a>
+            <a href="{{ route('change.password') }}" class="{{ request()->is('change-password') ? 'active' : '' }}">
+                Change Password
+            </a>
+            <form method="POST" action="{{ route('logout') }}" class="mt-5">
+                @csrf
+                <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
+            </form>
+        @elseif (session('selected_role') === 'investor')
+            <a href="{{ route('investor.edit') }}" class="{{ request()->is('investor/edit*') ? 'active' : '' }}">
+                Profile Update
+            </a><br>
+            <a href="{{ route('investor.companies') }}"
+                class="{{ request()->is('investor.companies') ? 'active' : '' }}">
+                My Companies
+            </a><br>
+            <a href="{{ route('change.password') }}" class="{{ request()->is('change-password') ? 'active' : '' }}">
+                Change Password
+            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
+            </form>
         @endif
+
+        @php
+            \Log::info('Sidebar rendered with role', [
+                'selected_role' => session('selected_role'),
+                'investor_approved' => Auth::user()->investor ? Auth::user()->investor->approved : 0,
+            ]);
+        @endphp
     </div>
 
     {{-- Main Content --}}

@@ -96,9 +96,13 @@ class LoginController extends Controller
                     }
                     // Profile is complete, redirect to edit page
                     return redirect()->route('entrepreneur.edit');
-                } elseif ($selectedRole === 'investor' && (!$user->investor || $user->investor->approved != 1)) {
-                    Auth::logout();
-                    return back()->withErrors(['email' => 'You are not approved. Please wait for approval.'])->withInput();
+                } elseif ($selectedRole === 'investor') {
+                    session(['selected_role' => $selectedRole]);
+                    Log::info('ROLE', ['selectedRole' => $selectedRole]);
+                    if ($user->investor) {
+                        // Redirect to investor edit page if not approved or no investor profile
+                        return redirect()->route('investor.edit');
+                    }
                 }
             } else {
                 Auth::logout();

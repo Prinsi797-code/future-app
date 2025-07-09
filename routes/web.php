@@ -66,6 +66,10 @@ Route::get('/login', [LoginController::class, 'Login'])->name('login');
 Route::post('/login-process', [LoginController::class, 'loginProcess'])->name('login.process');
 
 Route::get('/my-companies', [EntrepreneurController::class, 'myCompanies'])->name('my.companies')->middleware('auth');
+
+Route::get('/investor-companies', [InvestorController::class, 'myCompanies'])->name('investor.companies')->middleware('auth');
+Route::post('investor/company/store', [InvestorController::class, 'storeCompany'])->name('investor.company.store');
+
 Route::post('/company/store', [EntrepreneurController::class, 'storeCompany'])->name('company.store');
 Route::put('/company/{id}', [EntrepreneurController::class, 'updateCompany'])->name('company.update');
 Route::delete('/entrepreneurs/{id}', [EntrepreneurController::class, 'destroy'])->name('entrepreneurs.destroy');
@@ -104,6 +108,13 @@ Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('
 
 Route::get('/entrepreneur/edit', [EntrepreneurController::class, 'edit'])->name('entrepreneur.edit');
 Route::post('/entrepreneur/update', [EntrepreneurController::class, 'update'])->name('entrepreneur.update');
+
+
+//investor update 
+
+Route::get('/investor/edit', [InvestorController::class, 'edit'])->name('investor.edit');
+Route::post('/investor/update/{id}', [InvestorController::class, 'update'])->name('investor.update');
+
 
 Route::post('/mark-interested', [InvestorController::class, 'markInterested'])->name('mark.interested');
 Route::post('/entrepreneur/remark', [EntrepreneurController::class, 'storeRemark'])->name('entrepreneur.remark');

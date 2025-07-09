@@ -1800,12 +1800,12 @@
             }
 
             //const pitchVideoInput = document.querySelector('input[name="pitch_video"]');
-            videoUploadInput = document.querySelector('input[name="video_upload"]');
+            //  videoUploadInput = document.querySelector('input[name="video_upload"]');
             const termsCheckbox = document.querySelector('input[name="agreed_to_terms"]');
 
-            if (videoUploadInput) {
-                videoUploadInput.addEventListener('input', updateSubmitButtonState);
-            }
+            //if (videoUploadInput) {
+            //  videoUploadInput.addEventListener('input', updateSubmitButtonState);
+            //  }
 
             //if (pitchVideoInput) {
             //pitchVideoInput.addEventListener('input', updateSubmitButtonState);
@@ -1935,11 +1935,11 @@
             // Validate video upload (optional)
             // Query the video upload input locally
             const videoUploadInput = currentStepEl.querySelector('input[name="video_upload"]');
-            const isVideoUploadValid = !videoUploadInput || !videoUploadInput.files[0] || isValidVideo(
-                videoUploadInput
-                .files[0]);
-            if (!videoUploadInput || !videoUploadInput.files[0]) {
-                return false; // return false if no video uploaded
+            if (videoUploadInput && videoUploadInput.files[0]) {
+                // If video is uploaded, validate it
+                if (!isValidVideo(videoUploadInput.files[0])) {
+                    return false; // Invalid video file
+                }
             }
 
             // Check if pitch video has value and is a valid URL
@@ -3132,27 +3132,7 @@
             const terms = currentStepEl.querySelector('input[name="agreed_to_terms"]');
             const videoUpload = currentStepEl.querySelector('input[name="video_upload"]');
 
-            // Validate Pitch Video Link
-            // if (!pitchVideo || !pitchVideo.value.trim()) {
-            //if (document.getElementById('pitch_video_error')) {
-            //   document.getElementById('pitch_video_error').textContent = 'Enter pitch video link';
-            //   document.getElementById('pitch_video_error').classList.remove('d-none');
-            //}
-            // isValid = false;
-            //} else {
-            // try {
-            // new URL(pitchVideo.value.trim());
-            // if (document.getElementById('pitch_video_error')) {
-            //      document.getElementById('pitch_video_error').classList.add('d-none');
-            //  }
-            //} catch (e) {
-            // if (document.getElementById('pitch_video_error')) {
-            // document.getElementById('pitch_video_error').textContent = 'Please enter a valid URL';
-            // document.getElementById('pitch_video_error').classList.remove('d-none');
-            // }
-            // isValid = false;
-            //  }
-            // }
+
             // Validate Video Upload (optional)
             if (videoUpload && videoUpload.files[0]) {
                 if (!isValidVideo(videoUpload.files[0])) {

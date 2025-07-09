@@ -608,18 +608,18 @@
                                 <th scope="col" style="min-width: 100px;">Business Name</th>
                                 {{-- <th scope="col" style="min-width: 80px;">Funding Requirement</th> --}}
                                 @unless (session('selected_role') === 'investor')
-                                    <th scope="col" style="min-width: 80px;">Pitch Video</th>
+                                    <th scope="col" style="min-width: 80px;">Video Link</th>
                                 @endunless
                                 @unless (session('selected_role') === 'admin')
-                                    <th scope="col" style="min-width: 80px;">Pitch Video</th>
+                                    <th scope="col" style="min-width: 80px;">Video Link</th>
                                 @endunless
                                 @if (session('selected_role') === 'investor')
-                                    <th scope="col" style="min-width: 80px;">Remark</th>
+                                    {{-- <th scope="col" style="min-width: 80px;">Remark</th> --}}
                                     <th scope="col" style="min-width: 80px;">Intrested</th>
                                 @endif
                                 @if (session('selected_role') === 'admin')
                                     <th scope="col" style="min-width: 80px;">Reject</th>
-                                    <th scope="col" style="min-width: 80ox;">video</th>
+                                    <th scope="col" style="min-width: 80ox;">Youtube Link</th>
                                     <th scope="col" style="min-width: 80px;">Approved</th>
                                 @endif
                                 <th scope="col" style="min-width: 100px;">Action</th>
@@ -664,7 +664,7 @@
                                         <td>
                                             @if (!empty($entrepreneurs->video_upload))
                                                 <a href="{{ $entrepreneurs->video_upload }}" target="_blank">
-                                                    Video Pitch
+                                                    Video Link
                                                 </a>
                                             @else
                                                 <span class="text-muted">No video</span>
@@ -675,7 +675,7 @@
                                         <td>
                                             @if (!empty($entrepreneurs->pitch_video))
                                                 <a href="{{ $entrepreneurs->pitch_video }}" target="_blank">
-                                                    Video Pitch
+                                                    Video Link
                                                 </a>
                                             @else
                                                 <span class="text-muted">No video</span>
@@ -713,14 +713,14 @@
                                             <button class="btn btn-sm btn-primary video-btn" data-id="{{ $entrepreneurs->id }}"
                                                 data-video="{{ $entrepreneurs->pitch_video }}" data-bs-toggle="modal"
                                                 data-bs-target="#videoModal">
-                                                Video
+                                                Youtube Link
                                             </button>
                                         </td>
                                         </td>
                                     @endunless
                                     @if (session('selected_role') === 'investor')
                                         {{-- @if (Auth::user()->role === 'investor') --}}
-                                        <td>
+                                        {{-- <td>
                                             @php
                                                 $user = Auth::guard('web')->user();
                                                 $isInvestor = $user && $user->role === 'investor';
@@ -740,7 +740,7 @@
                                                 {{ $hasRemark || !$isInvestor ? 'disabled' : '' }}>
                                                 {{ $hasRemark ? 'Remarked ✔' : 'Remark' }}
                                             </button>
-                                        </td>
+                                        </td> --}}
 
                                         {{-- <td>
                                             @php
@@ -805,8 +805,7 @@
                                     @endunless
                                     <td>
                                         <button class="btn btn-sm btn-primary view-details-btn"
-                                            data-id="{{ $entrepreneurs->id }}"
-                                            data-name="{{ $entrepreneurs->full_name }}"
+                                            data-id="{{ $entrepreneurs->id }}" data-name="{{ $entrepreneurs->full_name }}"
                                             @unless (session('selected_role') === 'investor')
             data-email="{{ $entrepreneurs->email }}"
             data-countrycode="{{ $entrepreneurs->country_code }}"

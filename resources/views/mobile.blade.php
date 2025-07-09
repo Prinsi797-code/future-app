@@ -514,9 +514,9 @@
                     )->count();
 
                     // Get highest remarks from remark_entrepreneur table
-                    $highestRemark = \App\Models\RemarkEntrepreneur::where('entrepreneur_id', $entrepreneur->id)
+                    $highestRemark = \App\Models\Interest::where('entrepreneur_id', $entrepreneur->id)
                         ->selectRaw(
-                            'MAX(remark_your_stake) as max_stake, MAX(remark_market_capital) as max_capital, MAX(remark_company_value) as max_value',
+                            'MAX(your_stake) as max_stake, MAX(market_capital) as max_capital, MAX(company_value) as max_value',
                         )
                         ->first();
 

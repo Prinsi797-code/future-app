@@ -121,6 +121,22 @@
         font-size: 0.9rem;
         color: #555;
     }
+
+    .video-preview-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .video-preview-container video {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+    }
 </style>
 @php
     $isApproved = $entrepreneur->approved == 1;
@@ -366,9 +382,10 @@
 
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
-                                    <input type="text" class="form-control" name="business_country"
-                                        id="business_country" readonly
-                                        value="{{ old('business_country', $entrepreneur->business_country) }}">
+                                    <select name="business_country" class="form-select" id="business_country">
+                                        <option value="">Select a country</option>
+                                        {{-- Options will be dynamically populated by JavaScript --}}
+                                    </select>
                                     <label for="business_country">Business Country *</label>
                                     <div class="text-danger mt-1 d-none" id="business_country_error"></div>
                                 </div>
@@ -376,8 +393,11 @@
 
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
-                                    <input type="text" class="form-control" name="business_state" id="business_state"
-                                        readonly value="{{ old('business_state', $entrepreneur->business_state) }}">
+                                    <select class="form-control" name="business_state" id="business_state"
+                                        data-selected="{{ old('business_state', $enterprent->business_state ?? '') }}">
+                                        <option value="">Select State</option>
+                                        {{-- Options will be dynamically populated by JavaScript --}}
+                                    </select>
                                     <label for="business_state">Business State *</label>
                                     <div class="text-danger mt-1 d-none" id="business_state_error"></div>
                                 </div>
@@ -385,12 +405,17 @@
 
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
-                                    <input type="text" class="form-control" name="business_city" id="business_city"
-                                        readonly value="{{ old('business_city', $entrepreneur->business_city) }}">
+                                    <select class="form-control" name="business_city" id="business_city"
+                                        data-selected="{{ old('business_city', $enterprent->business_city ?? '') }}">
+                                        <option value="">Select City</option>
+                                        {{-- Options will be dynamically populated by JavaScript --}}
+                                    </select>
                                     <label for="business_city">Business City *</label>
                                     <div class="text-danger mt-1 d-none" id="business_city_error"></div>
                                 </div>
                             </div>
+
+                            {{-- Hidden script to set selected values --}}
 
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
@@ -530,11 +555,14 @@
 
                             <div class="col-12 mb-3">
                                 <div class="form-floating-custom">
-                                    <input type="url" class="form-control" id="video_upload" name="video_upload"
-                                        value="{{ old('video_upload', $entrepreneur->video_upload) }}"
-                                        placeholder="https://youtube.com/watch?v=..." readonly>
-                                    <label for="video_upload">Pitch Video Link</label>
-                                    <div class="text-danger mt-1 d-none" id="pitch_video_error"></div>
+                                    <label for="video_upload" class="form-label">Upload Pitch Video</label>
+                                    <input type="file" class="form-control" id="video_upload" name="video_upload"
+                                        accept="video/mp4,video/x-m4v,video/avi,video/webm">
+                                    <div class="text-danger mt-1 d-none" id="video_upload_error"></div>
+                                    <small class="text-muted">Upload one video file (MP4, AVI, or WebM, max 50MB)</small>
+                                    <input type="hidden" id="existing_video_url"
+                                        value="{{ $entrepreneur->video_upload ?? '' }}">
+                                    <div id="video_upload_preview" class="video-preview-container mt-2"></div>
                                 </div>
                             </div>
                         </div>
@@ -920,6 +948,21 @@
                                 <div id="y_pitch_deck_preview" class="pdf-preview-container mt-2"></div>
                                 <div class="text-danger mt-1 d-none" id="y_pitch_deck_error"></div>
                             </div>
+
+
+                            <div class="col-12 mb-3">
+                                <div class="form-floating-custom">
+                                    <label for="video_upload" class="form-label">Upload Pitch Video</label>
+                                    <input type="file" class="form-control" id="video_upload" name="video_upload"
+                                        accept="video/mp4,video/x-m4v,video/avi,video/webm">
+                                    <div class="text-danger mt-1 d-none" id="video_upload_error"></div>
+                                    <small class="text-muted">Upload one video file (MP4, AVI, or WebM, max 50MB)</small>
+                                    <input type="hidden" id="existing_video_url"
+                                        value="{{ $entrepreneur->video_upload ?? '' }}">
+                                    <div id="video_upload_preview" class="video-preview-container mt-2"></div>
+                                </div>
+                            </div>
+
                         </div>
                     @endif
                     {{-- end business yes --}}
@@ -977,19 +1020,74 @@
 @endsection
 @section('scripts')
     <script>
-        flatpickr("#dob", {
-            dateFormat: "d/m/Y",
-            maxDate: "today",
-            yearSelectorRange: 100,
-            disableMobile: "true",
-            clickOpens: true,
-            allowInput: false,
-            onChange: function(selectedDates, dateStr, instance) {
-                // Your existing validation logic here
-                const parts = dateStr.split('/');
-                const formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                // Use formattedDate in your validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoUploadInput = document.getElementById('video_upload');
+            const videoPreviewContainer = document.getElementById('video_upload_preview');
+            const videoError = document.getElementById('video_upload_error');
+            const existingVideoUrl = document.getElementById('existing_video_url')?.value;
+
+            // Function to display video in preview
+            function displayVideo(src) {
+                videoPreviewContainer.innerHTML = ''; // Clear existing preview
+                const videoElement = document.createElement('video');
+                videoElement.controls = true;
+                videoElement.style.maxWidth = '100%';
+                videoElement.style.maxHeight = '300px';
+                videoElement.src = src;
+                videoPreviewContainer.appendChild(videoElement);
             }
+
+            // Display existing video from database (BunnyCDN URL) if it exists
+            if (existingVideoUrl) {
+                displayVideo(existingVideoUrl);
+            }
+
+            // Handle new video upload
+            videoUploadInput?.addEventListener('change', function() {
+                // Clear previous errors
+                videoError.classList.add('d-none');
+                videoError.textContent = '';
+
+                const file = this.files[0];
+                if (!file) {
+                    // If no file is selected, restore existing video (if any)
+                    videoPreviewContainer.innerHTML = '';
+                    if (existingVideoUrl) displayVideo(existingVideoUrl);
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['video/mp4', 'video/x-m4v', 'video/avi', 'video/webm'];
+                if (!allowedTypes.includes(file.type)) {
+                    videoError.textContent = 'Please upload a valid video file (MP4, AVI, or WebM).';
+                    videoError.classList.remove('d-none');
+                    this.value = ''; // Clear the input
+                    videoPreviewContainer.innerHTML = ''; // Clear preview
+                    if (existingVideoUrl) displayVideo(existingVideoUrl); // Restore existing video
+                    return;
+                }
+
+                // Validate file size (50MB limit)
+                const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+                if (file.size > maxSize) {
+                    videoError.textContent = 'Video file size exceeds 50MB limit.';
+                    videoError.classList.remove('d-none');
+                    this.value = ''; // Clear the input
+                    videoPreviewContainer.innerHTML = ''; // Clear preview
+                    if (existingVideoUrl) displayVideo(existingVideoUrl); // Restore existing video
+                    return;
+                }
+
+                // Create video preview for new file
+                const videoSrc = URL.createObjectURL(file);
+                displayVideo(videoSrc);
+
+                // Clean up the object URL when the video is no longer needed
+                const videoElement = videoPreviewContainer.querySelector('video');
+                videoElement.onloadeddata = () => {
+                    URL.revokeObjectURL(videoSrc);
+                };
+            });
         });
         document.addEventListener('DOMContentLoaded', function() {
             // Pass already uploaded file paths from Laravel to JavaScript
@@ -1274,34 +1372,61 @@
             const ageInput = document.getElementById('age');
             const dobError = document.getElementById('dob_error');
 
-            if (dobInput) {
+            // Function to calculate age
+            function calculateAge(birthDate) {
                 const today = new Date();
-                const minAdultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-                const maxDateStr = minAdultDate.toISOString().split('T')[0];
-                dobInput.setAttribute('max', maxDateStr);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
 
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                return age;
+            }
+
+            // Function to validate age
+            function validateAge(selectedDate) {
+                const age = calculateAge(selectedDate);
+
+                if (isNaN(age) || age < 18) {
+                    dobError.textContent = 'You must be at least 18 years old.';
+                    dobError.classList.remove('d-none');
+                    dobInput.value = '';
+                    ageInput.value = '';
+                    return false;
+                } else {
+                    dobError.classList.add('d-none');
+                    ageInput.value = age;
+                    return true;
+                }
+            }
+
+            // Initialize flatpickr
+            flatpickr("#dob", {
+                dateFormat: "d/m/Y",
+                maxDate: "today",
+                yearSelectorRange: 100,
+                disableMobile: "true",
+                clickOpens: true,
+                allowInput: false,
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        const selectedDate = selectedDates[0];
+                        validateAge(selectedDate);
+                    }
+                }
+            });
+
+            // Remove native date input event listeners since we're using flatpickr
+            if (dobInput) {
+                // Prevent manual typing
                 dobInput.addEventListener('keydown', function(e) {
                     e.preventDefault();
                 });
 
-                dobInput.addEventListener('change', function() {
-                    const dob = new Date(this.value);
-                    let age = today.getFullYear() - dob.getFullYear();
-                    const m = today.getMonth() - dob.getMonth();
-                    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-                        age--;
-                    }
-                    ageInput.value = isNaN(age) ? '' : age;
-
-                    if (isNaN(age) || age < 18) {
-                        dobError.textContent = 'You must be at least 18 years old.';
-                        dobError.classList.remove('d-none');
-                        this.value = '';
-                        ageInput.value = '';
-                    } else {
-                        dobError.classList.add('d-none');
-                    }
-                });
+                // Remove the native change event listener since flatpickr handles it
+                // The flatpickr onChange will handle all date selection validation
             }
 
             function updateYearsInBusiness() {
@@ -1378,6 +1503,164 @@
                 investmentField.addEventListener('input', calculateValuation);
                 equityField.addEventListener('input', calculateValuation);
             }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const bizCountrySelect = document.getElementById('business_country');
+            const bizStateSelect = document.getElementById('business_state');
+            const bizCitySelect = document.getElementById('business_city');
+            const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
+            const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
+            const BASE_URL = 'https://api.countrystatecity.in/v1';
+
+            // Store mapping for later use
+            let countryMapping = {};
+            let stateMapping = {};
+
+            async function fetchCountries(selectElement) {
+                try {
+                    const response = await fetch(`${BASE_URL}/countries`, {
+                        headers: {
+                            'X-CSCAPI-KEY': API_KEY
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch countries');
+                    const countries = await response.json();
+
+                    selectElement.innerHTML = '<option value="">Select a country</option>';
+                    countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country.iso2;
+                        option.textContent = country.name;
+                        selectElement.appendChild(option);
+                        countryMapping[country.iso2] = country.name;
+                    });
+                } catch (error) {
+                    console.error('Error fetching countries:', error);
+                    selectElement.innerHTML = '<option value="">Error loading countries</option>';
+                }
+            }
+
+            async function populateStates(countryIso2, stateSelect, citySelect, preselectedState = null) {
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                citySelect.innerHTML = '<option value="">Select City</option>';
+
+                if (!countryIso2) return;
+
+                try {
+                    const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states`, {
+                        headers: {
+                            'X-CSCAPI-KEY': API_KEY
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch states');
+                    const states = await response.json();
+
+                    states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
+                        sensitivity: 'base'
+                    }));
+
+                    states.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state.iso2;
+                        option.textContent = state.name;
+                        stateSelect.appendChild(option);
+                        stateMapping[state.iso2] = state.name;
+                    });
+
+                    if (preselectedState) {
+                        stateSelect.value = preselectedState;
+                        if (stateSelect.value === preselectedState) {
+                            populateCities(countryIso2, preselectedState, citySelect, bizCitySelect.dataset
+                                .selected || '');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching states:', error);
+                    stateSelect.innerHTML = '<option value="">No states available</option>';
+                }
+            }
+
+            async function populateCities(countryIso2, stateIso2, citySelect, preselectedCity = null) {
+                citySelect.innerHTML = '<option value="">Select City</option>';
+
+                if (!countryIso2 || !stateIso2) return;
+
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}/countries/${countryIso2}/states/${stateIso2}/cities`, {
+                            headers: {
+                                'X-CSCAPI-KEY': API_KEY
+                            }
+                        });
+                    if (!response.ok) throw new Error('Failed to fetch cities');
+                    const cities = await response.json();
+
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.name;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+
+                    if (preselectedCity) {
+                        citySelect.value = preselectedCity;
+                    }
+                } catch (error) {
+                    console.error('Error fetching cities:', error);
+                    citySelect.innerHTML = '<option value="">No cities available</option>';
+                }
+            }
+
+            function updateFundingCurrencyLabel(countrySelect, labels) {
+                const selectedCountry = (countrySelect?.value || '').trim().toLowerCase();
+                let label = selectedCountry === 'in' ? '(₹)' : selectedCountry ? '($)' : '';
+                labels.forEach(el => (el.textContent = label));
+            }
+
+            // Event Listeners
+            bizCountrySelect?.addEventListener('change', () => {
+                const countryIso2 = bizCountrySelect.value.trim();
+                populateStates(countryIso2, bizStateSelect, bizCitySelect);
+                updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
+                const countryError = document.getElementById('business_country_error');
+                if (countryIso2 && countryError) countryError.classList.add('d-none');
+            });
+
+            bizStateSelect?.addEventListener('change', () => {
+                const countryIso2 = bizCountrySelect.value.trim();
+                const stateIso2 = bizStateSelect.value;
+                populateCities(countryIso2, stateIso2, bizCitySelect);
+            });
+
+            // Initialize form
+            async function initializeForm() {
+                if (!bizCountrySelect) return;
+
+                await fetchCountries(bizCountrySelect);
+
+                // Get preselected values from Blade
+                const preselectedCountry =
+                    "{{ old('business_country', $enterprent->business_country ?? '') }}";
+                const preselectedState = "{{ old('business_state', $enterprent->business_state ?? '') }}";
+                const preselectedCity = "{{ old('business_city', $enterprent->business_city ?? '') }}";
+
+                if (preselectedCountry) {
+                    bizCountrySelect.value = preselectedCountry;
+                    updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
+                    await populateStates(preselectedCountry, bizStateSelect, bizCitySelect, preselectedState);
+                }
+            }
+
+            initializeForm();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set selected values for editing
+            @if (old('business_country', $enterprent->business_country ?? null))
+                document.getElementById('business_country').value =
+                    "{{ old('business_country', $enterprent->business_country) }}";
+            @endif
         });
     </script>
 @endsection

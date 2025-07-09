@@ -414,8 +414,7 @@
                                         <input type="text" class="form-control" name="current_address"
                                             id="current_address"
                                             value="{{ old('current_address', $investor->current_address ?? '') }}"
-                                            placeholder="Nexora Ventures Inc.123 Market Street, Suite 200 San Francisco, CA 94105 United States"
-                                            required>
+                                            placeholder="Nexora Ventures Inc.123 Market Street, Suite 200 San Francisco, CA 94105 United States">
                                         <label for="current_address">Residentail Address *</label>
                                         <div class="text-danger mt-1 d-none" id="current_address_error"></div>
                                     </div>
@@ -485,7 +484,7 @@
                                         <label class="form-label">Date of Birth *</label>
                                         <input type="text" class="form-control" name="dob" id="dob"
                                             value="{{ old('dob', $investor->dob ?? '') }}" placeholder="Select date"
-                                            readonly required>
+                                            readonly>
                                         <div class="text-danger mt-1 d-none" id="dob_error"></div>
                                     </div>
                                 </div>
@@ -493,7 +492,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
-                                            <select class="form-select" name="qualification" id="qualification" required>
+                                            <select class="form-select" name="qualification" id="qualification">
                                                 <option value="">Select Qualification</option>
                                                 @foreach ($qualifications as $qualification)
                                                     <option value="{{ $qualification }}"
@@ -575,7 +574,7 @@
                                                 <label class="form-label">Company Name *</label>
                                                 <input type="text" class="form-control" name="organization_name"
                                                     value="{{ old('organization_name', $investor->organization_name ?? '') }}"
-                                                    placeholder="XYZ Enterprises" required>
+                                                    placeholder="XYZ Enterprises">
                                                 <div class="text-danger mt-1 d-none" id="organization_name_error"></div>
                                             </div>
                                         </div>
@@ -583,8 +582,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="company_address"
                                                     value="{{ old('company_address', $investor->company_address ?? '') }}"
-                                                    placeholder="Nexora Ventures Inc.123 Market Street, Suite 200 San Francisco, CA 94105 United States"
-                                                    required>
+                                                    placeholder="Nexora Ventures Inc.123 Market Street, Suite 200 San Francisco, CA 94105 United States">
                                                 <label class="form-label" id="company_address">Business Address *</label>
                                                 <div class="text-danger mt-1 d-none" id="company_address_error">
                                                 </div>
@@ -631,7 +629,7 @@
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="company_zipcode"
                                                     value="{{ old('company_zipcode', $investor->company_zipcode ?? '') }}"
-                                                    placeholder="852741" required>
+                                                    placeholder="852741">
                                                 <label class="form-label" id="company_zipcode_label">Business Pin / Zip
                                                     Code
                                                     *</label>
@@ -702,7 +700,7 @@
                                             <input type="tel" class="form-control" name="professional_phone"
                                                 placeholder="9638527410"
                                                 value="{{ old('professional_phone', $investor->professional_phone ?? '') }}"
-                                                maxlength="12" required>
+                                                maxlength="12">
                                         </div>
                                         <div class="text-danger mt-1 d-none" id="professional_phone_error"></div>
                                         <div class="text-danger mt-1 d-none" id="company_country_code_error"></div>
@@ -769,7 +767,7 @@
                                             Stage
                                             *</label>
                                         <select class="form-select" name="preferred_startup_stage[]"
-                                            id="preferred_startup_stage" multiple required>
+                                            id="preferred_startup_stage" multiple>
                                             <option value="">Select Stages</option>
                                             @foreach ($startupStages as $stage)
                                                 <option value="{{ $stage }}"
@@ -863,7 +861,7 @@
                                         @endforeach
                                     </div> --}}
                                         <select class="form-select" name="preferred_industries[]"
-                                            id="preferred_industries" multiple required>
+                                            id="preferred_industries" multiple>
                                             <option value="">Preferred Industries * (Select multiple)</option>
                                             @foreach ($industries as $industry)
                                                 <option value="{{ $industry }}"
@@ -893,7 +891,7 @@
                                         @endforeach
                                     </div> --}}
                                         <select class="form-select" name="preferred_geographies[]"
-                                            id="preferred_geographies" multiple required>
+                                            id="preferred_geographies" multiple>
                                             <option value="">Preferred Industries * (Select multiple)</option>
                                             @foreach ($geographies as $geography)
                                                 <option value="{{ $geography }}"
@@ -1642,20 +1640,81 @@
                     '+974': 8 // Qatar
                 };
 
-                if (!fullName.value.trim()) {
+                if (!fullName?.value.trim()) {
                     document.getElementById('full_name_error').textContent = 'Full name is required';
                     document.getElementById('full_name_error').classList.remove('d-none');
                     isValid = false;
                 }
+
+                // Required: phone_number
+                if (!phoneNumber?.value.trim()) {
+                    document.getElementById('phone_number_error').textContent = 'Phone number is required';
+                    document.getElementById('phone_number_error').classList.remove('d-none');
+                    isValid = false;
+                } else {
+                    const phone = phoneNumber.value.trim();
+                    const expectedLength = phoneLengthMap[countryCode?.value] || 10;
+                    const phonePattern = new RegExp(`^\\d{${expectedLength}}$`);
+                    if (!phonePattern.test(phone)) {
+                        document.getElementById('phone_number_error').textContent =
+                            `Phone number must be exactly ${expectedLength} digits for ${countryCode?.value || 'selected country'}`;
+                        document.getElementById('phone_number_error').classList.remove('d-none');
+                        isValid = false;
+                    } else {
+                        document.getElementById('phone_number_error')?.classList.add('d-none');
+                    }
+                }
+
+                // Required: country
+                const countryValue = country?.value.trim() || '';
+                if (!countryValue) {
+                    if (countryError) {
+                        countryError.textContent = 'Country is required';
+                        countryError.classList.remove('d-none');
+                    }
+                    isValid = false;
+                } else {
+                    if (countryError) {
+                        countryError.classList.add('d-none');
+                    }
+                }
+
+                // Required: state
+                if (!state?.value) {
+                    document.getElementById('state_error').textContent = 'State is required';
+                    document.getElementById('state_error').classList.remove('d-none');
+                    isValid = false;
+                } else {
+                    document.getElementById('state_error')?.classList.add('d-none');
+                }
+
+                // Required: city
+                if (!city?.value) {
+                    document.getElementById('city_error').textContent = 'City is required';
+                    document.getElementById('city_error').classList.remove('d-none');
+                    isValid = false;
+                } else {
+                    document.getElementById('city_error')?.classList.add('d-none');
+                }
+
+                // Required: pin_code
+                if (!pin_code || !pin_code.value.trim()) {
+                    document.getElementById('pin_code_error').textContent = 'Pin/Zip code is required';
+                    document.getElementById('pin_code_error').classList.remove('d-none');
+                    isValid = false;
+                } else if (!/^\d{5,6}$/.test(pin_code.value.trim())) { // Basic validation for 5-6 digit zip code
+                    document.getElementById('pin_code_error').textContent = 'Enter a valid 5-6 digit pin/zip code';
+                    document.getElementById('pin_code_error').classList.remove('d-none');
+                    isValid = false;
+                }
+
+                // Optional: linkedin_profile
                 if (linkedinProfile && linkedinProfile.value.trim()) {
                     const urlValue = linkedinProfile.value.trim();
                     let url;
-
                     try {
                         url = new URL(urlValue.startsWith('http://') || urlValue.startsWith('https://') ? urlValue :
                             `https://${urlValue}`);
-
-                        // Check if the URL ends with .com
                         if (!url.hostname.endsWith('.com')) {
                             errorElement.textContent =
                                 'Please provide a valid Socialmedia URL ending with .com (e.g., https://linkedin.com/in/your-profile)';
@@ -1671,29 +1730,20 @@
                         isValid = false;
                     }
                 } else {
-                    errorElement.classList.add('d-none'); // Hide error if empty
+                    errorElement.classList.add('d-none');
                 }
 
-                if (!phoneNumber.value.trim()) {
-                    document.getElementById('phone_number_error').textContent = 'Phone number is required';
-                    document.getElementById('phone_number_error').classList.remove('d-none');
+                // Optional: country_code (but validate if phone_number is provided)
+                if (phoneNumber?.value.trim() && !countryCode?.value.trim()) {
+                    document.getElementById('country_code_error').textContent =
+                        'Country code is required when phone number is provided';
+                    document.getElementById('country_code_error').classList.remove('d-none');
                     isValid = false;
                 } else {
-                    const phone = phoneNumber.value.trim();
-                    const expectedLength = phoneLengthMap[countryCode.value] ||
-                        10; // Default to 10 if country code not in map
-                    const phonePattern = new RegExp(`^\\d{${expectedLength}}$`); // Dynamic regex for exact digit length
-
-                    if (!phonePattern.test(phone)) {
-                        document.getElementById('phone_number_error').textContent =
-                            `Phone number must be exactly ${expectedLength} digits for ${countryCode.value}`;
-                        document.getElementById('phone_number_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        document.getElementById('phone_number_error').classList.add('d-none');
-                    }
+                    document.getElementById('country_code_error')?.classList.add('d-none');
                 }
 
+                // Optional: photo
                 if (photo && photo.files.length > 0) {
                     const file = photo.files[0];
                     const validImage = ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type);
@@ -1702,152 +1752,22 @@
                         document.getElementById('photo_error').classList.remove('d-none');
                         isValid = false;
                     } else {
-                        document.getElementById('photo_error').classList.add('d-none');
+                        document.getElementById('photo_error')?.classList.add('d-none');
                     }
                 } else {
-                    // No file selected — don't show error, just hide any previous one
-                    document.getElementById('photo_error').classList.add('d-none');
+                    document.getElementById('photo_error')?.classList.add('d-none');
                 }
 
-                if (!countryCode.value.trim()) {
-                    document.getElementById('country_code_error').textContent = 'Country code is required';
-                    document.getElementById('country_code_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('country_code_error').classList.add('d-none');
-                }
-
-                const countryValue = country && country.value ? country.value.trim() : '';
-                if (!country || !countryValue) {
-                    if (countryError) {
-                        countryError.textContent = 'Country is required';
-                        countryError.classList.remove('d-none');
+                // Optional: current_address, qualification, dob, age
+                // No required validation, just clear any previous errors
+                ['current_address_error', 'qualification_error', 'dob_error', 'age_error'].forEach(id => {
+                    const errorEl = document.getElementById(id);
+                    if (errorEl) {
+                        errorEl.classList.add('d-none');
                     }
-                    isValid = false;
-                } else {
-                    if (countryError) {
-                        countryError.classList.add('d-none');
-                    }
-                }
-
-                if (!state.value) {
-                    document.getElementById('state_error').textContent = 'State is required';
-                    document.getElementById('state_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('state_error').classList.add('d-none');
-                }
-
-                if (!city.value) {
-                    document.getElementById('city_error').textContent = 'City is required';
-                    document.getElementById('city_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('city_error').classList.add('d-none');
-                }
-
-                document.getElementById('pin_code_error').classList.add('d-none');
-                document.getElementById('pin_code_error').textContent = '';
-                if (pinCodeError) {
-                    pinCodeError.classList.add('d-none');
-                    pinCodeError.textContent = '';
-                }
-
-                //if (!pin_code || !pin_code.value.trim()) {
-                //if (pinCodeError) {
-                //     pinCodeError.textContent = 'Pin code is required';
-                //   pinCodeError.classList.remove('d-none');
-                // }
-                // isValid = false;
-                // } else {
-                // const pin = pin_code.value.trim();
-                //  let pattern;
-                //  let message;
-                //  const countryValue = country && country.value ? country.value.trim().toLowerCase() : '';
-                //
-                //if (countryValue === 'india') {
-                //   pattern = /^\d{6}$/;
-                //   message = 'Indian pin code must be exactly 6 digits';
-                //} else if (countryValue === 'united states') {
-                //   pattern = /^\d{5}(-\d{4})?$/;
-                //  message = 'US ZIP code must be 5 digits or ZIP+4 format (e.g., 12345 or 12345-6789)';
-                // } else if (countryValue === 'united kingdom') {
-                //     pattern = /^[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}$/i;
-                //    message = 'UK postcode format is invalid';
-                // } else {
-                //     pattern = /.*/; // Accept anything for unknown countries
-                //message = '';
-                //  }
-
-                //if (!pattern.test(pin)) {
-                //if (pinCodeError) {
-                //pinCodeError.textContent = message || 'Invalid pin/zip code';
-                //   pinCodeError.classList.remove('d-none');
-                // }
-                //  isValid = false;
-                //  }
-                // }
-                if (!pin_code || !pin_code.value.trim()) {
-                    document.getElementById('pin_code_error').textContent = 'Pin/Zip code is required';
-                    document.getElementById('pin_code_error').classList.remove('d-none');
-                    isValid = false;
-                } else if (!/^\d{5,6}$/.test(pin_code.value.trim())) { // Basic validation for 5-6 digit zip code
-                    document.getElementById('pin_code_error').textContent = 'Enter a valid 5-6 digit pin/zip code';
-                    document.getElementById('pin_code_error').classList.remove('d-none');
-                    isValid = false;
-                }
-
-                if (!current_address.value.trim()) {
-                    document.getElementById('current_address_error').textContent = 'Address is required';
-                    document.getElementById('current_address_error').classList.remove('d-done');
-                    isValid = false;
-                }
-                if (!qualification) {
-                    document.getElementById('qualification_error').textContent = 'Please select a qualification';
-                    document.getElementById('qualification_error').classList.remove('d-none');
-                    isValid = false;
-                }
-                if (!dob.value.trim()) {
-                    document.getElementById('dob_error').textContent = 'Date of birth is required';
-                    document.getElementById('dob_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('dob_error').classList.add('d-none');
-                }
-
-                //} else if (step === 3) {
-                // Validate Investment Information
-                //const investorType = currentStepEl.querySelector('input[name="investor_type"]:checked');
-                //const investmentRange = currentStepEl.querySelector('input[name="investment_range"]:checked');
-                //const startupStage = currentStepEl.querySelector('input[name="preferred_startup_stage[]"]:checked');
-                //const startupStages = currentStepEl.querySelectorAll('input[name="preferred_startup_stage[]"]:checked');
+                });
 
 
-                //if (!investorType) {
-                //document.getElementById('investor_type_error').textContent = 'Please select an investor type';
-                //document.getElementById('investor_type_error').classList.remove('d-none');
-                // isValid = false;
-                // }
-
-                // if (!investmentRange) {
-                //document.getElementById('investment_range_error').textContent = 'Please select an investment range';
-                // document.getElementById('investment_range_error').classList.remove('d-none');
-                // isValid = false;
-                // }
-
-                // if (startupStages.length === 0) {
-                // document.getElementById('preferred_startup_stage_error').textContent =
-                //  'Please select at least one preferred investment stage';
-                // document.getElementById('preferred_startup_stage_error').classList.remove('d-none');
-                //  isValid = false;
-                // }
-
-                //if (!startupStage) {
-                //document.getElementById('preferred_startup_stage_error').textContent =
-                //'Please select preferred startup stage';
-                //document.getElementById('preferred_startup_stage_error').classList.remove('d-none');
-                // isValid = false;
-                // }
             } else if (step === 3) {
                 // Validate Professional Information
                 const organizationName = currentStepEl.querySelector('input[name="organization_name"]');
@@ -1934,54 +1854,22 @@
                 };
 
                 if (existingCompany && existingCompany.value === '1') {
-                    if (!organizationName.value.trim()) {
-                        document.getElementById('organization_name_error').textContent = 'Company name is required';
-                        document.getElementById('organization_name_error').classList.remove('d-none');
-                        isValid = false;
-                    }
-
-                    if (!companyAddress.value.trim()) {
-                        document.getElementById('company_address_error').textContent = 'Company address is required';
-                        document.getElementById('company_address_error').classList.remove('d-none');
-                        isValid = false;
-                    }
 
                     const companyCountryValue = companyCountry && companyCountry.value ? companyCountry.value.trim() : '';
-                    if (!companyCountryValue) {
-                        if (companyCountryError) {
-                            companyCountryError.textContent = 'Country is required';
-                            companyCountryError.classList.remove('d-none');
+                    const zipcodeValue = zipcode.value.trim();
+
+                    if (zipcodeValue !== '') {
+                        if (!/^\d{5,6}$/.test(zipcodeValue)) {
+                            document.getElementById('company_zipcode_error').textContent =
+                                'Enter a valid 5-6 digit pin/zip code';
+                            document.getElementById('company_zipcode_error').classList.remove('d-none');
+                            isValid = false;
+                        } else {
+                            document.getElementById('company_zipcode_error').classList.add('d-none');
                         }
-                        isValid = false;
                     } else {
-                        if (companyCountryError) companyCountryError.classList.add('d-none');
-                    }
-
-                    if (!companyState.value) {
-                        document.getElementById('company_state_error').textContent = 'Company State is required';
-                        document.getElementById('company_state_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        document.getElementById('company_state_error').classList.add('d-none');
-                    }
-
-                    if (!companyCity.value) {
-                        document.getElementById('company_city_error').textContent = 'Company City is required';
-                        document.getElementById('company_city_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
-                        document.getElementById('company_city_error').classList.add('d-none');
-                    }
-
-                    if (!zipcode.value.trim()) {
-                        document.getElementById('company_zipcode_error').textContent = 'Pin/Zip code is required';
-                        document.getElementById('company_zipcode_error').classList.remove('d-none');
-                        isValid = false;
-                    } else if (!/^\d{5,6}$/.test(zipcode.value.trim())) {
-                        document.getElementById('company_zipcode_error').textContent =
-                            'Enter a valid 5-6 digit pin/zip code';
-                        document.getElementById('company_zipcode_error').classList.remove('d-none');
-                        isValid = false;
+                        // Optional and empty — clear any previous error
+                        document.getElementById('company_zipcode_error').classList.add('d-none');
                     }
 
                     if (website && website.value.trim()) {
@@ -2013,57 +1901,28 @@
                         websiteErrorElement.classList.add('d-none'); // Hide error if empty
                     }
 
-                    if (!businessLogo || businessLogo.files.length === 0) {
-                        document.getElementById('business_logo_error').textContent =
-                            'Business logo is required.';
-                        document.getElementById('business_logo_error').classList.remove('d-none');
-                        isValid = false;
-                    } else {
+
+                    if (businessLogo && businessLogo.files.length > 0) {
                         const file = businessLogo.files[0];
                         const validImage = ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type);
                         if (!validImage) {
                             document.getElementById('business_logo_error').textContent =
-                                'Only JPG, JPEG, or PNG files allowed for business logo.';
+                                'Only JPG, JPEG, or PNG files allowed.';
                             document.getElementById('business_logo_error').classList.remove('d-none');
                             isValid = false;
+                        } else {
+                            document.getElementById('business_logo_error')?.classList.add('d-none');
                         }
-                    }
-
-                    // Validate tax registration number
-                    if (!taxRegistrationNumber || !taxRegistrationNumber.value.trim()) {
-                        document.getElementById('tax_registration_number_error').textContent =
-                            'Tax registration number is required';
-                        document.getElementById('tax_registration_number_error').classList.remove('d-none');
-                        isValid = false;
-                    }
-
-                    if (!professionalEmail.value.trim() || !professionalEmail.validity.valid) {
-                        document.getElementById('professional_email_error').textContent =
-                            'Valid professional email is required';
-                        document.getElementById('professional_email_error').classList.remove('d-none');
-                        isValid = false;
+                    } else {
+                        document.getElementById('business_logo_error')?.classList.add('d-none');
                     }
                 }
 
-                if (!companyCountryCode.value.trim()) {
-                    document.getElementById('company_country_code_error').textContent = 'Company Country code is required';
-                    document.getElementById('company_country_code_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('company_country_code_error').classList.add('d-none');
-                }
+                const mobile = professionalPhone.value.trim();
 
-
-                if (!professionalPhone.value.trim()) {
-                    document.getElementById('professional_phone_error').textContent = 'Phone number is required';
-                    document.getElementById('professional_phone_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    const mobile = professionalPhone.value.trim();
-                    const expectedLengthMobile = phoneLengthMapbusiness[companyCountryCode.value] ||
-                        10; // Default to 10 if country code not in map
-                    const mobilePattern = new RegExp(
-                        `^\\d{${expectedLengthMobile}}$`); // Dynamic regex for exact digit length
+                if (mobile !== '') {
+                    const expectedLengthMobile = phoneLengthMapbusiness[companyCountryCode.value] || 10;
+                    const mobilePattern = new RegExp(`^\\d{${expectedLengthMobile}}$`);
 
                     if (!mobilePattern.test(mobile)) {
                         document.getElementById('professional_phone_error').textContent =
@@ -2073,73 +1932,22 @@
                     } else {
                         document.getElementById('professional_phone_error').classList.add('d-none');
                     }
+                } else {
+                    // Field is optional and empty — clear any previous error
+                    document.getElementById('professional_phone_error').classList.add('d-none');
                 }
 
-                // Validate business logo (optional)
+                if (startupStages) {
+                    const selectedValues = Array.from(startupStages.selectedOptions).map(opt => opt.value);
 
-                if (!designation) {
-                    document.getElementById('designation_error').textContent = 'Please select a position';
-                    document.getElementById('designation_error').classList.remove('d-none');
-                    isValid = false;
-                }
+                    // Optional: If you want to log the selected values
+                    console.log('Selected startup stages:', selectedValues);
 
-                if (!investorType || !investorType.value) {
-                    console.log('Investor Type validation failed:', {
-                        investorTypeElement: investorType,
-                        value: investorType?.value,
-                        errorDiv: document.getElementById('investor_type_error')
-                    });
-                    const errorDiv = document.getElementById('investor_type_error');
-                    if (errorDiv) {
-                        errorDiv.textContent = 'Please select an investor type';
-                        errorDiv.classList.remove('d-none');
-                    } else {
-                        console.error('investor_type_error div not found in DOM');
-                    }
-                    isValid = false;
-                }
-
-                if (!investmentRange || !investmentRange.value) {
-                    const errorType = document.getElementById('investment_range_error');
-                    if (errorType) {
-                        errorType.textContent = 'Please select an investment range';
-                        errorType.classList.remove('d-none');
-                    } else {
-                        console.error('investment_range_error div not found in DOM');
-                    }
-                    isValid = false;
-                }
-
-                if (!startupStages) {
-                    console.error('preferred_startup_stage select element not found in step 3');
-                    isValid = false;
-                } else if (startupStages.selectedOptions.length === 0) {
-                    console.log('Preferred Startup Stage validation failed:', {
-                        selectedOptions: Array.from(startupStages.selectedOptions).map(opt => opt.value),
-                        errorPreferredStartup: document.getElementById('preferred_startup_stage_error')
-                    });
+                    // Clear previous error if any
                     const errorPreferredStartup = document.getElementById('preferred_startup_stage_error');
                     if (errorPreferredStartup) {
-                        errorPreferredStartup.textContent = 'Please select at least one preferred investment stage';
-                        errorPreferredStartup.classList.remove('d-none');
-                    } else {
-                        console.error('preferred_startup_stage_error div not found in DOM');
+                        errorPreferredStartup.classList.add('d-none');
                     }
-                    isValid = false;
-                }
-
-                if (!professionalPhone.value.trim()) {
-                    document.getElementById('professional_phone_error').textContent =
-                        'Professional phone number is required';
-                    document.getElementById('professional_phone_error').classList.remove('d-none');
-                    isValid = false;
-                }
-
-                if (!investmentExperience) {
-                    document.getElementById('investment_experince_error').textContent =
-                        'Please select years of an investment experience';
-                    document.getElementById('investment_experince_error').classList.remove('d-none');
-                    isValid = false;
                 }
             } else if (step === 4) {
                 // Validate Investment Preferences
@@ -2163,25 +1971,7 @@
                 }
 
                 // Validate with Select2 (assuming Select2 is initialized)
-                if (!preferredIndustries || !$(preferredIndustries).select2('data').length) {
-                    console.log('Preferred Industries validation failed');
-                    document.getElementById('preferred_industries_error').textContent =
-                        'Please select at least one preferred industry';
-                    document.getElementById('preferred_industries_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('preferred_industries_error').classList.add('d-none');
-                }
 
-                if (!preferredGeographies || !$(preferredGeographies).select2('data').length) {
-                    console.log('Preferred Geographies validation failed');
-                    document.getElementById('preferred_geographies_error').textContent =
-                        'Please select at least one preferred geography';
-                    document.getElementById('preferred_geographies_error').classList.remove('d-none');
-                    isValid = false;
-                } else {
-                    document.getElementById('preferred_geographies_error').classList.add('d-none');
-                }
 
                 // If actively investing checkbox is checked, validate company details
                 const activelyInvesting = document.getElementById('actively_investing');

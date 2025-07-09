@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Mail\InterestedNotification;
 use App\Mail\InvestorApprovedMail;
+use App\Mail\InvestorNewCompanyNotification;
+use App\Mail\NewCompanyNotification;
 use App\Mail\SendUserLoginInfoMail;
 use App\Models\DummyInvestor;
 use App\Models\Entrepreneur;
 use App\Models\Interest;
+use App\Models\InvestorCompany;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +19,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Jobs\CleanupInvestorUser;
 use App\Models\Investor;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class InvestorController extends Controller
 {
@@ -312,6 +317,298 @@ class InvestorController extends Controller
         return $currencySymbol . $formatted;
     }
 
+    public function edit()
+    {
+        $user = Auth::user();
+        $investor = Investor::where('user_id', $user->id)->first();
+
+        if (!$investor) {
+            Log::warning('No investor profile found for user', ['user_id' => $user->id]);
+            return redirect()->route('investor.form', ['user_id' => $user->id]);
+        }
+
+        Log::info('Investor Data:', $investor->toArray());
+
+        $countries = [
+            ['code' => '+91', 'name' => 'IN'],
+            ['code' => '+1', 'name' => 'USA'],
+            ['code' => '+44', 'name' => 'UK'],
+            ['code' => '+971', 'name' => 'UAE'],
+            ['code' => '+65', 'name' => 'SG'],
+            ['code' => '+61', 'name' => 'AU'],
+            ['code' => '+81', 'name' => 'JP'],
+            ['code' => '+86', 'name' => 'CN'],
+            ['code' => '+49', 'name' => 'DE'],
+            ['code' => '+33', 'name' => 'FR'],
+            ['code' => '+39', 'name' => 'IT'],
+            ['code' => '+7', 'name' => 'RU'],
+            ['code' => '+34', 'name' => 'ES'],
+            ['code' => '+82', 'name' => 'KR'],
+            ['code' => '+66', 'name' => 'TH'],
+            ['code' => '+92', 'name' => 'PK'],
+            ['code' => '+880', 'name' => 'BD'],
+            ['code' => '+94', 'name' => 'LK'],
+            ['code' => '+60', 'name' => 'MY'],
+            ['code' => '+62', 'name' => 'ID'],
+            ['code' => '+63', 'name' => 'PH'],
+            ['code' => '+20', 'name' => 'EG'],
+            ['code' => '+234', 'name' => 'NG'],
+            ['code' => '+27', 'name' => 'ZA'],
+            ['code' => '+974', 'name' => 'QA'],
+        ];
+
+        $investorTypes = [
+            'Angel Investor',
+            'Venture Capital',
+            'Private Equity',
+            'Corporate Investor',
+            'Other'
+        ];
+
+        $designations = [
+            'FOUNDER',
+            'CO-FOUNDER',
+            'CHAIRMAN',
+            'MANAGING DIRECTOR',
+            'CEO',
+            'OTHER',
+        ];
+
+        $investmentExperince = [
+            'Below 1 Years',
+            '1 to 5 Years',
+            '5 Years and Above'
+        ];
+
+        $industries = [
+            'Technology',
+            'Healthcare',
+            'Finance',
+            'E-commerce',
+            'Education',
+            'Food & Beverage',
+            'Real Estate',
+            'Manufacturing',
+            'Energy',
+            'Other'
+        ];
+
+        $startupStages = [
+            'New Startup Idea',
+            'Established Business'
+        ];
+
+        $geographies = [
+            'North America',
+            'Europe',
+            'Asia',
+            'Middle East',
+            'Africa',
+            'South America',
+            'Oceania'
+        ];
+
+        $qualifications = [
+            'Undergraduate',
+            'Graduate',
+            'Postgraduate',
+            'Doctorate'
+        ];
+
+        $autoDetectedCountry = $this->detectCountryFromPhone($user->phone_number);
+        $country = $autoDetectedCountry;
+        $currencySymbol = $this->getCurrencySymbol($country);
+        $investmentRanges = $this->getInvestmentRanges($currencySymbol, $country);
+
+        return view('investor.edit', compact(
+            'investor',
+            'countries',
+            'investorTypes',
+            'investmentRanges',
+            'industries',
+            'geographies',
+            'startupStages',
+            'investmentExperince',
+            'designations',
+            'qualifications',
+            'user',
+            'autoDetectedCountry'
+        ));
+    }
+
+    public function update(Request $request, $id)
+    {
+        Log::info('Investor profile update attempt:', ['user_id' => $request->user_id, 'investor_id' => $id]);
+
+        $investor = Investor::where('id', $id)->where('user_id', $request->user_id)->first();
+        if (!$investor) {
+            Log::warning('Investor profile not found or unauthorized access:', ['user_id' => $request->user_id, 'investor_id' => $id]);
+            return redirect()->route('mobile.form')->with('error', 'Investor profile not found or you are not authorized to update this profile.');
+        }
+
+        try {
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'full_name' => 'nullable|string|max:255',
+                'email' => 'required|email|unique:investors,email,' . $investor->id,
+                'country' => 'nullable|string',
+                'investor_type' => 'nullable|string',
+                'investment_range' => 'nullable|string',
+                'preferred_industries' => 'nullable|array|min:1',
+                'preferred_geographies' => 'nullable|array|min:1',
+                'preferred_startup_stage' => 'nullable|array|min:1',
+                'actively_investing' => 'nullable|in:on,1,true,false,0',
+                'linkedin_profile' => 'nullable|string',
+                'company_name' => 'nullable|array',
+                'market_capital' => 'nullable|array',
+                'your_stake' => 'nullable|array',
+                'stake_funding' => 'nullable|array',
+                'investment_experince' => 'nullable|string',
+                'professional_phone' => 'nullable|string',
+                'professional_email' => 'nullable|email',
+                'website' => 'nullable|string',
+                'designation' => 'nullable|string',
+                'organization_name' => 'nullable|string',
+                'investor_profile' => 'nullable|file|mimes:pdf',
+                'phone_number' => 'nullable',
+                'country_code' => 'nullable',
+                'company_address' => 'nullable|string',
+                'company_country' => 'nullable|string',
+                'company_state' => 'nullable|string',
+                'company_city' => 'nullable|string',
+                'company_zipcode' => 'nullable',
+                'tax_registration_number' => 'nullable',
+                'business_logo' => 'nullable|image|mimes:jpg,jpeg,png',
+                'company_country_code' => 'nullable',
+                'current_address' => 'nullable',
+                'pin_code' => 'nullable',
+                'state' => 'nullable',
+                'city' => 'nullable',
+                'dob' => 'nullable',
+                'qualification' => 'nullable',
+                'age' => 'nullable',
+                'photo' => 'nullable|image|mimes:jpg,jpeg,png',
+                'agreed_to_terms' => 'required|accepted',
+            ]);
+
+            $data = [
+                'investor_profile' => $investor->investor_profile
+            ];
+            $logoPath = $investor->business_logo;
+            $photo = $investor->photo;
+
+            if ($request->hasFile('photo')) {
+                if ($investor->photo) {
+                    Storage::disk('public')->delete($investor->photo);
+                }
+                $passport = $request->file('photo');
+                $photos = time() . '_logo_' . $passport->getClientOriginalName();
+                $photo = $passport->storeAs('investor_photo', $photos, 'public');
+            }
+
+            if ($request->hasFile('investor_profile')) {
+                if ($investor->investor_profile) {
+                    Storage::disk('public')->delete($investor->investor_profile);
+                }
+                $file = $request->file('investor_profile');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('investor_profile', $filename, 'public');
+                $data['investor_profile'] = $path;
+            }
+
+            if ($request->hasFile('business_logo')) {
+                if ($investor->business_logo) {
+                    Storage::disk('public')->delete($investor->business_logo);
+                }
+                $logo = $request->file('business_logo');
+                $logoName = time() . '_logo_' . $logo->getClientOriginalName();
+                $logoPath = $logo->storeAs('investor_logos', $logoName, 'public');
+            }
+
+            $activelyInvesting = $request->has('actively_investing');
+
+            $investor->update([
+                'user_id' => $request->user_id,
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'country' => $request->country,
+                'linkedin_profile' => $request->linkedin_profile ? 'https://' . parse_url($request->linkedin_profile, PHP_URL_HOST) : null,
+                'investor_type' => $request->investor_type,
+                'investment_range' => $request->investment_range,
+                'preferred_industries' => json_encode($request->preferred_industries ?? []),
+                'preferred_geographies' => json_encode($request->preferred_geographies ?? []),
+                'preferred_startup_stage' => json_encode($request->preferred_startup_stage ?? []),
+                'investment_experince' => $request->investment_experince,
+                'professional_phone' => $request->professional_phone,
+                'professional_email' => $request->existing_company == 1 ? $request->professional_email : null,
+                'website' => $request->existing_company == 1 ? ($request->website ? 'https://' . parse_url($request->website, PHP_URL_HOST) : null) : null,
+                'designation' => $request->existing_company == 1 ? $request->designation : null,
+                'organization_name' => $request->existing_company == 1 ? $request->organization_name : null,
+                'investor_profile' => $request->existing_company == 1 ? $data['investor_profile'] : null,
+                'phone_number' => $request->phone_number,
+                'country_code' => $request->country_code,
+                'actively_investing' => $activelyInvesting,
+                'company_address' => $request->existing_company == 1 ? $request->company_address : null,
+                'company_country' => $request->existing_company == 1 ? $request->company_country : null,
+                'company_state' => $request->existing_company == 1 ? $request->company_state : null,
+                'company_city' => $request->existing_company == 1 ? $request->company_city : null,
+                'company_zipcode' => $request->existing_company == 1 ? $request->company_zipcode : null,
+                'tax_registration_number' => $request->existing_company == 1 ? $request->tax_registration_number : null,
+                'company_country_code' => $request->company_country_code,
+                'business_logo' => $request->existing_company == 1 ? $logoPath : null,
+                'current_address' => $request->current_address,
+                'dob' => $request->dob,
+                'pin_code' => $request->pin_code,
+                'state' => $request->state,
+                'city' => $request->city,
+                'qualification' => $request->qualification,
+                'age' => $request->age,
+                'photo' => $photo,
+                'existing_company' => $request->existing_company,
+            ]);
+
+            if ($activelyInvesting) {
+                InvestorCompany::where('investor_id', $investor->id)->delete();
+
+                $companyNames = $request->company_name ?? [];
+                $marketCapitals = $request->market_capital ?? [];
+                $stakes = $request->your_stake ?? [];
+                $valuations = $request->stake_funding ?? [];
+
+                foreach ($companyNames as $index => $companyName) {
+                    if (!empty($companyName)) {
+                        InvestorCompany::create([
+                            'investor_id' => $investor->id,
+                            'company_name' => $companyName,
+                            'market_capital' => $marketCapitals[$index] ?? null,
+                            'your_stake' => $stakes[$index] ?? null,
+                            'stake_funding' => $valuations[$index] ?? null,
+                        ]);
+                    }
+                }
+            } else {
+                InvestorCompany::where('investor_id', $investor->id)->delete();
+            }
+
+            Log::info('Investor profile updated successfully.', ['id' => $investor->id]);
+
+            $dummyInvestor = DummyInvestor::where('user_id', $request->user_id)->first();
+            if ($dummyInvestor) {
+                Log::info('Deleting dummy investor record', ['user_id' => $request->user_id]);
+                $dummyInvestor->delete();
+            }
+
+            return redirect()->route('mobile.form')->with('success', 'Investor profile updated successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed during update:', $e->errors());
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error updating investor:', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Something went wrong. Please try again.')->withInput();
+        }
+    }
+
     public function store(Request $request)
     {
         Log::info('Investor form submission:', $request->all());
@@ -329,10 +626,10 @@ class InvestorController extends Controller
                 'email' => 'required|email|unique:investors,email',
                 'country' => 'nullable|string',
                 'investor_type' => 'nullable|string',
-                'investment_range' => 'required|string',
+                'investment_range' => 'nullable|string',
                 'preferred_industries' => 'nullable|array|min:1',
                 'preferred_geographies' => 'nullable|array|min:1',
-                'preferred_startup_stage' => 'required|array|min:1',
+                'preferred_startup_stage' => 'nullable|array|min:1',
                 'actively_investing' => 'nullable|in:on,1,true,false,0',
                 'linkedin_profile' => 'nullable|string',
                 'company_name' => 'nullable|array',
@@ -345,7 +642,7 @@ class InvestorController extends Controller
                 'website' => 'nullable|string',
                 'designation' => 'nullable|string',
                 'organization_name' => 'nullable|string',
-                'investor_profile' => 'nullable|file|mimes:pdf|max:10240',
+                'investor_profile' => 'nullable|file|mimes:pdf',
                 'phone_number' => 'nullable',
                 'country_code' => 'nullable',
                 'company_address' => 'nullable|string',
@@ -363,10 +660,13 @@ class InvestorController extends Controller
                 'dob' => 'nullable',
                 'qualification' => 'nullable',
                 'age' => 'nullable',
-                'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+                'photo' => 'nullable|image|mimes:jpg,jpeg,png',
             ]);
 
-            $data = [];
+            // Initialize with default values
+            $data = [
+                'investor_profile' => null
+            ];
             $logoPath = null;
             $photo = null;
 
@@ -404,9 +704,10 @@ class InvestorController extends Controller
                 // 'linkedin_profile' => $request->linkedin_profile,
                 'investor_type' => $request->investor_type,
                 'investment_range' => $request->investment_range,
-                'preferred_industries' => json_encode($request->preferred_industries),
-                'preferred_geographies' => json_encode($request->preferred_geographies),
-                'preferred_startup_stage' => json_encode($request->preferred_startup_stage),
+                'preferred_industries' => json_encode($request->preferred_industries ?? []),
+                'preferred_geographies' => json_encode($request->preferred_geographies ?? []),
+
+                'preferred_startup_stage' => json_encode($request->preferred_startup_stage ?? []),
                 'investment_experince' => $request->investment_experince,
                 'professional_phone' => $request->professional_phone,
                 'professional_email' => $request->existing_company == 1 ? $request->professional_email : null,
@@ -458,22 +759,11 @@ class InvestorController extends Controller
 
             Log::info('Investor and companies saved.', ['id' => $investor->id]);
 
-            // $emailNamePart = strstr($request->email, '@', true); // e.g., "tilvaprinsi"
-            // $randomDigits = rand(100, 999); // generates random number between 100–999
-            // $generatedPassword = $emailNamePart . '@' . $randomDigits;
-
-            // $user->name = $request->full_name;
-            // $user->email = $request->email;
-            // $user->password = Hash::make($generatedPassword);
-            // $user->save();
-
             $dummyInvestor = DummyInvestor::where('user_id', $request->user_id)->first();
             if ($dummyInvestor) {
                 Log::info('Deleting dummyintvestor record', ['user_id' => $request->user_id]);
                 $dummyInvestor->delete();
             }
-
-            // Mail::to($user->email)->send(new SendUserLoginInfoMail($user->name, $user->email, $generatedPassword));
 
             Auth::logout();
             $request->session()->invalidate();
@@ -490,6 +780,50 @@ class InvestorController extends Controller
         }
     }
 
+    public function myCompanies()
+    {
+        $user = Auth::user();
+        $investor = Investor::where('user_id', $user->id)->first();
+
+        // if (!$investor) {
+        //     return redirect()->route('entrepreneur.profile')->withErrors(['error' => 'Please complete your entrepreneur profile first.']);
+        // }
+
+        // Get companies using entrepreneur's ID
+        $companies = InvestorCompany::where('investor_id', $investor->id)->get();
+
+        return view('investor.my-companies', compact('companies'));
+    }
+
+    public function storeCompany(Request $request)
+    {
+
+        log::info('storecomapny', $request->all());
+        $request->validate([
+            'company_name' => 'required|string|max:255',
+            'market_capital' => 'required|numeric|min:0',
+            'your_stake' => 'required|numeric|between:0,100',
+            'stake_funding' => 'required|numeric|min:0',
+        ]);
+        $investor = Investor::where('user_id', Auth::id())->first();
+
+        if (!$investor) {
+            return redirect()->back()->withErrors(['error' => 'Entrepreneur profile not found. Please complete your profile first.']);
+        }
+        $company = InvestorCompany::create([
+            'investor_id' => $investor->id,
+            'company_name' => $request->company_name,
+            'market_capital' => $request->market_capital,
+            'your_stake' => $request->your_stake,
+            'stake_funding' => $request->stake_funding,
+        ]);
+
+
+        // Send email notification to admin
+        Mail::to('info@futuretaikun.com')->send(new InvestorNewCompanyNotification($company, $investor));
+
+        return redirect()->route('investor.companies')->with('success', 'Company added successfully!');
+    }
     // public function toggleApproval(Request $request)
     // {
     //     $investor = Investor::find($request->id);
@@ -715,6 +1049,14 @@ class InvestorController extends Controller
             $data = $request->all();
             unset($data['user_id'], $data['step'], $data['_token']);
 
+            foreach (['photo', 'business_logo', 'investor_profile'] as $fileField) {
+                if (!$request->hasFile($fileField) || !$request->file($fileField)->isValid()) {
+                    $request->request->remove($fileField);
+                    // Also remove from files array
+                    $request->files->remove($fileField);
+                }
+            }
+
             // Step-specific validation and allowed fields
             $validationRules = [];
             $allowedFields = [];
@@ -733,7 +1075,7 @@ class InvestorController extends Controller
                     'dob' => 'nullable|string',
                     'age' => 'nullable|string',
                     'qualification' => 'nullable|string',
-                    'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+                    'photo' => 'nullable|image|mimes:jpg,jpeg,png',
                 ];
                 $allowedFields = [
                     'full_name',
@@ -756,8 +1098,8 @@ class InvestorController extends Controller
                     'existing_company' => 'nullable|in:0,1',
                     'investment_experince' => 'nullable|string',
                     'investor_type' => 'nullable|string',
-                    'investment_range' => 'required|string',
-                    'preferred_startup_stage' => 'required|array|min:1',
+                    'investment_range' => 'nullable|string',
+                    'preferred_startup_stage' => 'nullable|array',
                     'preferred_startup_stage.*' => 'string',
                 ];
                 $allowedFields = ['existing_company', 'investment_experince', 'investor_type', 'investment_range', 'preferred_startup_stage'];
@@ -775,8 +1117,8 @@ class InvestorController extends Controller
                         'designation' => 'nullable|string',
                         'professional_phone' => 'nullable|string',
                         'company_country_code' => 'nullable|string|max:10',
-                        'business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-                        'investor_profile' => 'nullable|file|mimes:pdf|max:10240',
+                        'business_logo' => 'nullable|image|mimes:jpg,jpeg,png',
+                        'investor_profile' => 'nullable|file|mimes:pdf',
                     ]);
                     $allowedFields = array_merge($allowedFields, [
                         'organization_name',
@@ -797,9 +1139,9 @@ class InvestorController extends Controller
                 }
             } elseif ($step == 4) {
                 $validationRules = [
-                    'preferred_industries' => 'nullable|array|min:1',
+                    'preferred_industries' => 'nullable|array',
                     'preferred_industries.*' => 'string',
-                    'preferred_geographies' => 'nullable|array|min:1',
+                    'preferred_geographies' => 'nullable|array',
                     'preferred_geographies.*' => 'string',
                     'actively_investing' => 'nullable|in:0,1',
                 ];
@@ -811,6 +1153,14 @@ class InvestorController extends Controller
             }
 
             $validatedData = $request->validate($validationRules);
+
+            // Remove empty file inputs to avoid triggering validation
+            foreach (['photo', 'business_logo', 'investor_profile'] as $fileField) {
+                if (!$request->hasFile($fileField) || !$request->file($fileField)->isValid()) {
+                    $request->request->remove($fileField);
+                }
+            }
+
 
             // Filter data to include only allowed fields
             $data = array_intersect_key($data, array_flip($allowedFields));

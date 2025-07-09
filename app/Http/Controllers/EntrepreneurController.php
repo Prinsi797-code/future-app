@@ -888,8 +888,12 @@ class EntrepreneurController extends Controller
         $user = Auth::user();
         $entrepreneur = Entrepreneur::where('user_id', $user->id)->firstOrFail();
 
-        Log::info('request', $request->all());
-        Log::info('Before update:', ['id' => $entrepreneur->id, 'pin_code' => $entrepreneur->pin_code]);
+        Log::info('Request data:', $request->all());
+        Log::info('Before update:', [
+            'id' => $entrepreneur->id,
+            'pin_code' => $entrepreneur->pin_code,
+            'video_upload' => $entrepreneur->video_upload
+        ]);
 
         // Validate request
         $validator = Validator::make($request->all(), [
@@ -921,7 +925,7 @@ class EntrepreneurController extends Controller
             'business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'website_links' => 'nullable|url',
-            'video_upload' => 'nullable|url',
+            'video_upload' => 'nullable|file|mimes:mp4,mov,avi,webm|max:51200',
             'pitch_deck' => 'nullable|file|mimes:pdf|max:10240',
             'agreed_to_terms' => 'nullable|accepted',
             'y_business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
@@ -932,6 +936,9 @@ class EntrepreneurController extends Controller
             'y_business_address' => 'nullable|string|max:255',
             'y_business_country' => 'nullable|string',
             'y_business_state' => 'nullable|string',
+            'business_revenue1' => 'nullable',
+            'business_revenue2' => 'nullable',
+            'business_revenue3' => 'nullable',
             'y_business_city' => 'nullable|string',
             'y_zipcode' => 'nullable|string|regex:/^[0-9]{6}$/',
             'y_type_industries' => 'nullable|string',
@@ -970,13 +977,13 @@ class EntrepreneurController extends Controller
             $productPhotos = $request->file('product_photos');
             $newPhotos = [];
             foreach ($productPhotos as $photo) {
-                if (count($newPhotos) < 3) { // Limit to 3 photos
+                if (count($newPhotos) < 3) {
                     $filename = time() . '_photo_' . $photo->getClientOriginalName();
                     $newPhotos[] = $photo->storeAs('product_photos', $filename, 'public');
                 }
             }
             $productPhotosPaths = array_merge($productPhotosPaths, $newPhotos);
-            $productPhotosPaths = array_slice($productPhotosPaths, -3); // Keep only the latest 3 photos
+            $productPhotosPaths = array_slice($productPhotosPaths, -3);
             Log::info('Product photos uploaded:', ['count' => count($newPhotos), 'paths' => $newPhotos]);
         }
 
@@ -991,7 +998,7 @@ class EntrepreneurController extends Controller
 
         $productPhotosPathsY = $entrepreneur->y_product_photos ? json_decode($entrepreneur->y_product_photos, true) : [];
         if ($request->hasFile('y_product_photos')) {
-            $productPhotosY = []; // Initialize array
+            $productPhotosY = [];
             foreach ($request->file('y_product_photos') as $index => $photoY) {
                 if ($photoY && $photoY->isValid()) {
                     $photoName = time() . '_photo_' . $index . '_' . $photoY->getClientOriginalName();
@@ -1003,7 +1010,7 @@ class EntrepreneurController extends Controller
                 }
             }
             $productPhotosPathsY = array_merge($productPhotosPathsY, $productPhotosY);
-            $productPhotosPathsY = array_slice($productPhotosPathsY, -3); // Limit to 3 photos
+            $productPhotosPathsY = array_slice($productPhotosPathsY, -3);
         } else {
             Log::info('No Y product photos uploaded');
         }
@@ -1014,6 +1021,43 @@ class EntrepreneurController extends Controller
             $filenameY = time() . '_' . $file->getClientOriginalName();
             $pitchDeckPathY = $file->storeAs('y_pitch_decks', $filenameY, 'public');
             Log::info('Y Pitch deck uploaded:', ['path' => $pitchDeckPathY]);
+        }
+
+        // Handle video upload to BunnyCDN
+        $videoUploadPath = $entrepreneur->video_upload; // Preserve existing video
+        if ($request->hasFile('video_upload')) {
+            $video = $request->file('video_upload');
+            $videoName = time() . '_video_' . $video->getClientOriginalName();
+            $videoPath = 'video/' . $videoName;
+
+            try {
+                $client = new \GuzzleHttp\Client();
+                $response = $client->put("https://storage.bunnycdn.com/futuretaikun/{$videoPath}", [
+                    'headers' => [
+                        'AccessKey' => env('BUNNYCDN_API_KEY'),
+                        'Content-Type' => $video->getClientMimeType(),
+                    ],
+                    'body' => fopen($video->getRealPath(), 'r'),
+                ]);
+
+                if ($response->getStatusCode() === 201 || $response->getStatusCode() === 200) {
+                    $videoUploadPath = "https://futuretaikun.b-cdn.net/{$videoPath}";
+                    Log::info('New video uploaded to BunnyCDN:', ['url' => $videoUploadPath]);
+
+                    // Delete old video from BunnyCDN if it exists
+                    if ($entrepreneur->video_upload && $entrepreneur->video_upload != $videoUploadPath) {
+                        $this->deleteOldVideo($entrepreneur->video_upload);
+                    }
+                } else {
+                    Log::error('Failed to upload video to BunnyCDN', ['status' => $response->getStatusCode()]);
+                    return redirect()->back()->withErrors(['video_upload' => 'Failed to upload video to BunnyCDN'])->withInput();
+                }
+            } catch (\Exception $e) {
+                Log::error('BunnyCDN upload error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+                return redirect()->back()->withErrors(['video_upload' => 'Error uploading video'])->withInput();
+            }
+        } else {
+            Log::info('No video uploaded - keeping existing video', ['video_upload' => $videoUploadPath]);
         }
 
         // Update entrepreneur data
@@ -1046,7 +1090,7 @@ class EntrepreneurController extends Controller
             'business_logo' => $businessLogoPath,
             'product_photos' => json_encode($productPhotosPaths),
             'website_links' => $request->website_links,
-            'video_upload' => $request->video_upload,
+            'video_upload' => $videoUploadPath,
             'pitch_deck' => $pitchDeckPath,
             'agreed_to_terms' => $request->has('agreed_to_terms'),
             'is_verified' => true,
@@ -1063,6 +1107,9 @@ class EntrepreneurController extends Controller
             'y_type_industries' => $request->y_type_industries,
             'y_own_fund' => $request->y_own_fund,
             'y_loan' => $request->y_loan,
+            'business_revenue1' => $request->business_revenue1,
+            'business_revenue2' => $request->business_revenue2,
+            'business_revenue3' => $request->business_revenue3,
             'y_invested_amount' => $request->y_invested_amount,
             'y_business_logo' => $businessLogoPathY,
             'business_email' => $request->business_email,
@@ -1070,27 +1117,42 @@ class EntrepreneurController extends Controller
             'business_year' => $request->business_year,
         ];
 
-        // Remove null values to avoid overwriting existing data
+        // Log the update data before filtering
+        Log::info('Update data before filtering:', $updateData);
+
+        // Remove null values to avoid overwriting existing data with null
         $updateData = array_filter($updateData, function ($value) {
-            return $value !== null;
+            return !is_null($value);
         });
 
-        try {
-            // Log before update
-            Log::info('Before update:', ['id' => $entrepreneur->id, 'pin_code' => $entrepreneur->pin_code]);
+        // Log the update data after filtering
+        Log::info('Update data after filtering:', $updateData);
 
+        try {
             $result = $entrepreneur->update($updateData);
-            Log::info('Entrepreneur update attempt:', ['success' => $result, 'data' => $updateData]);
+            Log::info('Entrepreneur update attempt:', [
+                'success' => $result,
+                'data' => $updateData,
+                'video_upload' => $updateData['video_upload'] ?? 'Not set'
+            ]);
 
             if ($result) {
                 // Refresh the model to get the latest data from the database
                 $entrepreneur->refresh();
-                Log::info('Entrepreneur updated successfully:', ['id' => $entrepreneur->id, 'pin_code' => $entrepreneur->pin_code]);
+                Log::info('Entrepreneur updated successfully:', [
+                    'id' => $entrepreneur->id,
+                    'pin_code' => $entrepreneur->pin_code,
+                    'video_upload' => $entrepreneur->video_upload
+                ]);
             } else {
                 Log::warning('Entrepreneur update failed:', ['id' => $entrepreneur->id]);
+                return redirect()->back()->with('error', 'Failed to update entrepreneur profile.');
             }
         } catch (\Exception $e) {
-            Log::error('Update exception:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            Log::error('Update exception:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()->with('error', 'An error occurred while updating the profile.');
         }
 
@@ -1098,6 +1160,51 @@ class EntrepreneurController extends Controller
         $updatedEntrepreneur = Entrepreneur::where('user_id', $user->id)->first();
         return redirect()->route('entrepreneur.edit')->with('success', 'Entrepreneur profile updated successfully!')->with('entrepreneur', $updatedEntrepreneur);
     }
+
+    private function deleteOldVideo($videoUrl)
+    {
+        try {
+            $client = new \GuzzleHttp\Client();
+            $path = str_replace('https://futuretaikun.b-cdn.net/', '', $videoUrl);
+            $response = $client->delete("https://storage.bunnycdn.com/futuretaikun/{$path}", [
+                'headers' => [
+                    'AccessKey' => env('BUNNYCDN_API_KEY'),
+                ],
+            ]);
+
+            if ($response->getStatusCode() === 200) {
+                Log::info('Old video deleted from BunnyCDN:', ['url' => $videoUrl]);
+            } else {
+                Log::warning('Failed to delete old video from BunnyCDN:', ['url' => $videoUrl, 'status' => $response->getStatusCode()]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error deleting old video from BunnyCDN:', ['url' => $videoUrl, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Delete old video from BunnyCDN
+     */
+    // private function deleteOldVideo($videoUrl)
+    // {
+    //     try {
+    //         $client = new \GuzzleHttp\Client();
+    //         $path = str_replace('https://futuretaikun.b-cdn.net/', '', $videoUrl);
+    //         $response = $client->delete("https://storage.bunnycdn.com/futuretaikun/{$path}", [
+    //             'headers' => [
+    //                 'AccessKey' => env('BUNNYCDN_API_KEY'),
+    //             ],
+    //         ]);
+
+    //         if ($response->getStatusCode() === 200) {
+    //             Log::info('Old video deleted from BunnyCDN:', ['url' => $videoUrl]);
+    //         } else {
+    //             Log::warning('Failed to delete old video from BunnyCDN:', ['url' => $videoUrl, 'status' => $response->getStatusCode()]);
+    //         }
+    //     } catch (\Exception $e) {
+    //         Log::error('Error deleting old video from BunnyCDN:', ['url' => $videoUrl, 'message' => $e->getMessage()]);
+    //     }
+    // }
     public function reject(Request $request)
     {
         try {
