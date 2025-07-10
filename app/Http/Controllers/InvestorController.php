@@ -14,6 +14,7 @@ use App\Models\InvestorCompany;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -321,14 +322,32 @@ class InvestorController extends Controller
     {
         $user = Auth::user();
         $investor = Investor::where('user_id', $user->id)->first();
+        //Log::info('Investor Data first', $investor->toArray());
 
         if (!$investor) {
-            Log::warning('No investor profile found for user', ['user_id' => $user->id]);
+            // Log::warning('No investor profile found for user', ['user_id' => $user->id]);
             return redirect()->route('investor.form', ['user_id' => $user->id]);
         }
 
-        Log::info('Investor Data:', $investor->toArray());
+        // Fetch countries from API for company_country
+        $apiKey = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
+        $response = Http::withHeaders(['X-CSCAPI-KEY' => $apiKey])
+            ->get('https://api.countrystatecity.in/v1/countries');
 
+        // Log API response
+        if ($response->successful()) {
+            // Log::info('Countries API response', ['countries' => $response->json()]);
+        } else {
+            Log::error('Failed to fetch countries from API', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+        }
+
+        // Use API response for company_country dropdown
+        $countries1 = $response->successful() ? $response->json() : [];
+
+        // Hardcoded countries for other purposes (e.g., phone country codes)
         $countries = [
             ['code' => '+91', 'name' => 'IN'],
             ['code' => '+1', 'name' => 'USA'],
@@ -356,6 +375,20 @@ class InvestorController extends Controller
             ['code' => '+27', 'name' => 'ZA'],
             ['code' => '+974', 'name' => 'QA'],
         ];
+
+        // Log data
+        Log::info('Countries1 array passed to view (API)', ['countries1' => $countries1]);
+        Log::info('Countries array (hardcoded)', ['countries' => $countries]);
+        Log::info('Investor Data', $investor->toArray());
+
+        // Log auto-detected country and pre-selection value
+        $autoDetectedCountry = $this->detectCountryFromPhone($user->phone_number);
+        $preSelectedCountry = old('company_country', $investor->company_country ?? $autoDetectedCountry);
+        Log::info('Pre-selection values', [
+            'autoDetectedCountry' => $autoDetectedCountry,
+            'preSelectedCountry' => $preSelectedCountry,
+            'company_country' => $investor->company_country
+        ]);
 
         $investorTypes = [
             'Angel Investor',
@@ -415,7 +448,6 @@ class InvestorController extends Controller
             'Doctorate'
         ];
 
-        $autoDetectedCountry = $this->detectCountryFromPhone($user->phone_number);
         $country = $autoDetectedCountry;
         $currencySymbol = $this->getCurrencySymbol($country);
         $investmentRanges = $this->getInvestmentRanges($currencySymbol, $country);
@@ -423,6 +455,7 @@ class InvestorController extends Controller
         return view('investor.edit', compact(
             'investor',
             'countries',
+            'countries1',
             'investorTypes',
             'investmentRanges',
             'industries',
@@ -439,8 +472,9 @@ class InvestorController extends Controller
     public function update(Request $request, $id)
     {
         Log::info('Investor profile update attempt:', ['user_id' => $request->user_id, 'investor_id' => $id]);
-
-        $investor = Investor::where('id', $id)->where('user_id', $request->user_id)->first();
+        $user = Auth::user();
+        $investor = Investor::where('user_id', $user->id)->firstOrFail();
+        // $investor = Investor::where('id', $id)->where('user_id', $request->user_id)->first();
         if (!$investor) {
             Log::warning('Investor profile not found or unauthorized access:', ['user_id' => $request->user_id, 'investor_id' => $id]);
             return redirect()->route('mobile.form')->with('error', 'Investor profile not found or you are not authorized to update this profile.');
@@ -598,7 +632,10 @@ class InvestorController extends Controller
                 $dummyInvestor->delete();
             }
 
-            return redirect()->route('mobile.form')->with('success', 'Investor profile updated successfully!');
+            $investor = Investor::where('user_id', $user->id)->first();
+            return redirect()->route('investor.edit')->with('success', 'Investor profile updated successfully!')->with('investor', $investor);
+
+            // return redirect()->route('mobile.form')->with('success', 'Investor profile updated successfully!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation failed during update:', $e->errors());

@@ -14,6 +14,7 @@ use App\Models\InvestorRejectEntrepreneur;
 use App\Models\RemarkEntrepreneur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\EntrepreneurApprovedMail;
@@ -797,34 +798,78 @@ class EntrepreneurController extends Controller
     }
     public function edit()
     {
+        $user = Auth::user();
+        $entrepreneur = session('entrepreneur') ?: Entrepreneur::where('user_id', $user->id)->first();
+
+        if (!$entrepreneur) {
+            Log::warning('No entrepreneur profile found for user', ['user_id' => $user->id]);
+            return redirect()->route('login');
+        }
+
+        // Fetch countries from API
+        $apiKey = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
+        $response = Http::withHeaders(['X-CSCAPI-KEY' => $apiKey])
+            ->get('https://api.countrystatecity.in/v1/countries');
+
+        // Log API response
+        if ($response->successful()) {
+            Log::info('Countries API response', ['countries' => $response->json()]);
+        } else {
+            Log::error('Failed to fetch countries from API', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+        }
+
+        // Use API response for dropdowns
+        $countries1 = $response->successful() ? $response->json() : [];
+
+        // Hardcoded countries for phone codes
         $countries = [
             ['code' => '+91', 'name' => 'IN'],
             ['code' => '+1', 'name' => 'USA'],
             ['code' => '+44', 'name' => 'UK'],
             ['code' => '+971', 'name' => 'UAE'],
             ['code' => '+65', 'name' => 'SG'],
-            ['code' => '+61', 'name' => 'AU'],     // Australia
-            ['code' => '+81', 'name' => 'JP'],     // Japan
-            ['code' => '+86', 'name' => 'CN'],     // China
-            ['code' => '+49', 'name' => 'DE'],     // Germany
-            ['code' => '+33', 'name' => 'FR'],     // France
-            ['code' => '+39', 'name' => 'IT'],     // Italy
-            ['code' => '+7', 'name' => 'RU'],     // Russia
-            ['code' => '+34', 'name' => 'ES'],     // Spain
-            ['code' => '+82', 'name' => 'KR'],     // South Korea
-            ['code' => '+66', 'name' => 'TH'],     // Thailand   ///
-            ['code' => '+92', 'name' => 'PK'],     // Pakistan
-            ['code' => '+880', 'name' => 'BD'],     // Bangladesh
-            ['code' => '+94', 'name' => 'LK'],     // Sri Lanka
-            ['code' => '+60', 'name' => 'MY'],     // Malaysia
-            ['code' => '+62', 'name' => 'ID'],     // Indonesia
-            ['code' => '+63', 'name' => 'PH'],     // Philippines
-            ['code' => '+20', 'name' => 'EG'],     // Egypt
-            ['code' => '+234', 'name' => 'NG'],     // Nigeria
-            ['code' => '+27', 'name' => 'ZA'],     // South Africa
-            ['code' => '+974', 'name' => 'QA'],     // Qatar
-            // Add more countries as needed
+            ['code' => '+61', 'name' => 'AU'],
+            ['code' => '+81', 'name' => 'JP'],
+            ['code' => '+86', 'name' => 'CN'],
+            ['code' => '+49', 'name' => 'DE'],
+            ['code' => '+33', 'name' => 'FR'],
+            ['code' => '+39', 'name' => 'IT'],
+            ['code' => '+7', 'name' => 'RU'],
+            ['code' => '+34', 'name' => 'ES'],
+            ['code' => '+82', 'name' => 'KR'],
+            ['code' => '+66', 'name' => 'TH'],
+            ['code' => '+92', 'name' => 'PK'],
+            ['code' => '+880', 'name' => 'BD'],
+            ['code' => '+94', 'name' => 'LK'],
+            ['code' => '+60', 'name' => 'MY'],
+            ['code' => '+62', 'name' => 'ID'],
+            ['code' => '+63', 'name' => 'PH'],
+            ['code' => '+20', 'name' => 'EG'],
+            ['code' => '+234', 'name' => 'NG'],
+            ['code' => '+27', 'name' => 'ZA'],
+            ['code' => '+974', 'name' => 'QA'],
         ];
+
+        // Log data
+        Log::info('Countries1 array passed to view (API)', ['countries1' => $countries1]);
+        Log::info('Countries array (hardcoded)', ['countries' => $countries]);
+        Log::info('Entrepreneur Data', $entrepreneur->toArray());
+
+        // Log pre-selection values for both sets of fields
+        $autoDetectedCountry = $this->detectCountryFromPhone($user->phone_number);
+        Log::info('Pre-selection values', [
+            'autoDetectedCountry' => $autoDetectedCountry,
+            'business_country' => old('business_country', $entrepreneur->business_country ?? $autoDetectedCountry),
+            'business_state' => old('business_state', $entrepreneur->business_state ?? ''),
+            'business_city' => old('business_city', $entrepreneur->business_city ?? ''),
+            'y_business_country' => old('y_business_country', $entrepreneur->y_business_country ?? $autoDetectedCountry),
+            'y_business_state' => old('y_business_state', $entrepreneur->y_business_state ?? ''),
+            'y_business_city' => old('y_business_city', $entrepreneur->y_business_city ?? '')
+        ]);
+
         $registratioTypes = [
             'Propritorship',
             'Partnership',
@@ -840,20 +885,6 @@ class EntrepreneurController extends Controller
             'Postgraduate',
             'Doctorate'
         ];
-
-        $user = Auth::user();
-        $entrepreneur = session('entrepreneur') ?: Entrepreneur::where('user_id', $user->id)->first();
-
-        if (!$entrepreneur) {
-            return redirect()->route('login');
-        }
-
-        // Check if the entrepreneur is approved
-        // if ($entrepreneur->approved == 1) {
-        //     return redirect()->route('not-allowed');
-        // }
-
-        \Log::info('Entrepreneur Data:', $entrepreneur->toArray());
 
         $industries = [
             'Technology',
@@ -872,16 +903,23 @@ class EntrepreneurController extends Controller
             'New Startup Idea',
             'Established Business'
         ];
-        $autoDetectedCountry = $this->detectCountryFromPhone($user->phone_number);
 
-        // Set it to $country to use further
         $country = $autoDetectedCountry;
-
-        // Now use it to get the currency symbol
         $currencySymbol = $this->getCurrencySymbol($country);
         $investmentRanges = $this->getInvestmentRanges($currencySymbol, $country);
 
-        return view('Auth.edit-entrepreneur', compact('entrepreneur', 'registratioTypes', 'countries', 'qualifications', 'user', 'industries', 'businessStages', 'investmentRanges', 'autoDetectedCountry'));
+        return view('Auth.edit-entrepreneur', compact(
+            'entrepreneur',
+            'registratioTypes',
+            'countries1',
+            'countries',
+            'qualifications',
+            'user',
+            'industries',
+            'businessStages',
+            'investmentRanges',
+            'autoDetectedCountry'
+        ));
     }
     public function update(Request $request)
     {
@@ -922,6 +960,9 @@ class EntrepreneurController extends Controller
             'market_capital' => 'nullable|numeric|min:1',
             'your_stake' => 'nullable|numeric|min:1|max:100',
             'stake_funding' => 'nullable|numeric|min:0',
+            'y_market_capital' => 'nullable|numeric|min:1',
+            'y_your_stake' => 'nullable|numeric|min:1|max:100',
+            'y_stake_funding' => 'nullable|numeric|min:0',
             'business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'website_links' => 'nullable|url',
@@ -1087,6 +1128,9 @@ class EntrepreneurController extends Controller
             'market_capital' => $request->market_capital,
             'your_stake' => $request->your_stake,
             'stake_funding' => $request->stake_funding,
+            'y_market_capital' => $request->y_market_capital,
+            'y_your_stake' => $request->y_your_stake,
+            'y_stake_funding' => $request->y_stake_funding,
             'business_logo' => $businessLogoPath,
             'product_photos' => json_encode($productPhotosPaths),
             'website_links' => $request->website_links,

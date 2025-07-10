@@ -1275,7 +1275,7 @@
 
                             // Add required attribute back to company fields
                             const requiredFields = field.querySelectorAll(
-                                'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="professional_phone"] section[name="designation"] input[name="investor_profile"]'
+                                // 'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="professional_phone"] section[name="designation"] input[name="investor_profile"]'
                             );
                             requiredFields.forEach(reqField => {
                                 reqField.setAttribute('required', 'required');
@@ -1288,7 +1288,7 @@
 
                             // Remove required attribute from company fields to prevent validation errors
                             const requiredFields = field.querySelectorAll(
-                                'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="investor_profile"]'
+                                //'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="investor_profile"]'
                             );
                             requiredFields.forEach(reqField => {
                                 reqField.removeAttribute('required');
@@ -2474,8 +2474,10 @@
             const newStep = currentStep + direction;
 
             if (newStep >= 2 && newStep <= totalSteps) {
-                currentStep = newStep;
-                showStep(currentStep);
+                setTimeout(() => {
+                    currentStep = newStep;
+                    showStep(currentStep);
+                }, 2000);
             }
         }
 

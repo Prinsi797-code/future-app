@@ -28,7 +28,7 @@
                     </div>
                 </a>
             </div>
-        @elseif ($userRole === 'investor')
+        @elseif ($userRole === 'investor' && $investor->approved == 1)
             <!-- Entrepreneur Stats Card (Only Approved) -->
             <div class="col-md-6 mb-4">
                 <a href="{{ route('admin.entrepreneurs') }}" style="text-decoration: none;">

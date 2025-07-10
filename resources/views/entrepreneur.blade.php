@@ -2016,19 +2016,19 @@
     <div class="resume-section">
         <h5 class="section-title">Personal Information</h5>
         <div class="info-grid">
-            <div class="info-item"><span class="info-label">Name:</span> ${button.dataset.name || '-'}</div>
-            <div class="info-item"><span class="info-label">Age:</span> ${button.dataset.age || '-'}</div>
-            <div class="info-item"><span class="info-label">Date of Birth:</span> ${button.dataset.dob || '-'}</div>
-            <div class="info-item"><span class="info-label">Qualification:</span> ${button.dataset.qualification || '-'}</div>
-            <div class="info-item"><span class="info-label">Country:</span> ${button.dataset.country || '-'}</div>
-            <div class="info-item"><span class="info-label">City:</span> ${button.dataset.city || '-'}</div>
-            <div class="info-item"><span class="info-label">State:</span> ${button.dataset.state || '-'}</div>
-            <div class="info-item"><span class="info-label">Pin Code:</span> ${button.dataset.pincode || '-'}</div>
+            <div class="info-item"><span class="info-label">Name:</span> ${button.dataset.name || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Age:</span> ${button.dataset.age || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Date of Birth:</span> ${button.dataset.dob || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Qualification:</span> ${button.dataset.qualification || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Country:</span> ${button.dataset.country || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">City:</span> ${button.dataset.city || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">State:</span> ${button.dataset.state || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Pin Code:</span> ${button.dataset.pincode || 'N/A'}</div>
             @unless (session('selected_role') === 'investor')
-                <div class="info-item"><span class="info-label">Email:</span> ${button.dataset.email || '-'}</div>
-                <div class="info-item"><span class="info-label">Phone Number:</span> ${button.dataset.countrycode || '-'} ${button.dataset.phone || '-'}</div>
-                <div class="info-item"><span class="info-label">Website:</span> ${button.dataset.website ? `<a href="${button.dataset.website}" target="_blank" class="download-link">${button.dataset.website}</a>` : '-'}</div>
-                <div class="info-item"><span class="info-label">Current Address:</span> ${button.dataset.address || '-'}</div>
+                <div class="info-item"><span class="info-label">Email:</span> ${button.dataset.email || 'N/A'}</div>
+                <div class="info-item"><span class="info-label">Phone Number:</span> ${button.dataset.countrycode || 'N/A'} ${button.dataset.phone || 'N/A'}</div>
+                <div class="info-item"><span class="info-label">Website:</span> ${button.dataset.website ? `<a href="${button.dataset.website}" target="_blank" class="download-link">${button.dataset.website}</a>` : 'N/A'}</div>
+                <div class="info-item"><span class="info-label">Current Address:</span> ${button.dataset.address || 'N/A'}</div>
             @endunless
         </div>
     </div>
@@ -2047,30 +2047,30 @@
 <div class="resume-section">
     <h5 class="section-title mt-4">Unregistered Business Details</h5>
     <div class="info-grid">
-        <div class="info-item"><span class="info-label">Business Name:</span> ${button.dataset.businessname || '-'}</div>
-        <div class="info-item"><span class="info-label">Brand Name:</span> ${button.dataset.brandname || '-'}</div>
-        <div class="info-item"><span class="info-label">Business Country:</span> ${button.dataset.businesscountry || '-'}</div>
-        <div class="info-item"><span class="info-label">Business State:</span> ${button.dataset.businessstate || '-'}</div>
-        <div class="info-item"><span class="info-label">Business City:</span> ${button.dataset.businesscity || '-'}</div>
-        <div class="info-item"><span class="info-label">Business Description:</span> ${button.dataset.describe || '-'}</div>
-        <div class="info-item"><span class="info-label">Business Address:</span> ${button.dataset.businessaddress || '-'}</div>
-        <div class="info-item"><span class="info-label">Own Fund:</span> ${button.dataset.ownfund || '-'}</div>
-        <div class="info-item"><span class="info-label">Loan:</span> ${button.dataset.loan || '-'}</div>
-        <div class="info-item"><span class="info-label">Invested Amount:</span> ${button.dataset.amount || '-'}</div>
-        <div class="info-item"><span class="info-label">Fund Asked:</span> ${button.dataset.marketcapital || '-'}</div>
-        <div class="info-item"><span class="info-label">Equity Offered:</span> ${button.dataset.yourstake || '-'}</div>
-        <div class="info-item"><span class="info-label">Company Valuation:</span> ${button.dataset.stakefunding || '-'}</div>
+        <div class="info-item"><span class="info-label">Business Name:</span> ${button.dataset.businessname || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Brand Name:</span> ${button.dataset.brandname || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Business Country:</span> ${button.dataset.businesscountry || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Business State:</span> ${button.dataset.businessstate || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Business City:</span> ${button.dataset.businesscity || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Business Description:</span> ${button.dataset.describe || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Business Address:</span> ${button.dataset.businessaddress || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Own Fund:</span> ${button.dataset.ownfund || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Loan:</span> ${button.dataset.loan || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Invested Amount:</span> ${button.dataset.amount || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Fund Asked:</span> ${button.dataset.marketcapital || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Equity Offered:</span> ${button.dataset.yourstake || 'N/A'}</div>
+        <div class="info-item"><span class="info-label">Company Valuation:</span> ${button.dataset.stakefunding || 'N/A'}</div>
         <div class="info-item"><span class="info-label">Product Photos:</span>
             ${button.dataset.product_photos ? 
                 button.dataset.product_photos.replace(/[\[\]']/g, '').split(',').map(photo => 
                     `<img src="/storage/${photo.trim()}" alt="Product Photo" class="product-image">`
-                ).join('') : '-'}
+                ).join('') : 'N/A'}
         </div>
         <div class="info-item"><span class="info-label">Business Logo:</span>
-            ${button.dataset.business_logo ? `<img src="/storage/business_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : '-'}
+            ${button.dataset.business_logo ? `<img src="/storage/business_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : 'N/A'}
         </div>
         <div class="info-item"><span class="info-label">Business Summary:</span>
-            ${button.dataset.pitch_deck ? `<a href="/storage/pitch_decks/${button.dataset.pitch_deck.trim()}" download class="download-link">Download PDF</a>` : '-'}
+            ${button.dataset.pitch_deck ? `<a href="/storage/pitch_decks/${button.dataset.pitch_deck.trim()}" download class="download-link">Download PDF</a>` : 'N/A'}
         </div>
     </div>
 </div>
@@ -2083,41 +2083,41 @@
     <div class="resume-section">
         <h5 class="section-title mt-4">Registered Business Details</h5>
         <div class="info-grid">
-            <div class="info-item"><span class="info-label">Employee Number:</span> ${button.dataset.employee_number || '-'}</div>
-            <div class="info-item"><span class="info-label">Number of Founders:</span> ${button.dataset.founder || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Name:</span> ${button.dataset.y_business_name || '-'}</div>
-            <div class="info-item"><span class="info-label">Brand Name:</span> ${button.dataset.y_brand_name || '-'}</div>
+            <div class="info-item"><span class="info-label">Employee Number:</span> ${button.dataset.employee_number || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Number of Founders:</span> ${button.dataset.founder || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Business Name:</span> ${button.dataset.y_business_name || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Brand Name:</span> ${button.dataset.y_brand_name || 'N/A'}</div>
               @unless (session('selected_role') === 'investor')
-                <div class="info-item"><span class="info-label">Business Email:</span> ${button.dataset.businessemail || '-'}</div>
-                <div class="info-item"><span class="info-label">Business Mobile Number:</span> ${button.dataset.businessmobile || '-'}</div>
+                <div class="info-item"><span class="info-label">Business Email:</span> ${button.dataset.businessemail || 'N/A'}</div>
+                <div class="info-item"><span class="info-label">Business Mobile Number:</span> ${button.dataset.businessmobile || 'N/A'}</div>
             @endunless
-            <div class="info-item"><span class="info-label">Tax Registration Number:</span> ${button.dataset.taxregistrationnumber || '-'}</div>
-            <div class="info-item"><span class="info-label">Year of Establishment:</span> ${button.dataset.businessyear || '-'}</div>
-            <div class="info-item"><span class="info-label">Years in Business:</span> ${button.dataset.yearcount || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Description:</span> ${button.dataset.y_describe_business || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Address:</span> ${button.dataset.y_business_address || '-'}</div>
-            <div class="info-item"><span class="info-label">Business Country:</span> ${button.dataset.y_business_country || '-'}</div>
-            <div class="info-item"><span class="info-label">Business State:</span> ${button.dataset.y_business_state || '-'}</div>
-            <div class="info-item"><span class="info-label">Business City:</span> ${button.dataset.y_business_city || '-'}</div>
-            <div class="info-item"><span class="info-label">Zip Code:</span> ${button.dataset.y_zipcode || '-'}</div>
-            <div class="info-item"><span class="info-label">Type of Industries:</span> ${button.dataset.y_type_industries || '-'}</div>
-            <div class="info-item"><span class="info-label">Own Fund:</span> ${button.dataset.y_own_fund || '-'}</div>
-            <div class="info-item"><span class="info-label">Loan:</span> ${button.dataset.y_loan || '-'}</div>
-            <div class="info-item"><span class="info-label">Invested Amount:</span> ${button.dataset.y_invested_amount || '-'}</div>
-            <div class="info-item"><span class="info-label">Revenue - FY 1:</span> ${button.dataset.revenue1 || '-'}</div>
-            <div class="info-item"><span class="info-label">Revenue - FY 2:</span> ${button.dataset.revenue2 || '-'}</div>
-            <div class="info-item"><span class="info-label">Revenue - FY 3:</span> ${button.dataset.revenue3 || '-'}</div>
+            <div class="info-item"><span class="info-label">Tax Registration Number:</span> ${button.dataset.taxregistrationnumber || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Year of Establishment:</span> ${button.dataset.businessyear || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Years in Business:</span> ${button.dataset.yearcount || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Business Description:</span> ${button.dataset.y_describe_business || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Business Address:</span> ${button.dataset.y_business_address || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Business Country:</span> ${button.dataset.y_business_country || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Business State:</span> ${button.dataset.y_business_state || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Business City:</span> ${button.dataset.y_business_city || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Zip Code:</span> ${button.dataset.y_zipcode || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Type of Industries:</span> ${button.dataset.y_type_industries || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Own Fund:</span> ${button.dataset.y_own_fund || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Loan:</span> ${button.dataset.y_loan || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Invested Amount:</span> ${button.dataset.y_invested_amount || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Revenue - FY 1:</span> ${button.dataset.revenue1 || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Revenue - FY 2:</span> ${button.dataset.revenue2 || 'N/A'}</div>
+            <div class="info-item"><span class="info-label">Revenue - FY 3:</span> ${button.dataset.revenue3 || 'N/A'}</div>
             <div class="info-item"><span class="info-label">Product Photos:</span>
                 ${button.dataset.y_product_photos ? 
                     button.dataset.y_product_photos.replace(/[\[\]']/g, '').split(',').map(photo => 
                         `<img src="/storage/${photo.trim()}" alt="Product Photo" class="product-image">`
-                    ).join('') : '-'}
+                    ).join('') : 'N/A'}
             </div>
             <div class="info-item"><span class="info-label">Business Logo:</span>
-                ${button.dataset.y_business_logo ? `<img src="/storage/y_business_logos/${button.dataset.y_business_logo.trim()}" alt="Business Logo" class="product-image">` : '-'}
+                ${button.dataset.y_business_logo ? `<img src="/storage/y_business_logos/${button.dataset.y_business_logo.trim()}" alt="Business Logo" class="product-image">` : 'N/A'}
             </div>
             <div class="info-item"><span class="info-label">Business Summary:</span>
-                ${button.dataset.y_pitch_deck ? `<a href="/storage/y_pitch_decks/${button.dataset.y_pitch_deck.trim()}" download class="download-link">Download PDF</a>` : '-'}
+                ${button.dataset.y_pitch_deck ? `<a href="/storage/y_pitch_decks/${button.dataset.y_pitch_deck.trim()}" download class="download-link">Download PDF</a>` : 'N/A'}
             </div>
         </div>
     </div>
@@ -2129,9 +2129,9 @@
     <div class="resume-section">
         <h5 class="section-title mt-4">Investment Required</h5>
         <div class="info-grid">
-            <div class="info-item"><span class="info-label">Fund Asked:</span> ${button.dataset.registerbusiness === '1' ? (button.dataset.market_capital || '-') : (button.dataset.marketcapital || '-')}</div>
-            <div class="info-item"><span class="info-label">Equity Offered:</span> ${button.dataset.registerbusiness === '1' ? (button.dataset.your_stake || '-') : (button.dataset.yourstake || '-')}</div>
-            <div class="info-item"><span class="info-label">Company Valuation:</span> ${button.dataset.registerbusiness === '1' ? (button.dataset.stake_funding || '-') : (button.dataset.stakefunding || '-')}</div>
+            <div class="info-item"><span class="info-label">Fund Asked:</span> ${button.dataset.registerbusiness === '1' ? (button.dataset.market_capital || 'N/A') : (button.dataset.marketcapital || 'N/A')}</div>
+            <div class="info-item"><span class="info-label">Equity Offered:</span> ${button.dataset.registerbusiness === '1' ? (button.dataset.your_stake || 'N/A') : (button.dataset.yourstake || 'N/A')}</div>
+            <div class="info-item"><span class="info-label">Company Valuation:</span> ${button.dataset.registerbusiness === '1' ? (button.dataset.stake_funding || 'N/A') : (button.dataset.stakefunding || 'N/A')}</div>
         </div>
     </div>
 `;

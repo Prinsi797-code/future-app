@@ -643,33 +643,41 @@
                                                 <i class="bi bi-linkedin"></i> View
                                             </a>
                                         @else
-                                            <span class="text-muted">-</span>
+                                            <span class="text-muted">N/A</span>
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-secondary badge-custom">
-                                            {{ $investor->investor_type }}
-                                        </span>
+                                        @if ($investor->investor_type)
+                                            <span class="badge bg-secondary badge-custom">
+                                                {{ $investor->investor_type }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
                                     </td>
 
                                     <td>
-                                        <span>
-                                            {{ $investor->investment_range }}
-                                        </span>
+                                        @if ($investor->investment_range)
+                                            <span>
+                                                {{ $investor->investment_range }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span>
                                             @if ($investor->preferred_startup_stage)
                                                 @php
                                                     $stages = json_decode($investor->preferred_startup_stage, true);
-                                                    if (is_array($stages)) {
+                                                    if (is_array($stages) && !empty($stages)) {
                                                         echo implode(', ', $stages);
                                                     } else {
-                                                        echo $investor->preferred_startup_stage;
+                                                        echo 'No Stage Selected';
                                                     }
                                                 @endphp
                                             @else
-                                                No stages selected
+                                                No Stage Selected
                                             @endif
                                         </span>
                                     </td>
@@ -895,72 +903,72 @@
                 <div class="resume-section">
                     <h5 class="section-title">Personal Information</h5>
                     <div class="info-grid">
-                        <div class="info-item"><span class="info-label">Name: </span> ${button.dataset.name || '-'}</div>
-                        <div class="info-item"><span class="info-label">Age:</span> ${button.dataset.age || '-'}</div>
-                        <div class="info-item"><span class="info-label">Date of Birth:</span> ${button.dataset.dob || '-'}</div>
-                        <div class="info-item"><span class="info-label">Qualification:</span> ${button.dataset.qualification || '-'}</div>
-                        <div class="info-item"><span class="info-label">Country:</span> ${button.dataset.country || '-'}</div>
-                        <div class="info-item"><span class="info-label">City:</span> ${button.dataset.city || '-'}</div>
-                        <div class="info-item"><span class="info-label">State:</span> ${button.dataset.state || '-'}</div>
-                        <div class="info-item"><span class="info-label">Pin Code:</span> ${button.dataset.pincode || '-'}</div>
-                        <div class="info-item"><span class="info-label">Address:</span> ${button.dataset.address || '-'}</div>
+                        <div class="info-item"><span class="info-label">Name: </span> ${button.dataset.name || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Age:</span> ${button.dataset.age || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Date of Birth:</span> ${button.dataset.dob || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Qualification:</span> ${button.dataset.qualification || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Country:</span> ${button.dataset.country || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">City:</span> ${button.dataset.city || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">State:</span> ${button.dataset.state || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Pin Code:</span> ${button.dataset.pincode || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Address:</span> ${button.dataset.address || 'N/A'}</div>
                     </div>
                 </div>
                 <div class="resume-section">
                     <h5 class="section-title mt-4">Contact Information</h5>
                     <div class="info-grid">
-                        <div class="info-item"><span class="info-label">Phone:</span> ${button.dataset.countrycode || ''} ${button.dataset.phone || '-'}</div>
-                        <div class="info-item"><span class="info-label">Professional Phone:</span> ${button.dataset.countrycode || ''} ${button.dataset.professionalphone || '-'}</div>
-                        <div class="info-item"><span class="info-label">Email:</span> ${button.dataset.email || '-'}</div>
+                        <div class="info-item"><span class="info-label">Phone:</span> ${button.dataset.countrycode || ''} ${button.dataset.phone || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Professional Phone:</span> ${button.dataset.countrycode || ''} ${button.dataset.professionalphone || 'N/A'}</div>
+                        <div class="info-item"><span class="info-label">Email:</span> ${button.dataset.email || 'N/A'}</div>
                                              ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                          <div class="info-item"><span class="info-label">Professional Email:</span> ${button.dataset.professionalemail || '-'}</div>
-                                                                                                                                                                                        <div class="info-item"><span class="info-label">Website:</span> ${button.dataset.website ? `<a href="${button.dataset.website}" target="_blank" class="download-link">${button.dataset.website}</a>` : '-'}</div>
-                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                          <div class="info-item"><span class="info-label">Professional Email:</span> ${button.dataset.professionalemail || 'N/A'}</div>
+                                                                                                                                                                                                                                                        <div class="info-item"><span class="info-label">Website:</span> ${button.dataset.website ? `<a href="${button.dataset.website}" target="_blank" class="download-link">${button.dataset.website}</a>` : 'N/A'}</div>
+                                                                                                                                                                                                                                                        ` : ''}
                     </div>
                 </div>
                 <div class="resume-section">
                     <h5 class="section-title mt-4">Professional Details</h5>
                     <div class="info-grid">
                      ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Designation:</span> ${button.dataset.designation || '-'}</div>
-                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Organization:</span> ${button.dataset.organization || '-'}</div>
-                                                                                                                                                                                                                                                            ` : ''}
-                            <div class="info-item"><span class="info-label">Investment Experience:</span> ${button.dataset.investmentexperince || '-'}</div>
-                            <div class="info-item"><span class="info-label">Preferred Industries:</span> ${button.dataset.industries || '-'}</div>
-                            <div class="info-item"><span class="info-label">Preferred Geographies:</span> ${button.dataset.geographies || '-'}</div>
+                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Designation:</span> ${button.dataset.designation || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Organization:</span> ${button.dataset.organization || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                            ` : ''}
+                            <div class="info-item"><span class="info-label">Investment Experience:</span> ${button.dataset.investmentexperince || 'N/A'}</div>
+                            <div class="info-item"><span class="info-label">Preferred Industries:</span> ${button.dataset.industries || 'N/A'}</div>
+                            <div class="info-item"><span class="info-label">Preferred Geographies:</span> ${button.dataset.geographies || 'N/A'}</div>
                             <div class="info-item"><span class="info-label">Actively Investing:</span> ${button.dataset.investing == '1' ? 'Yes' : 'No'}</div>
                         </div>
                     </div>
                     ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                    <div class="resume-section">
-                                                                                                                                                                                                                                        <h5 class="section-title mt-4">Company Information</h5>
-                                                                                                                                                                                                                                        <div class="info-grid">
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Address:</span> ${button.dataset.companyaddress || '-'}</div>
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Country:</span> ${button.dataset.companycountry || '-'}</div>
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company State:</span> ${button.dataset.companystate || '-'}</div>
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company City:</span> ${button.dataset.companycity || '-'}</div>
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Zipcode:</span> ${button.dataset.companyzipcode || '-'}</div>
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Country Code:</span> ${button.dataset.companycountrycode || '-'}</div>
-                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Tax Registration Number:</span> ${button.dataset.companytax || '-'}</div>
-                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                    ` : ''}
+                                                                                                                                                                                                                                                                                                    <div class="resume-section">
+                                                                                                                                                                                                                                                                                                        <h5 class="section-title mt-4">Company Information</h5>
+                                                                                                                                                                                                                                                                                                        <div class="info-grid">
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Address:</span> ${button.dataset.companyaddress || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Country:</span> ${button.dataset.companycountry || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company State:</span> ${button.dataset.companystate || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company City:</span> ${button.dataset.companycity || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Zipcode:</span> ${button.dataset.companyzipcode || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Country Code:</span> ${button.dataset.companycountrycode || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Tax Registration Number:</span> ${button.dataset.companytax || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                    ` : ''}
                     <div class="resume-section">
                         <h5 class="section-title mt-4">Media</h5>
                         <div class="info-grid">
                          ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                        <div class="info-item"><span class="info-label">Business Logo:</span>
-                                                                                                                                                                                            ${button.dataset.business_logo ? `<img src="/storage/investor_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : '-'}
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                                        <div class="info-item"><span class="info-label">Business Logo:</span>
+                                                                                                                                                                                                                                                            ${button.dataset.business_logo ? `<img src="/storage/investor_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : 'N/A'}
+                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                        ` : ''}
                             <div class="info-item"><span class="info-label">Investor Photo:</span>
-                                ${button.dataset.photo ? `<img src="/storage/investor_photo/${button.dataset.photo.trim()}" alt="Investor Photo" class="product-image">` : '-'}
+                                ${button.dataset.photo ? `<img src="/storage/investor_photo/${button.dataset.photo.trim()}" alt="Investor Photo" class="product-image">` : 'N/A'}
                             </div>
                              ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                        <div class="info-item"><span class="info-label">Investor Profile:</span>
-                                                                                                                                                                                            ${button.dataset.investor_profile ? `<a href="/storage/investor_profile/${button.dataset.investor_profile.trim()}" download class="download-link">Download PDF</a>` : '-'}
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                                        <div class="info-item"><span class="info-label">Investor Profile:</span>
+                                                                                                                                                                                                                                                            ${button.dataset.investor_profile ? `<a href="/storage/investor_profile/${button.dataset.investor_profile.trim()}" download class="download-link">Download PDF</a>` : 'N/A'}
+                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                        ` : ''}
                         </div>
                     </div>
                 `;

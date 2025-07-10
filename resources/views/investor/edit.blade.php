@@ -246,6 +246,15 @@
         background-size: 16px 12px;
         padding-right: 2.5rem;
     }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+        padding-left: 15px !important;
+    }
+
+    .btn[type="submit"] {
+        display: inline-block !important;
+        visibility: visible !important;
+    }
 </style>
 
 @php
@@ -273,13 +282,11 @@
                                     <h5 class="mb-3 text-center">
                                         <i class="fas fa-building me-2"></i>Do You Have an Existing Company?
                                     </h5>
-
                                     <div class="d-flex gap-3 mt-2 justify-content-center">
                                         <div class="form-check form-check-inline">
                                             <input type="radio" class="form-check-input" name="existing_company"
                                                 value="0" id="existing_company_no"
                                                 {{ old('existing_company', $investor->existing_company ?? '0') == '0' ? 'checked' : '' }}>
-
                                             <label class="form-check-label" for="existing_company_no">No</label>
                                         </div>
                                         <div class="form-check form-check-inline">
@@ -299,7 +306,6 @@
                                         <i class="fas fa-user me-2"></i>Personal Information
                                     </h5>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="full_name" id="full_name"
@@ -309,7 +315,6 @@
                                         <div class="text-danger mt-1 d-none" id="full_name_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="email" class="form-control" name="email"
@@ -317,7 +322,6 @@
                                         <label for="email">Email Address *</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="input-group">
                                         <select name="country_code" class="form-select" style="max-width: 120px;" readonly
@@ -337,18 +341,13 @@
                                     <div class="text-danger mt-1 d-none" id="phone_number_error"></div>
                                     <div class="text-danger mt-1 d-none" id="country_code_error"></div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="country" id="country"
                                             value="{{ old('country', $investor->country) }}" readonly>
                                         <label for="country">Country *</label>
-                                        {{-- @error('country')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror --}}
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="state" id="state"
@@ -356,7 +355,6 @@
                                         <label for="state">State *</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="city" id="city"
@@ -365,7 +363,6 @@
                                         <div class="text-danger mt-1 d-none" id="city_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" pattern="[0-9]{6}" inputmode="numeric" maxlength="6"
@@ -376,7 +373,6 @@
                                         <div class="text-danger mt-1 d-none" id="pin_code_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="dob" id="dob"
@@ -385,7 +381,6 @@
                                         <div class="text-danger mt-1 d-none" id="dob_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
@@ -403,19 +398,14 @@
                                         <div class="text-danger mt-1 d-none" id="qualification_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="age" id="age"
                                             placeholder="Type your age..." readonly
                                             value="{{ old('age', $investor->age) }}">
                                         <label for="age">Age</label>
-                                        {{-- @error('age')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror --}}
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="current_address"
@@ -425,7 +415,6 @@
                                         <label for="current_address">Current Address</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <label for="photo" class="form-label">Upload Photo</label>
                                     <div class="file-upload-wrapper">
@@ -435,7 +424,12 @@
                                             <i class="fas fa-upload me-2"></i>Choose Image file...(jpg,png,jpeg)
                                         </label>
                                     </div>
-                                    <div id="photo_preview" class="image-preview-container mt-2"></div>
+                                    <div id="photo_preview" class="image-preview-container mt-2">
+                                        @if ($investor->photo)
+                                            <img src="{{ Storage::url($investor->photo) }}" class="img-thumbnail"
+                                                style="max-width: 150px; max-height: 150px; object-fit: cover; margin: 5px;">
+                                        @endif
+                                    </div>
                                     <div class="text-danger mt-1 d-none" id="photo_error"></div>
                                 </div>
                             </div>
@@ -447,7 +441,6 @@
                                         <i class="fas fa-briefcase me-2"></i>Investor Information
                                     </h5>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="url" class="form-control" name="linkedin_profile"
@@ -457,7 +450,6 @@
                                         <label for="linkedin_profile">LinkedIn Profile</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <select class="form-select" name="investor_type" id="investor_type">
@@ -469,15 +461,12 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <label for="industry">Select Investor Type *</label>
+                                        <label for="investor_type">Select Investor Type *</label>
                                         <div class="text-danger mt-1 d-none" id="investor_type_error"></div>
                                     </div>
                                 </div>
-
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
-
                                         <select class="form-select" name="investment_range" id="investment_range">
                                             <option value="">Select Investment Range</option>
                                             @foreach ($investmentRanges as $range)
@@ -487,12 +476,11 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <label for="industry">Investment Range *<span class="funding_currency_label"
-                                                id="funding_currency_label">()</span></label>
+                                        <label for="investment_range">Investment Range *<span
+                                                class="funding_currency_label">()</span></label>
                                         <div class="text-danger mt-1 d-none" id="investment_range_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
@@ -509,7 +497,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
@@ -526,11 +513,9 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
-                                        <label class="form-label" for="preferred_startup_stage">Preferred Investment
-                                            Stage
+                                        <label class="form-label" for="preferred_startup_stage">Preferred Investment Stage
                                             *</label>
                                         <select class="form-select" name="preferred_startup_stage[]"
                                             id="preferred_startup_stage" multiple>
@@ -545,18 +530,6 @@
                                         <div class="text-danger mt-1 d-none" id="preferred_startup_stage_error"></div>
                                     </div>
                                 </div>
-
-                                {{-- <div class="col-md-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="actively_investing"
-                                            id="actively_investing"
-                                            {{ old('actively_investing', $investor->actively_investing) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="actively_investing">
-                                            Actively Investing
-                                        </label>
-                                    </div>
-                                </div> --}}
-
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
@@ -584,16 +557,6 @@
                                         <i class="fas fa-building me-2"></i>Company Information
                                     </h5>
                                 </div>
-
-                                {{-- <div class="col-md-6 mb-3">
-                                    <div class="form-floating-custom">
-                                        <input type="tel" class="form-control" name="professional_phone"
-                                            id="professional_phone"
-                                            value="{{ old('professional_phone', $investor->professional_phone) }}"
-                                            placeholder="Enter professional phone number">
-                                        <label for="professional_phone">Professional Phone</label>
-                                    </div>
-                                </div> --}}
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <div class="input-group">
@@ -624,7 +587,6 @@
                                         <label for="professional_email">Professional Email</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="url" class="form-control" name="website" id="website"
@@ -633,7 +595,6 @@
                                         <label for="website">Website</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-group">
                                         <div class="form-floating-custom">
@@ -650,7 +611,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="organization_name"
@@ -660,7 +620,6 @@
                                         <label for="organization_name">Organization Name</label>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="company_address"
@@ -670,8 +629,7 @@
                                         <label for="company_address">Company Address</label>
                                     </div>
                                 </div>
-
-                                <div class="col-md-12 mb-3">
+                                {{-- <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <select name="company_country" class="form-select" id="company_country">
                                             <option value="">Select a country</option>
@@ -685,8 +643,22 @@
                                         <label for="company_country">Business Country *</label>
                                         <div class="text-danger mt-1 d-none" id="company_country_error"></div>
                                     </div>
+                                </div> --}}
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-floating-custom">
+                                        <select name="company_country" class="form-select" id="company_country">
+                                            <option value="">Select a country</option>
+                                            @foreach ($countries1 as $country)
+                                                <option value="{{ $country['iso2'] }}"
+                                                    {{ old('company_country', $investor->company_country ?? $autoDetectedCountry) == $country['iso2'] ? 'selected' : '' }}>
+                                                    {{ $country['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <label for="company_country">Business Country *</label>
+                                        <div class="text-danger mt-1 d-none" id="company_country_error"></div>
+                                    </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <select class="form-control" name="company_state" id="company_state">
@@ -696,7 +668,6 @@
                                         <div class="text-danger mt-1 d-none" id="company_state_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <select class="form-control" name="company_city" id="company_city">
@@ -706,7 +677,6 @@
                                         <div class="text-danger mt-1 d-none" id="company_city_error"></div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="company_zipcode"
@@ -714,12 +684,8 @@
                                             value="{{ old('company_zipcode', $investor->company_zipcode) }}"
                                             placeholder="Enter company zipcode">
                                         <label for="company_zipcode">Company Zipcode</label>
-                                        {{-- @error('company_zipcode')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror --}}
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="tax_registration_number"
@@ -727,33 +693,8 @@
                                             value="{{ old('tax_registration_number', $investor->tax_registration_number) }}"
                                             placeholder="Enter tax registration number">
                                         <label for="tax_registration_number">Tax Registration Number</label>
-                                        {{-- @error('tax_registration_number')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror --}}
                                     </div>
                                 </div>
-
-                                {{-- <div class="col-md-6 mb-3">
-                                    <div class="input-group">
-                                        <select name="company_country_code" class="form-select"
-                                            style="max-width: 120px;">
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country['code'] }}"
-                                                    {{ old('company_country_code', $investor->company_country_code) == $country['code'] ? 'selected' : '' }}>
-                                                    {{ $country['name'] }} ({{ $country['code'] }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <input type="tel" class="form-control" name="professional_phone"
-                                            placeholder="Enter professional phone number"
-                                            value="{{ old('professional_phone', $investor->professional_phone) }}"
-                                            style="padding: 15px;">
-                                    </div>
-                                    {{-- @error('company_country_code')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror --}}
-                                {{-- </div> --}}
-
                                 <div class="col-md-12 mb-3">
                                     <label for="business_logo" class="form-label">Upload Business Logo</label>
                                     <div class="file-upload-wrapper">
@@ -763,20 +704,14 @@
                                             <i class="fas fa-upload me-2"></i>Choose Image file...(jpg,png,jpeg)
                                         </label>
                                     </div>
-                                    <div id="business_logo_preview" class="image-preview-container mt-2"></div>
                                     <div id="business_logo_preview" class="image-preview-container mt-2">
                                         @if ($investor->business_logo)
-                                            <img src="{{ Storage::url('' . $investor->business_logo) }}"
-                                                class="img-thumbnail"
+                                            <img src="{{ Storage::url($investor->business_logo) }}" class="img-thumbnail"
                                                 style="max-width: 150px; max-height: 150px; object-fit: cover; margin: 5px;">
                                         @endif
                                     </div>
                                     <div class="text-danger mt-1 d-none" id="business_logo_error"></div>
-                                    {{-- @error('business_logo')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror --}}
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <label for="investor_profile" class="form-label">Upload Investor Profile</label>
                                     <div class="file-upload-wrapper">
@@ -792,7 +727,7 @@
                                                 <i class="fas fa-file-pdf text-danger me-2"></i>
                                                 <div>
                                                     <div class="fw-bold">
-                                                        <a href="{{ Storage::url('' . $investor->investor_profile) }}"
+                                                        <a href="{{ Storage::url($investor->investor_profile) }}"
                                                             target="_blank">
                                                             {{ basename($investor->investor_profile) }}
                                                         </a>
@@ -807,110 +742,109 @@
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
+                            </div>
 
-                                <!-- Investment Companies -->
-                                <div class="row mb-4 company-information"
-                                    style="display: {{ old('existing_company', $investor->existing_company ?? '0') == '1' ? 'block' : 'none' }};">
-                                    <div class="col-12">
-                                        <h5 class="mb-3">
-                                            <i class="fas fa-building me-2"></i>Investment Companies
-                                        </h5>
+                            <!-- Investment Companies -->
+                            <div class="row mb-4 company-information"
+                                style="display: {{ old('existing_company', $investor->existing_company ?? '0') == '1' ? 'block' : 'none' }};">
+                                <div class="col-12">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-building me-2"></i>Investment Companies
+                                    </h5>
+                                </div>
+                                @foreach ($investor->companies ?? [] as $index => $company)
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-floating-custom">
+                                            <input type="text" class="form-control"
+                                                name="company_name[{{ $index }}]"
+                                                value="{{ old('company_name.' . $index, $company->company_name) }}"
+                                                placeholder="Enter company name">
+                                            <label for="company_name[{{ $index }}]">Company Name</label>
+                                            @error('company_name.' . $index)
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    @foreach ($investor->companies ?? [] as $index => $company)
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-floating-custom">
-                                                <input type="text" class="form-control"
-                                                    name="company_name[{{ $index }}]"
-                                                    value="{{ old('company_name.' . $index, $company->company_name) }}"
-                                                    placeholder="Enter company name">
-                                                <label for="company_name[{{ $index }}]">Company Name</label>
-                                                @error('company_name.' . $index)
-                                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-floating-custom">
+                                            <input type="number" class="form-control"
+                                                name="market_capital[{{ $index }}]"
+                                                value="{{ old('market_capital.' . $index, $company->market_capital) }}"
+                                                placeholder="Enter market capital">
+                                            <label for="market_capital[{{ $index }}]">Market Capital <span
+                                                    class="funding_currency_label">()</span></label>
+                                            @error('market_capital.' . $index)
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-floating-custom">
-                                                <input type="number" class="form-control"
-                                                    name="market_capital[{{ $index }}]"
-                                                    value="{{ old('market_capital.' . $index, $company->market_capital) }}"
-                                                    placeholder="Enter market capital">
-                                                <label for="market_capital[{{ $index }}]">Market Capital <span
-                                                        class="funding_currency_label">()</span></label>
-                                                @error('market_capital.' . $index)
-                                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-floating-custom">
-                                                <input type="number" class="form-control"
-                                                    name="your_stake[{{ $index }}]"
-                                                    value="{{ old('your_stake.' . $index, $company->your_stake) }}"
-                                                    placeholder="Enter your stake (%)" min="0" max="100"
-                                                    step="0.01">
-                                                <label for="your_stake[{{ $index }}]">Your Stake (%)</label>
-                                                @error('your_stake.' . $index)
-                                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-floating-custom">
-                                                <input type="number" class="form-control"
-                                                    name="stake_funding[{{ $index }}]"
-                                                    value="{{ old('stake_funding.' . $index, $company->stake_funding) }}"
-                                                    placeholder="Enter stake funding">
-                                                <label for="stake_funding[{{ $index }}]">Stake Funding <span
-                                                        class="funding_currency_label">()</span></label>
-                                                @error('stake_funding.' . $index)
-                                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <!-- Terms and Conditions -->
-                                <div class="mb-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="agreed_to_terms"
-                                            id="agreed_to_terms" required>
-                                        <label class="form-check-label" for="agreed_to_terms">
-                                            I agree to the <a href="#" class="text-primary">Terms and Conditions</a>
-                                            and
-                                            <a href="#" class="text-primary">Privacy Policy</a> *
-                                        </label>
-                                        {{-- @error('agreed_to_terms')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror --}}
                                     </div>
-                                </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-floating-custom">
+                                            <input type="number" class="form-control"
+                                                name="your_stake[{{ $index }}]"
+                                                value="{{ old('your_stake.' . $index, $company->your_stake) }}"
+                                                placeholder="Enter your stake (%)" min="0" max="100"
+                                                step="0.01">
+                                            <label for="your_stake[{{ $index }}]">Your Stake (%)</label>
+                                            @error('your_stake.' . $index)
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
-                                <div class="d-flex flex-column flex-sm-row gap-3">
-                                    <a href="{{ route('choose.role', $user->id) }}"
-                                        class="btn btn-outline-secondary flex-fill">
-                                        <i class="fas fa-arrow-left me-2"></i>Back
-                                    </a>
-                                    <button type="submit" class="btn btn flex-fill"
-                                        style="background-color: #2EA9B9; color: white;">
-                                        <i class="fas fa-check me-2"></i>Update Profile
-                                    </button>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-floating-custom">
+                                            <input type="number" class="form-control"
+                                                name="stake_funding[{{ $index }}]"
+                                                value="{{ old('stake_funding.' . $index, $company->stake_funding) }}"
+                                                placeholder="Enter stake funding">
+                                            <label for="stake_funding[{{ $index }}]."Stake Funding><span
+                                                    class="funding_currency_label">funding_currency_label">()</span></label>
+                                            @error('stake_funding.' . $index)
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    @endif
                                 </div>
-                        </form>
-                    @else
-                        <div class="text-center mt-4">
-                            <p class="text-muted">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Profile is approved and cannot be edited.
-                            </p>
-                        </div>
-                    @endif
+                    </div>
+                    @endforeach
                 </div>
+
+                <!-- Terms and Conditions -->
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="agreed_to_terms" id="agreed_to_terms"
+                            required>
+                        <label class="form-check-label" for="agreed_to_terms" for="agreed_to_terms">
+                            I agree to the <a href="#" class="text-primary">"Terms and Conditions</a>
+                            and
+                            <a href="#" class="text-primary">Privacy Policy</a> *
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <a href="#" class="btn btn-outline-secondary flex-fill">
+                        <i class="fas fa-arrow-left me-2"></i> Back
+                    </a>
+                    <button type="submit" class="btn btn-primary flex-fill"
+                        style="background-color: #2E50A9B9; color: white;">
+                        <i class="fas fa-check me-2"></i> Update Profile
+                    </button>
+                </div>
+                </form>
+            @else
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Profile is approved and cannot be edited.
+                    </p>
+                </div>
+                @endif
             </div>
         </div>
-    </div>
-@endsection
+        </div>
+        </div>
+    @endsection
 @section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -942,7 +876,6 @@
             function toggleCompanyInformation() {
                 const existingCompanyValue = $('input[name="existing_company"]:checked').val();
                 const companyInfoSections = $('.company-information');
-
                 if (existingCompanyValue === '1') {
                     companyInfoSections.slideDown(300);
                 } else {
@@ -968,7 +901,10 @@
 
             // Event listener for existing company radio buttons
             $('input[name="existing_company"]').on('change', function() {
+                console.log('Existing Company Value:', $(this).val());
                 toggleCompanyInformation();
+                console.log('Update Profile Button Visibility:', $('.btn:contains("Update Profile")').is(
+                    ':visible'));
             });
 
             // Initialize the toggle on page load
@@ -1054,7 +990,7 @@
             }
 
             // Setup file previews for new uploads
-            setupFilePreview('business_logo', 'business_logo_preview', 'image');
+            // setupFilePreview('business_logo', 'business_logo_preview', 'image');
             setupFilePreview('product_photos', 'product_photos_preview', 'image');
             setupFilePreview('investor_profile', 'investor_profile_preview', 'pdf');
             setupFilePreview('pitch_deck', 'pitch_deck_preview', 'pdf');
@@ -1291,13 +1227,25 @@
                 }
             });
 
-            // Country, State, City logic (unchanged)
+            // Country, State, City logic
             const bizCountrySelect = document.getElementById('company_country');
             const bizStateSelect = document.getElementById('company_state');
             const bizCitySelect = document.getElementById('company_city');
-            const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
+            //const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
+            //const countryInput = document.getElementById('country');
             const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
             const BASE_URL = 'https://api.countrystatecity.in/v1';
+
+            // Get database values for pre-selection
+            const dbCountry = "{{ old('company_country', $investor->company_country ?? '') }}";
+            const dbState = "{{ old('company_state', $investor->company_state ?? '') }}";
+            const dbCity = "{{ old('company_city', $investor->company_city ?? '') }}";
+
+            console.log('Database Values:', {
+                dbCountry,
+                dbState,
+                dbCity
+            });
 
             async function fetchCountries() {
                 try {
@@ -1308,6 +1256,8 @@
                     });
                     if (!response.ok) throw new Error('Failed to fetch countries');
                     const countries = await response.json();
+                    console.log('Countries API response:', countries);
+
                     bizCountrySelect.innerHTML = '<option value="">Select a country</option>';
                     countries.forEach(country => {
                         const option = document.createElement('option');
@@ -1315,6 +1265,20 @@
                         option.textContent = country.name;
                         bizCountrySelect.appendChild(option);
                     });
+
+                    // Pre-select country from database
+                    if (dbCountry) {
+                        console.log('Pre-selecting country:', dbCountry);
+                        bizCountrySelect.value = dbCountry;
+                        if (bizCountrySelect.value === dbCountry) {
+                            console.log('Country pre-selected successfully:', dbCountry);
+                            await populateStates(dbCountry);
+                        } else {
+                            console.warn('Country not found in dropdown:', dbCountry);
+                        }
+                    } else {
+                        console.warn('No country value to pre-select (dbCountry is empty)');
+                    }
                 } catch (error) {
                     console.error('Error fetching countries:', error);
                     bizCountrySelect.innerHTML = '<option value="">Error loading countries</option>';
@@ -1322,12 +1286,11 @@
             }
 
             async function populateStates(countryIso2) {
-                console.log('Populating states for country:', countryIso2);
                 bizStateSelect.innerHTML = '<option value="">Select State</option>';
                 bizCitySelect.innerHTML = '<option value="">Select City</option>';
 
                 if (!countryIso2) {
-                    console.warn('No country selected');
+                    console.warn('No country selected for state population');
                     return;
                 }
 
@@ -1339,7 +1302,8 @@
                     });
                     if (!response.ok) throw new Error('Failed to fetch states');
                     const states = await response.json();
-                    console.log('States found:', states);
+                    console.log(`States for country ${countryIso2}:`, states);
+
                     states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
                         sensitivity: 'base'
                     }));
@@ -1349,6 +1313,20 @@
                         option.textContent = state.name;
                         bizStateSelect.appendChild(option);
                     });
+
+                    // Pre-select state from database
+                    if (dbState) {
+                        console.log('Pre-selecting state:', dbState);
+                        bizStateSelect.value = dbState;
+                        if (bizStateSelect.value === dbState) {
+                            console.log('State pre-selected successfully:', dbState);
+                            await populateCities(countryIso2, dbState);
+                        } else {
+                            console.warn('State not found in dropdown:', dbState);
+                        }
+                    } else {
+                        console.warn('No state value to pre-select (dbState is empty)');
+                    }
                 } catch (error) {
                     console.error('Error fetching states:', error);
                     bizStateSelect.innerHTML = '<option value="">No states available</option>';
@@ -1356,11 +1334,10 @@
             }
 
             async function populateCities(countryIso2, stateIso2) {
-                console.log('Populating cities for state:', stateIso2);
                 bizCitySelect.innerHTML = '<option value="">Select City</option>';
 
                 if (!countryIso2 || !stateIso2) {
-                    console.warn('No country or state selected');
+                    console.warn('No country or state selected for city population');
                     return;
                 }
 
@@ -1373,29 +1350,64 @@
                         });
                     if (!response.ok) throw new Error('Failed to fetch cities');
                     const cities = await response.json();
-                    console.log('Cities found:', cities);
+                    console.log(`Cities for state ${stateIso2}:`, cities);
+
                     cities.forEach(city => {
                         const option = document.createElement('option');
                         option.value = city.name;
                         option.textContent = city.name;
                         bizCitySelect.appendChild(option);
                     });
+
+                    // Pre-select city from database
+                    if (dbCity) {
+                        console.log('Pre-selecting city:', dbCity);
+                        bizCitySelect.value = dbCity;
+                        if (bizCitySelect.value === dbCity) {
+                            console.log('City pre-selected successfully:', dbCity);
+                        } else {
+                            console.warn('City not found in dropdown:', dbCity);
+                        }
+                    } else {
+                        console.warn('No city value to pre-select (dbCity is empty)');
+                    }
                 } catch (error) {
                     console.error('Error fetching cities:', error);
                     bizCitySelect.innerHTML = '<option value="">No cities available</option>';
                 }
             }
 
-            function updateFundingCurrencyLabel() {
-                const selectedCountry = (bizCountrySelect?.value || '').trim().toLowerCase();
-                let label = '';
+            //function updateFundingCurrencyLabel() {
+            //const selectedCountry = (bizCountrySelect?.value || '').trim().toLowerCase();
+            // let label = '';
 
-                if (selectedCountry === 'in') {
-                    label = '(₹)';
-                } else if (selectedCountry !== '') {
-                    label = '($)';
+            //  if (selectedCountry === 'in') {
+            //      label = '(₹)';
+            //   } else if (selectedCountry !== '') {
+            //       label = '($)';
+            //   }
+
+            // fundingCurrencyLabels.forEach(el => {
+            //     el.textContent = label;
+            //  });
+            //  }
+
+            const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
+            const countryInput = document.getElementById('country');
+
+            function updateFundingCurrencyLabel() {
+                const selectedCountry = (countryInput?.value || '').trim().toLowerCase();
+                console.log('Selected country:', selectedCountry);
+                console.log('Funding currency labels found:', fundingCurrencyLabels.length);
+
+                let label = '(USD)'; // Default to USD
+
+                // Check for India by country code or name
+                if (selectedCountry === 'in' || selectedCountry === 'india') {
+                    label = '(INR)';
                 }
 
+                console.log('Label to set:', label);
                 fundingCurrencyLabels.forEach(el => {
                     el.textContent = label;
                 });
@@ -1410,7 +1422,7 @@
                 bizCitySelect.value = '';
                 updateFundingCurrencyLabel();
 
-                const countryError = document.getElementById('business_country_error');
+                const countryError = document.getElementById('company_country_error');
                 if (countryCode && countryCode !== '') {
                     if (countryError) {
                         countryError.classList.add('d-none');
@@ -1420,20 +1432,16 @@
 
             bizStateSelect?.addEventListener('change', () => {
                 const countryCode = bizCountrySelect.value.trim();
-                const stateName = bizStateSelect.value;
-                populateCities(countryCode, stateName);
+                const stateCode = bizStateSelect.value.trim();
+                console.log('State changed to:', stateCode);
+                populateCities(countryCode, stateCode);
                 bizCitySelect.value = '';
             });
 
-            // On page load, populate countries and states if country is preselected
+            // Initialize on page load
             if (bizCountrySelect) {
                 fetchCountries();
-                if (bizCountrySelect.value && bizCountrySelect.value !== '') {
-                    const countryCode = bizCountrySelect.value.trim();
-                    console.log('Preselected country:', countryCode);
-                    populateStates(countryCode);
-                    updateFundingCurrencyLabel();
-                }
+                updateFundingCurrencyLabel();
             }
         });
     </script>

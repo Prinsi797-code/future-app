@@ -384,7 +384,7 @@
                                 <div class="form-floating-custom">
                                     <select name="business_country" class="form-select" id="business_country">
                                         <option value="">Select a country</option>
-                                        {{-- Options will be dynamically populated by JavaScript --}}
+                                        <!-- Options will be dynamically populated by JavaScript -->
                                     </select>
                                     <label for="business_country">Business Country *</label>
                                     <div class="text-danger mt-1 d-none" id="business_country_error"></div>
@@ -394,9 +394,9 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
                                     <select class="form-control" name="business_state" id="business_state"
-                                        data-selected="{{ old('business_state', $enterprent->business_state ?? '') }}">
+                                        data-selected="{{ old('business_state', $entrepreneur->business_state ?? '') }}">
                                         <option value="">Select State</option>
-                                        {{-- Options will be dynamically populated by JavaScript --}}
+                                        <!-- Options will be dynamically populated by JavaScript -->
                                     </select>
                                     <label for="business_state">Business State *</label>
                                     <div class="text-danger mt-1 d-none" id="business_state_error"></div>
@@ -406,9 +406,9 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
                                     <select class="form-control" name="business_city" id="business_city"
-                                        data-selected="{{ old('business_city', $enterprent->business_city ?? '') }}">
+                                        data-selected="{{ old('business_city', $entrepreneur->business_city ?? '') }}">
                                         <option value="">Select City</option>
-                                        {{-- Options will be dynamically populated by JavaScript --}}
+                                        <!-- Options will be dynamically populated by JavaScript -->
                                     </select>
                                     <label for="business_city">Business City *</label>
                                     <div class="text-danger mt-1 d-none" id="business_city_error"></div>
@@ -616,18 +616,51 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
                                     <input type="text" class="form-control" name="y_business_country"
                                         id="y_business_country" readonly
                                         value="{{ old('y_business_country', $entrepreneur->y_business_country) }}">
                                     <label for="y_business_country">Business Country *</label>
                                     <div class="text-danger mt-1 d-none" id="y_business_country_error"></div>
+                                </div>
+                            </div> --}}
 
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating-custom">
+                                    <select name="y_business_country" class="form-select" id="y_business_country">
+                                        <option value="">Select a country</option>
+                                        <!-- Options will be dynamically populated by JavaScript -->
+                                    </select>
+                                    <label for="y_business_country">Y Business Country *</label>
+                                    <div class="text-danger mt-1 d-none" id="y_business_country_error"></div>
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
+                                <div class="form-floating-custom">
+                                    <select class="form-control" name="y_business_state" id="y_business_state"
+                                        data-selected="{{ old('y_business_state', $entrepreneur->y_business_state ?? '') }}">
+                                        <option value="">Select State</option>
+                                        <!-- Options will be dynamically populated by JavaScript -->
+                                    </select>
+                                    <label for="y_business_state">Y Business State *</label>
+                                    <div class="text-danger mt-1 d-none" id="y_business_state_error"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating-custom">
+                                    <select class="form-control" name="y_business_city" id="y_business_city"
+                                        data-selected="{{ old('y_business_city', $entrepreneur->y_business_city ?? '') }}">
+                                        <option value="">Select City</option>
+                                        <!-- Options will be dynamically populated by JavaScript -->
+                                    </select>
+                                    <label for="y_business_city">Y Business City *</label>
+                                    <div class="text-danger mt-1 d-none" id="y_business_city_error"></div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
                                     <input type="text" class="form-control" name="y_business_state"
                                         id="y_business_state" readonly
@@ -647,7 +680,7 @@
                                     <div class="text-danger mt-1 d-none" id="y_business_city_error"></div>
 
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating-custom">
@@ -868,11 +901,11 @@
                                             Idea</span>
                                         <span class="funding_currency_label">()</span>
                                     </label>
-                                    <input type="number" class="form-control investment" name="market_capital"
-                                        id="market_capital" min="1" step="0.01"
-                                        value="{{ old('market_capital', $entrepreneur->y_market_capital) }}"
+                                    <input type="number" class="form-control investment" name="y_market_capital"
+                                        id="y_market_capital" min="1" step="0.01"
+                                        value="{{ old('y_market_capital', $entrepreneur->y_market_capital) }}"
                                         placeholder="Type your fund required for business idea...">
-                                    <div class="text-danger mt-1 d-none" id="market_capital_error"></div>
+                                    <div class="text-danger mt-1 d-none" id="y_market_capital_error"></div>
                                 </div>
                             </div>
 
@@ -880,24 +913,35 @@
                             <div class="col-md-4 mb-3">
                                 <div class="form-floating-custom">
                                     <label class="form-label">Equity Offered (Percentage)</label>
-                                    <input type="number" class="form-control equity" name="your_stake" id="your_stake"
-                                        placeholder="Type your equity offered (percentage)..." min="1"
-                                        max="100" step="0.01"
-                                        value="{{ old('your_stake', $entrepreneur->y_your_stake) }}">
-                                    <div class="text-danger mt-1 d-none" id="your_stake_error"></div>
+                                    <input type="number" class="form-control equity" name="y_your_stake"
+                                        id="y_your_stake" placeholder="Type your equity offered (percentage)..."
+                                        min="1" max="100" step="0.01"
+                                        value="{{ old('y_your_stake', $entrepreneur->y_your_stake) }}">
+                                    <div class="text-danger mt-1 d-none" id="y_your_stake_error"></div>
                                 </div>
                             </div>
 
 
-                            <div class="col-md-4 mb-3">
+                            {{-- <div class="col-md-4 mb-3">
                                 <div class="form-floating-custom">
                                     <label class="form-label">Company Valuation<span
                                             class="funding_currency_label">()</span></label>
-                                    <input type="number" class="form-control valuation" id="stake_funding"
-                                        name="stake_funding"
-                                        value="{{ old('stake_funding', $entrepreneur->y_stake_funding) }}"
+                                    <input type="number" class="form-control valuation" id="y_stake_funding"
+                                        name="y_stake_funding"
+                                        value="{{ old('y_stake_funding', $entrepreneur->y_stake_funding) }}"
                                         placeholder="Type your company valuation..." readonly>
-                                    <div class="text-danger mt-1 d-none" id="stake_funding_error"></div>
+                                    <div class="text-danger mt-1 d-none" id="y_stake_funding_error"></div>
+                                </div>
+                            </div> --}}
+                            <div class="col-md-4 mb-3">
+                                <div class="form-floating-custom">
+                                    <input type="number" class="form-control valuation" id="y_stake_funding"
+                                        name="y_stake_funding" readonly
+                                        value="{{ old('stake_funding', $entrepreneur->y_stake_funding) }}">
+                                    <label for="y_stake_funding">Company Valuation <span
+                                            class="funding_currency_label">()</span></label>
+                                    <div class="text-danger mt-1 d-none" id="y_stake_funding_error"></div>
+
                                 </div>
                             </div>
 
@@ -1329,18 +1373,18 @@
 
             // Existing script for funding_currency_label
             const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
-            const countryInput = document.getElementById('business_country');
+            const countryInput = document.getElementById('country');
 
             function updateFundingCurrencyLabel() {
                 const selectedCountry = (countryInput?.value || '').trim().toLowerCase();
                 console.log('Selected country:', selectedCountry);
-                console.log('Funding currency labels found:', fundingCurrencyLabels);
-                let label = '';
+                console.log('Funding currency labels found:', fundingCurrencyLabels.length);
 
-                if (selectedCountry === 'in') {
+                let label = '(USD)'; // Default to USD
+
+                // Check for India by country code or name
+                if (selectedCountry === 'in' || selectedCountry === 'india') {
                     label = '(INR)';
-                } else if (selectedCountry !== '') {
-                    label = '(USD)';
                 }
 
                 console.log('Label to set:', label);
@@ -1348,6 +1392,13 @@
                     el.textContent = label;
                 });
             }
+
+            // Initial call to set the label
+            console.log("Initializing funding currency label");
+            updateFundingCurrencyLabel();
+
+            // Add event listener for input changes
+            countryInput?.addEventListener('input', updateFundingCurrencyLabel);
 
             console.log("frefefe");
             updateFundingCurrencyLabel();
@@ -1482,6 +1533,28 @@
                 };
             }
 
+            const investmentFieldY = document.querySelector('input[name="y_market_capital"]');
+            const equityFieldY = document.querySelector('input[name="y_your_stake"]');
+            const valuationFieldY = document.querySelector('input[name="y_stake_funding"]');
+
+            function calculateValuationY() {
+                const investmentY = parseFloat(investmentFieldY.value) || 0;
+                const equityY = parseFloat(equityFieldY.value) || 0;
+
+                if (!isNaN(investmentY) && !isNaN(equityY) && equityY > 0) {
+                    const valuationY = (investmentY / equityY) * 100;
+                    valuationFieldY.value = valuationY.toFixed(2);
+                } else {
+                    valuationFieldY.value = '';
+                }
+            }
+
+            if (investmentFieldY && equityFieldY) {
+                investmentFieldY.addEventListener('input', calculateValuationY);
+                equityFieldY.addEventListener('input', calculateValuationY);
+            }
+
+
             // Valuation calculation
             const investmentField = document.querySelector('input[name="market_capital"]');
             const equityField = document.querySelector('input[name="your_stake"]');
@@ -1508,9 +1581,29 @@
             const bizCountrySelect = document.getElementById('business_country');
             const bizStateSelect = document.getElementById('business_state');
             const bizCitySelect = document.getElementById('business_city');
-            const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
+            const yCountrySelect = document.getElementById('y_business_country');
+            const yStateSelect = document.getElementById('y_business_state');
+            const yCitySelect = document.getElementById('y_business_city');
+            // const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
             const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
             const BASE_URL = 'https://api.countrystatecity.in/v1';
+
+            // Get database values for pre-selection
+            const dbCountry = "{{ old('business_country', $entrepreneur->business_country ?? '') }}";
+            const dbState = "{{ old('business_state', $entrepreneur->business_state ?? '') }}";
+            const dbCity = "{{ old('business_city', $entrepreneur->business_city ?? '') }}";
+            const yDbCountry = "{{ old('y_business_country', $entrepreneur->y_business_country ?? '') }}";
+            const yDbState = "{{ old('y_business_state', $entrepreneur->y_business_state ?? '') }}";
+            const yDbCity = "{{ old('y_business_city', $entrepreneur->y_business_city ?? '') }}";
+
+            console.log('Database Values:', {
+                business_country: dbCountry,
+                business_state: dbState,
+                business_city: dbCity,
+                y_business_country: yDbCountry,
+                y_business_state: yDbState,
+                y_business_city: yDbCity
+            });
 
             // Store mapping for later use
             let countryMapping = {};
@@ -1525,6 +1618,7 @@
                     });
                     if (!response.ok) throw new Error('Failed to fetch countries');
                     const countries = await response.json();
+                    console.log('Countries API response:', countries);
 
                     selectElement.innerHTML = '<option value="">Select a country</option>';
                     countries.forEach(country => {
@@ -1540,11 +1634,15 @@
                 }
             }
 
-            async function populateStates(countryIso2, stateSelect, citySelect, preselectedState = null) {
+            async function populateStates(countryIso2, stateSelect, citySelect, preselectedState = null,
+                preselectedCity = null) {
                 stateSelect.innerHTML = '<option value="">Select State</option>';
                 citySelect.innerHTML = '<option value="">Select City</option>';
 
-                if (!countryIso2) return;
+                if (!countryIso2) {
+                    console.warn('No country selected for state population');
+                    return;
+                }
 
                 try {
                     const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states`, {
@@ -1554,11 +1652,11 @@
                     });
                     if (!response.ok) throw new Error('Failed to fetch states');
                     const states = await response.json();
+                    console.log(`States for country ${countryIso2}:`, states);
 
                     states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
                         sensitivity: 'base'
                     }));
-
                     states.forEach(state => {
                         const option = document.createElement('option');
                         option.value = state.iso2;
@@ -1568,11 +1666,16 @@
                     });
 
                     if (preselectedState) {
+                        console.log('Pre-selecting state:', preselectedState);
                         stateSelect.value = preselectedState;
                         if (stateSelect.value === preselectedState) {
-                            populateCities(countryIso2, preselectedState, citySelect, bizCitySelect.dataset
-                                .selected || '');
+                            console.log('State pre-selected successfully:', preselectedState);
+                            await populateCities(countryIso2, preselectedState, citySelect, preselectedCity);
+                        } else {
+                            console.warn('State not found in dropdown:', preselectedState);
                         }
+                    } else {
+                        console.warn('No state value to pre-select');
                     }
                 } catch (error) {
                     console.error('Error fetching states:', error);
@@ -1583,7 +1686,10 @@
             async function populateCities(countryIso2, stateIso2, citySelect, preselectedCity = null) {
                 citySelect.innerHTML = '<option value="">Select City</option>';
 
-                if (!countryIso2 || !stateIso2) return;
+                if (!countryIso2 || !stateIso2) {
+                    console.warn('No country or state selected for city population');
+                    return;
+                }
 
                 try {
                     const response = await fetch(
@@ -1594,6 +1700,7 @@
                         });
                     if (!response.ok) throw new Error('Failed to fetch cities');
                     const cities = await response.json();
+                    console.log(`Cities for state ${stateIso2}:`, cities);
 
                     cities.forEach(city => {
                         const option = document.createElement('option');
@@ -1603,7 +1710,15 @@
                     });
 
                     if (preselectedCity) {
+                        console.log('Pre-selecting city:', preselectedCity);
                         citySelect.value = preselectedCity;
+                        if (citySelect.value === preselectedCity) {
+                            console.log('City pre-selected successfully:', preselectedCity);
+                        } else {
+                            console.warn('City not found in dropdown:', preselectedCity);
+                        }
+                    } else {
+                        console.warn('No city value to pre-select');
                     }
                 } catch (error) {
                     console.error('Error fetching cities:', error);
@@ -1613,15 +1728,18 @@
 
             function updateFundingCurrencyLabel(countrySelect, labels) {
                 const selectedCountry = (countrySelect?.value || '').trim().toLowerCase();
-                let label = selectedCountry === 'in' ? '(₹)' : selectedCountry ? '($)' : '';
+                console.log('Updating currency label for country:', selectedCountry);
+                let label = selectedCountry === 'in' ? '(₹)' : selectedCountry === 'az' ? '(AZN)' : '($)';
                 labels.forEach(el => (el.textContent = label));
+                console.log('Currency label updated:', label);
             }
 
-            // Event Listeners
+            // Event Listeners for Business Country/State/City
             bizCountrySelect?.addEventListener('change', () => {
                 const countryIso2 = bizCountrySelect.value.trim();
+                console.log('Business country changed to:', countryIso2);
                 populateStates(countryIso2, bizStateSelect, bizCitySelect);
-                updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
+                // updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
                 const countryError = document.getElementById('business_country_error');
                 if (countryIso2 && countryError) countryError.classList.add('d-none');
             });
@@ -1629,25 +1747,63 @@
             bizStateSelect?.addEventListener('change', () => {
                 const countryIso2 = bizCountrySelect.value.trim();
                 const stateIso2 = bizStateSelect.value;
+                console.log('Business state changed to:', stateIso2);
                 populateCities(countryIso2, stateIso2, bizCitySelect);
+            });
+
+            // Event Listeners for Y Business Country/State/City
+            yCountrySelect?.addEventListener('change', () => {
+                const countryIso2 = yCountrySelect.value.trim();
+                console.log('Y Business country changed to:', countryIso2);
+                populateStates(countryIso2, yStateSelect, yCitySelect);
+                // updateFundingCurrencyLabel(yCountrySelect, fundingCurrencyLabels);
+                const countryError = document.getElementById('y_business_country_error');
+                if (countryIso2 && countryError) countryError.classList.add('d-none');
+            });
+
+            yStateSelect?.addEventListener('change', () => {
+                const countryIso2 = yCountrySelect.value.trim();
+                const stateIso2 = yStateSelect.value;
+                console.log('Y Business state changed to:', stateIso2);
+                populateCities(countryIso2, stateIso2, yCitySelect);
             });
 
             // Initialize form
             async function initializeForm() {
-                if (!bizCountrySelect) return;
+                // Initialize Business Country dropdown
+                if (bizCountrySelect) {
+                    await fetchCountries(bizCountrySelect);
+                    if (dbCountry) {
+                        console.log('Pre-selecting business country:', dbCountry);
+                        bizCountrySelect.value = dbCountry;
+                        if (bizCountrySelect.value === dbCountry) {
+                            console.log('Business country pre-selected successfully:', dbCountry);
+                            await populateStates(dbCountry, bizStateSelect, bizCitySelect, dbState, dbCity);
+                        } else {
+                            console.warn('Business country not found in dropdown:', dbCountry);
+                        }
+                    } else {
+                        console.warn('No business country value to pre-select');
+                    }
+                    // updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
+                }
 
-                await fetchCountries(bizCountrySelect);
-
-                // Get preselected values from Blade
-                const preselectedCountry =
-                    "{{ old('business_country', $enterprent->business_country ?? '') }}";
-                const preselectedState = "{{ old('business_state', $enterprent->business_state ?? '') }}";
-                const preselectedCity = "{{ old('business_city', $enterprent->business_city ?? '') }}";
-
-                if (preselectedCountry) {
-                    bizCountrySelect.value = preselectedCountry;
-                    updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
-                    await populateStates(preselectedCountry, bizStateSelect, bizCitySelect, preselectedState);
+                // Initialize Y Business Country dropdown
+                if (yCountrySelect) {
+                    await fetchCountries(yCountrySelect);
+                    if (yDbCountry) {
+                        console.log('Pre-selecting Y business country:', yDbCountry);
+                        yCountrySelect.value = yDbCountry;
+                        if (yCountrySelect.value === yDbCountry) {
+                            console.log('Y Business country pre-selected successfully:', yDbCountry);
+                            await populateStates(yDbCountry, yStateSelect, yCitySelect, yDbState, yDbCity);
+                        } else {
+                            console.warn('Y Business country not found in dropdown:', yDbCountry);
+                        }
+                    } else {
+                        console.warn('No Y business country value to pre-select');
+                    }
+                    // updateFundingCurrencyLabel(yCountrySelect, fundingCurrencyLabels);
                 }
             }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Investor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,11 +18,12 @@ class DashboardController extends Controller
     public function index()
     {
         $userRole = session('selected_role') ?? Auth::user()->role; // Fallback to Auth::user()->role if session is not set
+        $investor = Investor::where('user_id', auth()->id())->first();
 
         if ($userRole === 'admin') {
             // For admins: Count approved and unapproved investors and entrepreneurs
-            $investorCountApproved = \App\Models\Investor::where('approved', 1)->count();
-            $investorCountUnapproved = \App\Models\Investor::where('approved', 0)->count();
+            $investorCountApproved = Investor::where('approved', 1)->count();
+            $investorCountUnapproved = Investor::where('approved', 0)->count();
             $entrepreneurCountApproved = \App\Models\Entrepreneur::where('approved', 1)->count();
             $entrepreneurCountUnapproved = \App\Models\Entrepreneur::where('approved', 0)->count();
         } else {
@@ -37,7 +39,8 @@ class DashboardController extends Controller
             'investorCountUnapproved',
             'entrepreneurCountApproved',
             'entrepreneurCountUnapproved',
-            'userRole'
+            'userRole',
+            'investor'
         ));
     }
 }

@@ -411,6 +411,101 @@
         .form-floating-custom select.form-control {
             cursor: pointer;
         }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .custom-toast {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            margin-bottom: 10px;
+            overflow: hidden;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .custom-toast.success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .custom-toast.error {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+
+        .custom-toast.info {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .custom-toast .toast-header {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-weight: 600;
+        }
+
+        .custom-toast .toast-body {
+            padding: 15px 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .custom-toast .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        .custom-toast .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Progress bar for auto-hide */
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            transition: width linear;
+        }
+
+        .toast-progress.success {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .toast-progress.error {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .toast-progress.info {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .toast-hide {
+            animation: slideOutRight 0.3s ease-in forwards;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .toast-container {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+
+            .custom-toast {
+                margin-bottom: 8px;
+            }
+        }
     </style>
 </head>
 
@@ -453,7 +548,7 @@
             <a href="{{ route('change.password') }}" class="{{ request()->is('change-password') ? 'active' : '' }}">
                 Change Password
             </a>
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" class="mt-5">
                 @csrf
                 <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
             </form>
@@ -480,7 +575,7 @@
             <a href="{{ route('change.password') }}" class="{{ request()->is('change-password') ? 'active' : '' }}">
                 Change Password
             </a>
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" class="mt-5">
                 @csrf
                 <button class="btn btn-outline-danger btn-sm" style="width: -webkit-fill-available;">Logout</button>
             </form>
@@ -516,6 +611,39 @@
             </div>
         </nav>
 
+        <div class="toast-container" id="toastContainer">
+            <!-- Success Toast -->
+            @if (session('success'))
+                <div class="toast custom-toast success show" role="alert" data-auto-hide="5000">
+                    <div class="toast-header">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <div class="toast-progress success"></div>
+                </div>
+            @endif
+
+            <!-- Error Toast -->
+            @if (session('error'))
+                <div class="toast custom-toast error show" role="alert" data-auto-hide="6000">
+                    <div class="toast-header">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong class="me-auto">Error</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <div class="toast-progress error"></div>
+                </div>
+            @endif
+        </div>
+
+
         {{-- Content Area --}}
         <div class="content-area">
             @yield('content')
@@ -539,6 +667,56 @@
                 sidebar.classList.remove('show');
             }
         });
+
+        function hideToast(toast) {
+            toast.classList.add('toast-hide');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+
+        // Function to show custom toast (for JavaScript usage)
+        function showToast(message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toastContainer');
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                info: 'fas fa-info-circle',
+                warning: 'fas fa-exclamation-triangle'
+            };
+
+            const toastHtml = `
+                <div class="toast custom-toast ${type} show" role="alert" data-auto-hide="${duration}">
+                    <div class="toast-header">
+                        <i class="${icons[type] || icons.info} me-2"></i>
+                        <strong class="me-auto">${type.charAt(0).toUpperCase() + type.slice(1)}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <div class="toast-progress ${type}"></div>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+            // Initialize the new toast
+            const newToast = toastContainer.lastElementChild;
+            const progressBar = newToast.querySelector('.toast-progress');
+
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.transition = `width ${duration}ms linear`;
+                setTimeout(() => {
+                    progressBar.style.width = '0%';
+                }, 100);
+            }
+
+            setTimeout(() => hideToast(newToast), duration);
+
+            newToast.querySelector('.btn-close').addEventListener('click', () => hideToast(newToast));
+        }
     </script>
     @yield('scripts')
 </body>
