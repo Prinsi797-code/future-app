@@ -334,7 +334,7 @@ function formatNumber($number)
 
                         <!-- Search Form for Mobile -->
                         <div class="search-form">
-                            <form action="{{ route('search') }}" method="GET" class="d-flex">
+                            <form action="{{ route('search') }}" method="GET" class="d-flex mt-3">
                                 <input type="hidden" name="filter" value="{{ request('filter') }}">
                                 <input type="text" name="query" class="form-control search-input"
                                     placeholder="Search by business name, country, or capital..."
@@ -347,7 +347,7 @@ function formatNumber($number)
                     </div>
                 </div>
 
-                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-4 row-cols-lg-3 g-4">
+                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-4 row-cols-lg-3 g-4 mb-3">
                     @foreach ($approvedEntrepreneurs as $entrepreneur)
                         @php
                             $images = json_decode(
@@ -369,9 +369,9 @@ function formatNumber($number)
                             )->count();
 
                             // Get highest remarks from remark_entrepreneur table
-                            $highestRemark = \App\Models\RemarkEntrepreneur::where('entrepreneur_id', $entrepreneur->id)
+                            $highestRemark = \App\Models\Interest::where('entrepreneur_id', $entrepreneur->id)
                                 ->selectRaw(
-                                    'MAX(remark_your_stake) as max_stake, MAX(remark_market_capital) as max_capital, MAX(remark_company_value) as max_value',
+                                    'MAX(your_stake) as max_stake, MAX(market_capital) as max_capital, MAX(company_value) as max_value',
                                 )
                                 ->first();
 
@@ -404,20 +404,19 @@ function formatNumber($number)
                                     ? formatNumber($highestRemark->max_value)
                                     : $stakeFundingFormatted;
                         @endphp
+
                         <div class="col">
                             <div class="card shadow-sm rounded-3 position-relative"
                                 onclick="window.open('{{ $videoUrl }}', '_blank')"
-                                style="cursor: pointer; border: 0.0625rem solid rgb(223, 227, 232);
-    border-radius: 0.3125rem;">
+                                style="cursor: pointer; border: none;">
                                 <div class="position-relative">
                                     <img src="{{ asset('storage/' . $firstImage) }}" class="card-img-top rounded-top-3"
                                         style="height: 180px; object-fit: cover;" alt="Business Image">
 
-                                    <!-- Logo Overlay - Moved to RIGHT side -->
                                     <!-- Logo Overlay - Moved to below the image, under the men -->
                                     <div class="position-absolute" style="bottom: -20px; right: 10px;">
                                         <img src="{{ asset('storage/' . $logo) }}" alt="Logo"
-                                            style="height: 60px; width: 60px; object-fit: contain; border-radius: 6px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                            style="height: 50px; width: 50px; object-fit: contain; border-radius: 6px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                                     </div>
                                 </div>
 
@@ -446,14 +445,13 @@ function formatNumber($number)
                                 </div>
                                 <hr class="m-0">
 
-                                <!-- Updated Card Footer with Better Inline Layout -->
-
+                                <!-- Updated Card Footer with Dynamic Currency -->
                                 <div class="d-flex justify-content-between w-100 mt-3 px-2 mb-3"
                                     style="gap: 5px; flex-wrap: nowrap;">
                                     <div class="flex-fill text-center">
                                         <div class="text-muted" style="font-size: 13px;">Fund</div>
                                         <div class="fw-semibold text-dark">
-                                            ₹{{ $marketCapitalFormatted }}
+                                            {{ $currency }}{{ $marketCapitalFormatted }}
                                         </div>
                                     </div>
                                     <div class="flex-fill text-center">
@@ -465,36 +463,30 @@ function formatNumber($number)
                                     <div class="flex-fill text-center">
                                         <div class="text-muted" style="font-size: 13px;">Valuation</div>
                                         <div class="fw-semibold text-dark">
-                                            ₹{{ $stakeFundingFormatted }}
+                                            {{ $currency }}{{ $stakeFundingFormatted }}
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Container -->
-                                <div class="card-footer border-top-0 p-2" style="background-color: #EEEEEF !important;">
-                                    <div class="d-flex flex-column align-items-center w-100">
-
-                                        <!-- Interested Investors -->
+                                <div class="card-footer border-top-0 p-3" style="background-color: #EEEEEF !important;">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <!-- Interested Investors Section -->
                                         <div class="d-flex justify-content-center text-center">
                                             <div>
                                                 <div class="fw-bold text-muted">Interested Investors</div>
-                                                <div class="d-flex align-items-center justify-content-center"
-                                                    style="gap: 8px;">
-
+                                                <div class="d-flex align-items-center gap-2 justify-content-center">
                                                     <span class="range-indicator"
-                                                        style="display: inline-block; width: 200px; height: 10px; border-radius: 5px;
-                        background: linear-gradient(to right, 
-                            {{ $interestedInvestorsCount <= 2 ? '#ff0000' : ($interestedInvestorsCount <= 5 ? '#ffa500' : '#00ff00') }},
-                            {{ $interestedInvestorsCount <= 2 ? '#ff3333' : ($interestedInvestorsCount <= 5 ? '#ffcc00' : '#33ff33') }}
-                        );
-                        transition: all 0.3s ease;">
+                                                        style="display: inline-block; width: 200px; height: 10px; border-radius: 5px; background: linear-gradient(to right, 
+                                            {{ $interestedInvestorsCount <= 2 ? '#ff0000' : ($interestedInvestorsCount <= 5 ? '#ffa500' : '#00ff00') }},
+                                            {{ $interestedInvestorsCount <= 2 ? '#ff3333' : ($interestedInvestorsCount <= 5 ? '#ffcc00' : '#33ff33') }});
+                                            transition: all 0.3s ease;">
                                                     </span>
                                                     {{ $interestedInvestorsCount }}
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- Stats Row: Force single-line tight layout -->
+                                        <!-- Stats in a Single Line with Better Formatting -->
                                         <div class="d-flex justify-content-between w-100 mt-3 px-2"
                                             style="gap: 5px; flex-wrap: nowrap;">
                                             <div class="flex-fill text-center">
@@ -516,7 +508,6 @@ function formatNumber($number)
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>

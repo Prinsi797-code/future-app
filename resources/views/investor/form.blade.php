@@ -2101,21 +2101,13 @@
             console.log("=== Next Button Clicked ===");
             console.log("Current step:", currentStep);
 
-            // Save data for the previous step if applicable
+            // पहले पिछले step का data save करें (अगर कोई है)
             if (currentStep > 1) {
                 const stepToSave = currentStep - 1;
                 console.log("First saving data for previous step:", stepToSave);
 
                 const stepData = collectStepData(stepToSave);
                 console.log("Collected step data for step", stepToSave, ":", stepData);
-
-                // Add actively_investing for step 4
-                if (stepToSave === 4) {
-                    const activelyInvestingCheckbox = document.querySelector(
-                        'input[name="actively_investing"]:checked');
-                    stepData.actively_investing = activelyInvestingCheckbox ? activelyInvestingCheckbox.value :
-                        '0';
-                }
 
                 try {
                     const formDataToSend = new FormData();
@@ -2163,7 +2155,7 @@
                         throw new Error('CSRF token is empty');
                     }
 
-                    const response = await fetch('{{ route('investor-save-step-data') }}', {
+                    const response = await fetch('{{ route('save-step-data') }}', {
                         method: 'POST',
                         body: formDataToSend,
                         headers: {
@@ -2189,10 +2181,10 @@
                 } catch (error) {
                     console.error('Error saving previous step data:', error);
                     //alert('Failed to save previous step data: ' + error.message);
+
                 }
             }
 
-            // Validate current step
             const stepToValidate = currentStep;
             console.log("Now validating current step:", stepToValidate);
 
@@ -2202,20 +2194,10 @@
             if (isValidStep) {
                 console.log("Current step validation passed, moving to next step");
 
-                // Move to next step if not the last one
                 if (currentStep < totalSteps) {
                     currentStep++;
                     showStep(currentStep);
                     console.log('Moved to step:', currentStep);
-
-                    // Ensure investment-fields visibility for step 4
-                    if (currentStep === 4) {
-                        const checkbox = document.getElementById('actively_investing');
-                        const investmentFields = document.getElementById('investment-fields');
-                        if (checkbox && investmentFields) {
-                            investmentFields.style.display = checkbox.checked ? 'block' : 'none';
-                        }
-                    }
                 }
             } else {
                 console.log("Current step validation failed, staying on current step");
@@ -2474,10 +2456,10 @@
             const newStep = currentStep + direction;
 
             if (newStep >= 2 && newStep <= totalSteps) {
-                setTimeout(() => {
-                    currentStep = newStep;
-                    showStep(currentStep);
-                }, 2000);
+                // setTimeout(() => {
+                currentStep = newStep;
+                showStep(currentStep);
+                // }, 2000);
             }
         }
 

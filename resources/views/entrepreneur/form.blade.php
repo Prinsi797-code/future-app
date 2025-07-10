@@ -3929,10 +3929,10 @@
             }
         }
 
-        setTimeout(() => {
-            currentStep = newStep;
-            showStep(currentStep);
-        }, 2000);
+        //setTimeout(() => {
+        currentStep = newStep;
+        showStep(currentStep);
+        //}, 2000);
     }
     const registerRadios = document.querySelectorAll('input[name="register_business"]');
     const businessDetailsSection = document.getElementById('business_details_section');

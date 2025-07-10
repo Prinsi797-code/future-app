@@ -938,6 +938,7 @@ class EntrepreneurController extends Controller
             'full_name' => 'nullable|string|max:255',
             'country_code' => 'string',
             'phone_number' => 'nullable|string',
+            'business_mobile' => 'nullable',
             'email' => 'nullable|email|unique:entrepreneurs,email,' . $entrepreneur->id,
             'country' => 'nullable|string',
             'state' => 'nullable|string',
@@ -956,6 +957,7 @@ class EntrepreneurController extends Controller
             'industry' => 'nullable|string',
             'own_fund' => 'nullable|numeric|min:0',
             'loan' => 'nullable|numeric|min:0',
+            'founder_number' => 'nullable|numeric',
             'invested_amount' => 'nullable|numeric|min:0',
             'market_capital' => 'nullable|numeric|min:1',
             'your_stake' => 'nullable|numeric|min:1|max:100',
@@ -985,6 +987,7 @@ class EntrepreneurController extends Controller
             'y_type_industries' => 'nullable|string',
             'y_own_fund' => 'nullable|numeric|min:0',
             'y_loan' => 'nullable|numeric|min:0',
+            'tax_registration_number' => 'nullable|string',
             'y_invested_amount' => 'nullable|numeric|min:0',
             'employee_number' => 'nullable|integer|min:0',
             'business_email' => 'nullable',
@@ -1106,6 +1109,7 @@ class EntrepreneurController extends Controller
             'full_name' => $request->full_name,
             'email' => $entrepreneur->email, // Keep readonly
             'phone_number' => $entrepreneur->phone_number, // Keep readonly
+            'business_mobile' => $request->business_mobile,
             'country' => $entrepreneur->country, // Keep readonly
             'country_code' => $entrepreneur->country_code, // Keep readonly
             'state' => $request->state,
@@ -1150,7 +1154,9 @@ class EntrepreneurController extends Controller
             'y_zipcode' => $request->y_zipcode,
             'y_type_industries' => $request->y_type_industries,
             'y_own_fund' => $request->y_own_fund,
+            'founder_number' => $request->founder_number,
             'y_loan' => $request->y_loan,
+            'tax_registration_number' => $request->tax_registration_number,
             'business_revenue1' => $request->business_revenue1,
             'business_revenue2' => $request->business_revenue2,
             'business_revenue3' => $request->business_revenue3,

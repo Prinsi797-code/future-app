@@ -491,7 +491,8 @@
     </div> --}}
     <div>
         <h1 style="" class="company-detail">
-            Fundraising <span class="company-span">Startups</span> On <span class="company-span">Future</span>Taikun</h1>
+            Fundraising <span class="company-span">Startups</span> On <span class="company-span">Future</span>Taikun
+        </h1>
         <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-4 row-cols-lg-3 g-4 mb-3">
             @foreach ($approvedEntrepreneurs as $entrepreneur)
                 @php
@@ -555,7 +556,6 @@
                             <img src="{{ asset('storage/' . $firstImage) }}" class="card-img-top rounded-top-3"
                                 style="height: 180px; object-fit: cover;" alt="Business Image">
 
-                            <!-- Logo Overlay - Moved to RIGHT side -->
                             <!-- Logo Overlay - Moved to below the image, under the men -->
                             <div class="position-absolute" style="bottom: -20px; right: 10px;">
                                 <img src="{{ asset('storage/' . $logo) }}" alt="Logo"
@@ -588,13 +588,13 @@
                         </div>
                         <hr class="m-0">
 
-                        <!-- Updated Card Footer with Better Inline Layout -->
+                        <!-- Updated Card Footer with Dynamic Currency -->
                         <div class="d-flex justify-content-between w-100 mt-3 px-2 mb-3"
                             style="gap: 5px; flex-wrap: nowrap;">
                             <div class="flex-fill text-center">
                                 <div class="text-muted" style="font-size: 13px;">Fund</div>
                                 <div class="fw-semibold text-dark">
-                                    ₹{{ $marketCapitalFormatted }}
+                                    {{ $currency }}{{ $marketCapitalFormatted }}
                                 </div>
                             </div>
                             <div class="flex-fill text-center">
@@ -606,7 +606,7 @@
                             <div class="flex-fill text-center">
                                 <div class="text-muted" style="font-size: 13px;">Valuation</div>
                                 <div class="fw-semibold text-dark">
-                                    ₹{{ $stakeFundingFormatted }}
+                                    {{ $currency }}{{ $stakeFundingFormatted }}
                                 </div>
                             </div>
                         </div>
@@ -618,12 +618,11 @@
                                     <div>
                                         <div class="fw-bold text-muted">Interested Investors</div>
                                         <div class="d-flex align-items-center gap-2 justify-content-center">
-
                                             <span class="range-indicator"
                                                 style="display: inline-block; width: 200px; height: 10px; border-radius: 5px; background: linear-gradient(to right, 
-        {{ $interestedInvestorsCount <= 2 ? '#ff0000' : ($interestedInvestorsCount <= 5 ? '#ffa500' : '#00ff00') }},
-        {{ $interestedInvestorsCount <= 2 ? '#ff3333' : ($interestedInvestorsCount <= 5 ? '#ffcc00' : '#33ff33') }});
-        transition: all 0.3s ease;">
+                                            {{ $interestedInvestorsCount <= 2 ? '#ff0000' : ($interestedInvestorsCount <= 5 ? '#ffa500' : '#00ff00') }},
+                                            {{ $interestedInvestorsCount <= 2 ? '#ff3333' : ($interestedInvestorsCount <= 5 ? '#ffcc00' : '#33ff33') }});
+                                            transition: all 0.3s ease;">
                                             </span>
                                             {{ $interestedInvestorsCount }}
                                         </div>
