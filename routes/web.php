@@ -9,6 +9,7 @@ use App\Http\Controllers\EntrepreneurController;
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OtpController;
+use App\Models\Entrepreneur;
 use App\Models\Investor;
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +84,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/entrepreneurs/download/csv', [EntrepreneurController::class, 'downloadCSV'])->name('admin.download');
     Route::get('/investors/download/csv', [InvestorController::class, 'downloadCSV'])->name('admin.investor.download');
     Route::post('/admin/update-pitch-video', [EntrepreneurController::class, 'updatePitchVideo'])->name('admin.update.pitch_video');
+    Route::post('/admin/update-product-logo', [EntrepreneurController::class, 'updateProductLogo'])->name('admin.update.product_logo');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // Route::post('/logout', function () {
     //     Auth::logout();

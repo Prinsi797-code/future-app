@@ -21,6 +21,8 @@ use App\Mail\EntrepreneurApprovedMail;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Entrepreneur;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Client;
 
@@ -339,7 +341,7 @@ class EntrepreneurController extends Controller
                 'dob' => 'nullable|string',
                 'age' => 'nullable',
                 //'pitch_video' => 'nullable|url',
-                'pin_code' => 'nullable|digits:6',
+                'pin_code' => 'nullable|digits_between:5,6',
                 'current_address' => 'nullable',
                 'qualification' => 'nullable|string',
                 'state' => 'nullable',
@@ -943,7 +945,7 @@ class EntrepreneurController extends Controller
             'country' => 'nullable|string',
             'state' => 'nullable|string',
             'city' => 'nullable|string',
-            'pin_code' => 'nullable|string|regex:/^[0-9]{6}$/',
+            'pin_code' => 'nullable|digits_between:5,6',
             'dob' => 'nullable|before:today',
             'qualification' => 'nullable|string',
             'age' => 'nullable|integer|min:18',
@@ -965,15 +967,15 @@ class EntrepreneurController extends Controller
             'y_market_capital' => 'nullable|numeric|min:1',
             'y_your_stake' => 'nullable|numeric|min:1|max:100',
             'y_stake_funding' => 'nullable|numeric|min:0',
-            'business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-            'product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'business_logo' => 'nullable',
+            'product_photos' => 'nullable',
             'website_links' => 'nullable|url',
-            'video_upload' => 'nullable|file|mimes:mp4,mov,avi,webm|max:51200',
-            'pitch_deck' => 'nullable|file|mimes:pdf|max:10240',
+            'video_upload' => 'nullable|file|mimes:mp4,mov,avi,webm',
+            'pitch_deck' => 'nullable',
             'agreed_to_terms' => 'nullable|accepted',
-            'y_business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'y_business_logo' => 'nullable|image|mimes:jpg,jpeg,png',
             'y_product_photos' => 'nullable|array|min:1|max:3',
-            'y_pitch_deck' => 'nullable|file|mimes:pdf|max:10240',
+            'y_pitch_deck' => 'nullable|file|mimes:pdf',
             'y_brand_name' => 'nullable|string|max:255',
             'y_describe_business' => 'nullable|string|max:75',
             'y_business_address' => 'nullable|string|max:255',
@@ -1994,6 +1996,45 @@ class EntrepreneurController extends Controller
                 return response()->json(['message' => 'No saved data found', 'data' => [], 'completed_steps' => []], 200);
             }
 
+            $apiKey = env('COUNTRY_STATE_CITY_API_KEY', 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==');
+            $baseUrl = 'https://api.countrystatecity.in/v1';
+
+            // Helper function to convert country name to iso2
+            $getCountryIso2 = function ($countryName) use ($apiKey, $baseUrl) {
+                if (!$countryName || preg_match('/^[A-Z]{2}$/', $countryName)) {
+                    return $countryName; // Already an iso2 code or empty
+                }
+                try {
+                    $response = Http::withHeaders(['X-CSCAPI-KEY' => $apiKey])->get("{$baseUrl}/countries");
+                    if ($response->successful()) {
+                        $countries = $response->json();
+                        $country = collect($countries)->firstWhere('name', $countryName);
+                        return $country ? $country['iso2'] : $countryName;
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Error fetching country iso2 for {$countryName}: {$e->getMessage()}");
+                }
+                return $countryName; // Fallback to original value if API fails
+            };
+
+            // Helper function to convert state name to iso2
+            $getStateIso2 = function ($countryIso2, $stateName) use ($apiKey, $baseUrl) {
+                if (!$countryIso2 || !$stateName || preg_match('/^[A-Z]{2}$/', $stateName)) {
+                    return $stateName; // Already an iso2 code, no country, or empty
+                }
+                try {
+                    $response = Http::withHeaders(['X-CSCAPI-KEY' => $apiKey])->get("{$baseUrl}/countries/{$countryIso2}/states");
+                    if ($response->successful()) {
+                        $states = $response->json();
+                        $state = collect($states)->firstWhere('name', $stateName);
+                        return $state ? $state['iso2'] : $stateName;
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Error fetching state iso2 for {$stateName}: {$e->getMessage()}");
+                }
+                return $stateName; // Fallback to original value if API fails
+            };
+
             $stepData = [
                 'step2' => [],
                 'step3' => [],
@@ -2070,16 +2111,31 @@ class EntrepreneurController extends Controller
                 'y_pitch_deck',
                 'website_links'
             ];
+
             if ($entrepreneur->register_business === '0') {
                 foreach ($step3FieldsNo as $field) {
                     if (!is_null($entrepreneur->$field)) {
-                        $stepData['step3'][$field] = $entrepreneur->$field;
+                        if ($field === 'business_country') {
+                            $stepData['step3'][$field] = $getCountryIso2($entrepreneur->$field);
+                        } elseif ($field === 'business_state') {
+                            $countryIso2 = $getCountryIso2($entrepreneur->business_country);
+                            $stepData['step3'][$field] = $getStateIso2($countryIso2, $entrepreneur->$field);
+                        } else {
+                            $stepData['step3'][$field] = $entrepreneur->$field;
+                        }
                     }
                 }
             } elseif ($entrepreneur->register_business === '1') {
                 foreach ($step3FieldsYes as $field) {
                     if (!is_null($entrepreneur->$field)) {
-                        $stepData['step3'][$field] = $entrepreneur->$field;
+                        if ($field === 'y_business_country') {
+                            $stepData['step3'][$field] = $getCountryIso2($entrepreneur->$field);
+                        } elseif ($field === 'y_business_state') {
+                            $countryIso2 = $getCountryIso2($entrepreneur->y_business_country);
+                            $stepData['step3'][$field] = $getStateIso2($countryIso2, $entrepreneur->$field);
+                        } else {
+                            $stepData['step3'][$field] = $entrepreneur->$field;
+                        }
                     }
                 }
                 $stepData['step3']['register_business'] = '1';
@@ -2106,6 +2162,119 @@ class EntrepreneurController extends Controller
         } catch (\Exception $e) {
             Log::error('Error retrieving step data: ' . $e->getMessage());
             return response()->json(['message' => 'Error retrieving step data'], 500);
+        }
+    }
+    public function updateProductLogo(Request $request)
+    {
+        // Log the raw input for debugging
+        Log::info('Update Product Logo Request (Raw):', ['input' => $request->all()]);
+
+        // Validate request
+        $validator = \Validator::make($request->all(), [
+            'entrepreneur_id' => 'required|exists:entrepreneurs,id',
+            'business_logo_admin' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'y_business_logo_admin' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'product_photos_admin.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'y_product_photos_admin.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ], [
+            'business_logo_admin.image' => 'The business logo must be an image.',
+            'business_logo_admin.mimes' => 'The business logo must be a file of type: jpeg, png, jpg, gif.',
+            'product_photos_admin.*.image' => 'The product photos must be images.',
+            'product_photos_admin.*.mimes' => 'The product photos must be files of type: jpeg, png, jpg, gif.',
+        ]);
+
+        if ($validator->fails()) {
+            Log::error('Validation failed:', ['errors' => $validator->errors()->all()]);
+            return response()->json(['status' => 'error', 'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all())], 422);
+        }
+        try {
+            $entrepreneur = Entrepreneur::find($request->entrepreneur_id);
+            if (!$entrepreneur) {
+                throw new \Exception('Entrepreneur not found.');
+            }
+
+            // Ensure storage directories exist and are writable
+            $directories = ['business_logos', 'y_business_logos', 'product_photos', 'y_product_photos'];
+            foreach ($directories as $dir) {
+                $path = storage_path('app/public/' . $dir);
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, 0777, true);
+                    Log::info('Created directory: ' . $path);
+                }
+                if (!File::isWritable($path)) {
+                    throw new \Exception('Directory ' . $path . ' is not writable.');
+                }
+            }
+
+            // Handle business logo upload
+            if ($request->hasFile('business_logo_admin')) {
+                Log::info('Storing business logo: ', ['file' => $request->file('business_logo_admin')->getClientOriginalName()]);
+                if ($entrepreneur->business_logo_admin) {
+                    Storage::delete('public/' . $entrepreneur->business_logo_admin);
+                }
+                $path = $request->file('business_logo_admin')->store('business_logos', 'public');
+                Log::info('Business logo stored at: ', ['path' => $path]);
+                $entrepreneur->business_logo_admin = $path;
+            }
+
+            // Handle YouTube business logo
+            if ($request->hasFile('y_business_logo_admin')) {
+                Log::info('Storing YouTube business logo: ', ['file' => $request->file('y_business_logo_admin')->getClientOriginalName()]);
+                if ($entrepreneur->y_business_logo_admin) {
+                    Storage::delete('public/' . $entrepreneur->y_business_logo_admin);
+                }
+                $path = $request->file('y_business_logo_admin')->store('y_business_logos', 'public');
+                Log::info('YouTube business logo stored at: ', ['path' => $path]);
+                $entrepreneur->y_business_logo_admin = $path;
+            }
+
+            // Handle product photos upload
+            if ($request->hasFile('product_photos_admin')) {
+                Log::info('Storing product photos: ', ['count' => count($request->file('product_photos_admin'))]);
+                if ($entrepreneur->product_photos_admin) {
+                    $oldPhotos = explode(',', $entrepreneur->product_photos_admin);
+                    foreach ($oldPhotos as $photo) {
+                        Storage::delete('public/' . $photo);
+                    }
+                }
+                $photos = [];
+                foreach ($request->file('product_photos_admin') as $photo) {
+                    Log::info('Storing product photo: ', ['file' => $photo->getClientOriginalName()]);
+                    $path = $photo->store('product_photos', 'public');
+                    Log::info('Product photo stored at: ', ['path' => $path]);
+                    $photos[] = $path;
+                }
+                $entrepreneur->product_photos_admin = implode(',', $photos);
+            }
+
+            // Handle YouTube product photos
+            if ($request->hasFile('y_product_photos_admin')) {
+                Log::info('Storing YouTube product photos: ', ['count' => count($request->file('y_product_photos_admin'))]);
+                if ($entrepreneur->y_product_photos_admin) {
+                    $oldPhotos = explode(',', $entrepreneur->y_product_photos_admin);
+                    foreach ($oldPhotos as $photo) {
+                        Storage::delete('public/' . $photo);
+                    }
+                }
+                $photos = [];
+                foreach ($request->file('y_product_photos_admin') as $photo) {
+                    Log::info('Storing YouTube product photo: ', ['file' => $photo->getClientOriginalName()]);
+                    $path = $photo->store('y_product_photos', 'public');
+                    Log::info('YouTube product photo stored at: ', ['path' => $path]);
+                    $photos[] = $path;
+                }
+                $entrepreneur->y_product_photos_admin = implode(',', $photos);
+            }
+
+            if ($entrepreneur->save()) {
+                Log::info('Entrepreneur data saved successfully for ID: ', ['id' => $entrepreneur->id]);
+                return response()->json(['status' => 'success', 'message' => 'Product and logo data updated successfully.']);
+            } else {
+                throw new \Exception('Failed to save entrepreneur data.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating product logo: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['status' => 'error', 'message' => 'Failed to update product and logo data: ' . $e->getMessage()], 500);
         }
     }
 }

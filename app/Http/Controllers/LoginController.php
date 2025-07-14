@@ -99,10 +99,11 @@ class LoginController extends Controller
                 } elseif ($selectedRole === 'investor') {
                     session(['selected_role' => $selectedRole]);
                     Log::info('ROLE', ['selectedRole' => $selectedRole]);
-                    if ($user->investor) {
+                    if (!$user->investor) {
                         // Redirect to investor edit page if not approved or no investor profile
-                        return redirect()->route('investor.edit');
+                        return redirect()->route('investor.form', ['user_id' => $user->id]);
                     }
+                    return redirect()->route('investor.edit');
                 }
             } else {
                 Auth::logout();

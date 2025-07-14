@@ -619,7 +619,8 @@
                                 @endif
                                 @if (session('selected_role') === 'admin')
                                     <th scope="col" style="min-width: 80px;">Reject</th>
-                                    <th scope="col" style="min-width: 80ox;">Youtube Link</th>
+                                    <th scope="col" style="min-width: 80px;">Youtube Link</th>
+                                    <th scope="col" style="min-width: 80px;">Edit Image</th>
                                     <th scope="col" style="min-width: 80px;">Approved</th>
                                 @endif
                                 <th scope="col" style="min-width: 100px;">Action</th>
@@ -708,7 +709,7 @@
                                                 {{ $hasRejected || !$isInvestor ? 'disabled' : '' }}>
                                                 {{ $hasRejected ? 'Rejected ✔' : 'Rejected' }}
                                             </button>
-
+                                        </td>
                                         <td>
                                             <button class="btn btn-sm btn-primary video-btn" data-id="{{ $entrepreneurs->id }}"
                                                 data-video="{{ $entrepreneurs->pitch_video }}" data-bs-toggle="modal"
@@ -716,6 +717,16 @@
                                                 Youtube Link
                                             </button>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" data-id="{{ $entrepreneurs->id }}"
+                                                data-business-logo="{{ $entrepreneurs->business_logo_admin }}"
+                                                data-y-business-logo="{{ $entrepreneurs->y_business_logo_admin }}"
+                                                data-product-photos="{{ $entrepreneurs->product_photos_admin }}"
+                                                data-y-product-photos="{{ $entrepreneurs->y_product_photos_admin }}"
+                                                data-register-business="{{ $entrepreneurs->register_business }}"
+                                                data-bs-toggle="modal" data-bs-target="#productLogo">
+                                                Products/Logo
+                                            </button>
                                         </td>
                                     @endunless
                                     @if (session('selected_role') === 'investor')
@@ -805,7 +816,8 @@
                                     @endunless
                                     <td>
                                         <button class="btn btn-sm btn-primary view-details-btn"
-                                            data-id="{{ $entrepreneurs->id }}" data-name="{{ $entrepreneurs->full_name }}"
+                                            data-id="{{ $entrepreneurs->id }}"
+                                            data-name="{{ $entrepreneurs->full_name }}"
                                             @unless (session('selected_role') === 'investor')
             data-email="{{ $entrepreneurs->email }}"
             data-countrycode="{{ $entrepreneurs->country_code }}"
@@ -892,6 +904,71 @@
                     </table>
                 </div>
             </div>
+
+            {{-- product logo edit --}}
+            <div class="modal fade" id="productLogo" tabindex="-1" aria-labelledby="productLogoLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form id="productLogoForm" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="entrepreneur_id" id="productLogoEntrepreneurId">
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productLogoLabel">Update Products & Logo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <!-- Business Logo (for register_business = 0) -->
+                                <div class="mb-3" id="businessLogoSection" style="display: none;">
+                                    <label for="businessLogo" class="form-label">Business Logo</label>
+                                    <input type="file" class="form-control" id="businessLogo"
+                                        name="business_logo_admin" accept="image/*">
+                                    <div id="businessLogoPreview" class="mt-2">
+                                        <img id="businessLogoImg" src="" alt="Business Logo Preview"
+                                            style="max-width: 200px; display: none;">
+                                    </div>
+                                </div>
+
+                                <!-- Product Photos (for register_business = 0) -->
+                                <div class="mb-3" id="productPhotosSection" style="display: none;">
+                                    <label for="productPhotos" class="form-label">Product Photos</label>
+                                    <input type="file" class="form-control" id="productPhotos"
+                                        name="product_photos_admin[]" multiple accept="image/*">
+                                    <div id="productPhotosPreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                                </div>
+
+                                <!-- YouTube Business Logo (for register_business = 1) -->
+                                <div class="mb-3" id="yBusinessLogoSection" style="display: none;">
+                                    <label for="yBusinessLogo" class="form-label">YouTube Business Logo</label>
+                                    <input type="file" class="form-control" id="yBusinessLogo"
+                                        name="y_business_logo_admin" accept="image/*">
+                                    <div id="yBusinessLogoPreview" class="mt-2">
+                                        <img id="yBusinessLogoImg" src="" alt="YouTube Logo Preview"
+                                            style="max-width: 200px; display: none;">
+                                    </div>
+                                </div>
+
+                                <!-- YouTube Product Photos (for register_business = 1) -->
+                                <div class="mb-3" id="yProductPhotosSection" style="display: none;">
+                                    <label for="yProductPhotos" class="form-label">YouTube Product Photos</label>
+                                    <input type="file" class="form-control" id="yProductPhotos"
+                                        name="y_product_photos_admin[]" multiple accept="image/*">
+                                    <div id="yProductPhotosPreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Video URL Modal -->
             <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel"
                 aria-hidden="true">
@@ -914,6 +991,7 @@
                                         required placeholder="https://example.com/video.mp4">
                                 </div>
                             </div>
+
 
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-success">Save</button>
@@ -962,6 +1040,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -1148,6 +1227,295 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Existing HTML remains the same, only updating the JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productLogoModal = document.getElementById('productLogo');
+            productLogoModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const entrepreneurId = button.getAttribute('data-id');
+                const registerBusiness = button.getAttribute('data-register-business');
+                const businessLogo = button.getAttribute('data-business-logo');
+                const yBusinessLogo = button.getAttribute('data-y-business-logo');
+                const productPhotos = button.getAttribute('data-product-photos');
+                const yProductPhotos = button.getAttribute('data-y-product-photos');
+
+                console.log(`Entrepreneur ID: ${entrepreneurId}, Register Business: ${registerBusiness}`);
+                console.log('Modal opened with data:', {
+                    entrepreneurId,
+                    registerBusiness,
+                    businessLogo,
+                    yBusinessLogo,
+                    productPhotos,
+                    yProductPhotos
+                });
+
+                // Set entrepreneur ID
+                document.getElementById('productLogoEntrepreneurId').value = entrepreneurId;
+
+                // Get all sections
+                const businessLogoSection = document.getElementById('businessLogoSection');
+                const productPhotosSection = document.getElementById('productPhotosSection');
+                const yBusinessLogoSection = document.getElementById('yBusinessLogoSection');
+                const yProductPhotosSection = document.getElementById('yProductPhotosSection');
+
+                // Show/hide sections based on register_business value
+                if (registerBusiness === '0') {
+                    // Show regular business sections
+                    if (businessLogoSection) businessLogoSection.style.display = 'block';
+                    if (productPhotosSection) productPhotosSection.style.display = 'block';
+                    // Hide YouTube sections
+                    if (yBusinessLogoSection) yBusinessLogoSection.style.display = 'none';
+                    if (yProductPhotosSection) yProductPhotosSection.style.display = 'none';
+
+                    console.log('Showing regular business sections');
+                } else if (registerBusiness === '1') {
+                    // Hide regular business sections
+                    if (businessLogoSection) businessLogoSection.style.display = 'none';
+                    if (productPhotosSection) productPhotosSection.style.display = 'none';
+                    // Show YouTube sections
+                    if (yBusinessLogoSection) yBusinessLogoSection.style.display = 'block';
+                    if (yProductPhotosSection) yProductPhotosSection.style.display = 'block';
+
+                    console.log('Showing YouTube business sections');
+                }
+
+                // Handle existing business logo
+                const businessLogoImg = document.getElementById('businessLogoImg');
+                if (businessLogo && businessLogoImg && registerBusiness === '0') {
+                    businessLogoImg.src = `/storage/${businessLogo}`;
+                    businessLogoImg.style.display = 'block';
+                } else if (businessLogoImg) {
+                    businessLogoImg.style.display = 'none';
+                }
+
+                // Handle existing YouTube business logo
+                const yBusinessLogoImg = document.getElementById('yBusinessLogoImg');
+                if (yBusinessLogo && yBusinessLogoImg && registerBusiness === '1') {
+                    yBusinessLogoImg.src = `/storage/${yBusinessLogo}`;
+                    yBusinessLogoImg.style.display = 'block';
+                } else if (yBusinessLogoImg) {
+                    yBusinessLogoImg.style.display = 'none';
+                }
+
+                // Handle existing product photos
+                const productPhotosPreview = document.getElementById('productPhotosPreview');
+                if (productPhotosPreview && productPhotos && registerBusiness === '0') {
+                    productPhotosPreview.innerHTML = '';
+                    const photos = productPhotos.split(',');
+                    photos.forEach(photo => {
+                        if (photo.trim()) {
+                            const img = document.createElement('img');
+                            img.src = `/storage/${photo.trim()}`;
+                            img.alt = 'Product Photo';
+                            img.style.maxWidth = '100px';
+                            img.style.margin = '5px';
+                            productPhotosPreview.appendChild(img);
+                        }
+                    });
+                } else if (productPhotosPreview) {
+                    productPhotosPreview.innerHTML = '';
+                }
+
+                // Handle existing YouTube product photos
+                const yProductPhotosPreview = document.getElementById('yProductPhotosPreview');
+                if (yProductPhotosPreview && yProductPhotos && registerBusiness === '1') {
+                    yProductPhotosPreview.innerHTML = '';
+                    const photos = yProductPhotos.split(',');
+                    photos.forEach(photo => {
+                        if (photo.trim()) {
+                            const img = document.createElement('img');
+                            img.src = `/storage/${photo.trim()}`;
+                            img.alt = 'YouTube Product Photo';
+                            img.style.maxWidth = '100px';
+                            img.style.margin = '5px';
+                            yProductPhotosPreview.appendChild(img);
+                        }
+                    });
+                } else if (yProductPhotosPreview) {
+                    yProductPhotosPreview.innerHTML = '';
+                }
+            });
+
+            // File input event listeners
+            const businessLogoInput = document.getElementById('businessLogo');
+            if (businessLogoInput) {
+                businessLogoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    const preview = document.getElementById('businessLogoImg');
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.style.display = 'block';
+                        console.log('Business logo selected:', file.name);
+                    }
+                });
+            }
+
+            const yBusinessLogoInput = document.getElementById('yBusinessLogo');
+            if (yBusinessLogoInput) {
+                yBusinessLogoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    const preview = document.getElementById('yBusinessLogoImg');
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.style.display = 'block';
+                        console.log('YouTube business logo selected:', file.name);
+                    }
+                });
+            }
+
+            const productPhotosInput = document.getElementById('productPhotos');
+            if (productPhotosInput) {
+                productPhotosInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    const preview = document.getElementById('productPhotosPreview');
+                    preview.innerHTML = '';
+                    Array.from(files).forEach(file => {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = 'Product Photo Preview';
+                        img.style.maxWidth = '100px';
+                        img.style.margin = '5px';
+                        preview.appendChild(img);
+                    });
+                    console.log('Product photos selected:', Array.from(files).map(f => f.name));
+                });
+            }
+
+            const yProductPhotosInput = document.getElementById('yProductPhotos');
+            if (yProductPhotosInput) {
+                yProductPhotosInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    const preview = document.getElementById('yProductPhotosPreview');
+                    preview.innerHTML = '';
+                    Array.from(files).forEach(file => {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = 'YouTube Product Photo Preview';
+                        img.style.maxWidth = '100px';
+                        img.style.margin = '5px';
+                        preview.appendChild(img);
+                    });
+                    console.log('YouTube product photos selected:', Array.from(files).map(f => f.name));
+                });
+            }
+
+            // Form submission
+            document.getElementById('productLogoForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const form = e.target;
+                const formData = new FormData(form);
+                const entrepreneurId = document.getElementById('productLogoEntrepreneurId').value;
+
+                if (!entrepreneurId) {
+                    console.error('Entrepreneur ID is missing.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Entrepreneur ID is missing.',
+                        confirmButtonColor: '#d33',
+                        customClass: {
+                            popup: 'rounded-3'
+                        }
+                    });
+                    return;
+                }
+
+                formData.append('entrepreneur_id', entrepreneurId);
+
+                console.log('Form data being sent:', Object.fromEntries(formData));
+
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+
+                submitButton.disabled = true;
+                submitButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+                fetch("{{ route('admin.update.product_logo') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log('Fetch response status:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Server response:', data);
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+
+                        if (data.status === 'success') {
+                            const modalInstance = bootstrap.Modal.getInstance(document.getElementById(
+                                'productLogo'));
+                            if (modalInstance) modalInstance.hide();
+
+                            setTimeout(() => {
+                                const backdrop = document.querySelector('.modal-backdrop');
+                                if (backdrop) backdrop.remove();
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                document.body.style.paddingRight = '';
+                            }, 100);
+
+                            form.reset();
+
+                            // Reset previews
+                            const businessLogoImg = document.getElementById('businessLogoImg');
+                            const yBusinessLogoImg = document.getElementById('yBusinessLogoImg');
+                            const productPhotosPreview = document.getElementById(
+                            'productPhotosPreview');
+                            const yProductPhotosPreview = document.getElementById(
+                                'yProductPhotosPreview');
+
+                            if (businessLogoImg) businessLogoImg.style.display = 'none';
+                            if (yBusinessLogoImg) yBusinessLogoImg.style.display = 'none';
+                            if (productPhotosPreview) productPhotosPreview.innerHTML = '';
+                            if (yProductPhotosPreview) yProductPhotosPreview.innerHTML = '';
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: data.message,
+                                confirmButtonColor: '#3085d6',
+                                customClass: {
+                                    popup: 'rounded-3'
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Something went wrong.',
+                                confirmButtonColor: '#d33',
+                                customClass: {
+                                    popup: 'rounded-3'
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonColor: '#d33',
+                            customClass: {
+                                popup: 'rounded-3'
+                            }
+                        });
+                    });
+            });
+        });
+    </script>
     <script>
         //start video edit in admin
         document.querySelectorAll('.video-btn').forEach(button => {

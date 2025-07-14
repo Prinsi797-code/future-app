@@ -457,18 +457,13 @@
                                         <div class="text-danger mt-1 d-none" id="country_error"></div>
                                     </div>
                                 </div> --}}
+
                                 <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <select name="country" class="form-select" id="country" required>
                                             <option value="">Select a country</option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country['name'] }}"
-                                                    {{ old('country', $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
-                                                    {{ $country['name'] }}
-                                                </option>
-                                            @endforeach
                                         </select>
-                                        <label for="form-label">Country *</label>
+                                        <label for="country">Country *</label>
                                         <div class="text-danger mt-1 d-none" id="country_error"></div>
                                     </div>
                                 </div>
@@ -479,7 +474,7 @@
                                             <option value="">Select State</option>
                                             {{-- Dynamically filled via JS --}}
                                         </select>
-                                        <label class="form-label">State *</label>
+                                        <label class="state">State *</label>
                                         <div class="text-danger mt-1 d-none" id="state_error"></div>
                                     </div>
                                 </div>
@@ -490,7 +485,7 @@
                                             <option value="">Select City</option>
                                             {{-- Dynamically filled via JS --}}
                                         </select>
-                                        <label class="form-label">City *</label>
+                                        <label class="city">City *</label>
                                         <div class="text-danger mt-1 d-none" id="city_error"></div>
                                     </div>
                                 </div>
@@ -652,12 +647,6 @@
                                                 <select name="business_country" class="form-select"
                                                     id="business_country">
                                                     <option value="">Select a country</option>
-                                                    @foreach ($countries as $country)
-                                                        <option value="{{ $country['name'] }}"
-                                                            {{ old('business_country', $enterprent->business_country ?? $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
-                                                            {{ $country['name'] }}
-                                                        </option>
-                                                    @endforeach
                                                 </select>
                                                 <label for="business_country">Business Country *</label>
                                                 <div class="text-danger mt-1 d-none" id="business_country_error"></div>
@@ -1007,12 +996,6 @@
                                                 <select name="y_business_country" class="form-select"
                                                     id="y_business_country">
                                                     <option value="">Select a country</option>
-                                                    @foreach ($countries as $country)
-                                                        <option value="{{ $country['name'] }}"
-                                                            {{ old('y_business_country', $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
-                                                            {{ $country['name'] }}
-                                                        </option>
-                                                    @endforeach
                                                 </select>
                                                 <label for="y_business_country">Business Country *</label>
                                                 <div class="text-danger mt-1 d-none" id="y_business_country_error"></div>
@@ -2174,18 +2157,6 @@
                     '+974': 8 // Qatar
                 };
 
-                //const countryValue = country && country.value ? country.value.trim() : '';
-                //if (!country || !countryValue) {
-                //    if (countryError) {
-                //      countryError.textContent = 'Country is required';
-                //  countryError.classList.remove('d-none');
-                //}
-                //isValid = false;
-                // } else {
-                // if (countryError) {
-                //countryError.classList.add('d-none');
-                //}
-                // }
                 // State Validation
                 if (!state.value) {
                     document.getElementById('state_error').textContent = 'State is required';
@@ -2251,40 +2222,7 @@
                     pinCodeError.textContent = '';
                 }
 
-                //if (!pin_code || !pin_code.value.trim()) {
-                // if (pinCodeError) {
-                //   pinCodeError.textContent = 'Pin code is required';
-                //pinCodeError.classList.remove('d-none');
-                //   }
-                //    isValid = false;
-                // } else {
-                //const pin = pin_code.value.trim();
-                //  let pattern;
-                //  let message;
-                //  const countryValue = country && country.value ? country.value.trim().toLowerCase() : '';
 
-                //  if (countryValue === 'india') {
-                //    pattern = /^\d{6}$/;
-                //     message = 'Indian pin code must be exactly 6 digits';
-                // } else if (countryValue === 'united states') {
-                //  pattern = /^\d{5}(-\d{4})?$/;
-                //  message = 'US ZIP code must be 5 digits or ZIP+4 format (e.g., 12345 or 12345-6789)';
-                //  } else if (countryValue === 'united kingdom') {
-                //     pattern = /^[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}$/i;
-                //     message = 'UK postcode format is invalid';
-                //  } else {
-                //     pattern = /.*/; // Accept anything for unknown countries
-                //     message = '';
-                //  }
-
-                // if (!pattern.test(pin)) {
-                //     if (pinCodeError) {
-                //pinCodeError.textContent = message || 'Invalid pin/zip code';
-                //  pinCodeError.classList.remove('d-none');
-                // }
-                // isValid = false;
-                //}
-                // }
                 if (!pin_code || !pin_code.value.trim()) {
                     document.getElementById('pin_code_error').textContent = 'Pin/Zip code is required';
                     document.getElementById('pin_code_error').classList.remove('d-none');
@@ -2296,27 +2234,6 @@
                     document.getElementById('pin_code_error').classList.remove('d-none');
                     isValid = false;
                 }
-
-
-                //if (!current_address.value.trim()) {
-                //document.getElementById('current_address_error').textContent = 'Address is required';
-                //document.getElementById('current_address_error').classList.remove('d-done');
-                //  isValid = false;
-                //  }
-
-                // if (!qualification) {
-                // document.getElementById('qualification_error').textContent =
-                //    'Please select a qualification';
-                //  document.getElementById('qualification_error').classList.remove('d-none');
-                //  isValid = false;
-                //  }
-                //if (!dob.value.trim()) {
-                // document.getElementById('dob_error').textContent = 'Date of birth is required';
-                //  document.getElementById('dob_error').classList.remove('d-none');
-                // isValid = false;
-                // } else {
-                //    document.getElementById('dob_error').classList.add('d-none');
-                //  }
 
             } else if (step === 3) {
                 if (!registerBusiness) {
@@ -2382,13 +2299,6 @@
                     loanError.classList.add('d-none');
                     loanError.textContent = '';
 
-                    // Validate required fields
-                    //if (!businessName.value.trim()) {
-                    //document.getElementById('business_name_error').textContent =
-                    // 'Proposed business name is required';
-                    // document.getElementById('business_name_error').classList.remove('d-none');
-                    //  isValid = false;
-                    // }
 
                     const companyGroups = document.querySelectorAll('.company-group');
                     let companyValid = true;
@@ -2422,51 +2332,6 @@
                     const BusinessCountryValue = businessCountry && businessCountry.value ? businessCountry
                         .value.trim() :
                         '';
-                    //if (!businessCountry || !BusinessCountryValue) {
-                    //if (businessCountryError) {
-                    //     businessCountryError.textContent = 'Country is required';
-                    //     businessCountryError.classList.remove('d-none');
-                    //  }
-                    //   isValid = false;
-                    // } else {
-                    //   if (businessCountryError) {
-                    //   businessCountryError.classList.add('d-none');
-                    //  }
-                    //}
-
-                    // if (!brandName.value.trim()) {
-                    // document.getElementById('brand_name_error').textContent =
-                    //   'Proposed business brand is required';
-                    // document.getElementById('brand_name_error').classList.remove('d-none');
-                    //  isValid = false;
-                    // }
-
-                    // if (!proposedAddress.value.trim()) {
-                    //document.getElementById('proposed_business_address_error').textContent =
-                    //    'Proposed business address is required';
-                    // document.getElementById('proposed_business_address_error').classList.remove('d-none');
-                    //  isValid = false;
-                    // }
-
-                    //if (!businessCity.value) {
-                    //  document.getElementById('business_city_error').textContent =
-                    // 'Business city is required';
-                    // document.getElementById('business_city_error').classList.remove('d-none');
-                    // isValid = false;
-                    // } else {
-                    //    document.getElementById('business_city_error').classList.add('d-none');
-                    //   }
-
-                    // State Validation
-                    //if (!businessState.value) {
-                    //document.getElementById('business_state_error').textContent =
-                    //  'Business State is required';
-                    // document.getElementById('business_state_error').classList.remove('d-none');
-                    // isValid = false;
-                    // } else {
-                    //    document.getElementById('business_state_error').classList.add('d-none');
-                    //  }
-
 
                     if (pitchDeck.files.length > 0) {
                         const file = pitchDeck.files[0];
@@ -2495,33 +2360,6 @@
                         });
                     }
 
-                    //if (!businessDescribe.value.trim()) {
-                    //document.getElementById('business_describe_error').textContent =
-                    // 'Proposed business description is required';
-                    //document.getElementById('business_describe_error').classList.remove('d-none');
-                    // isValid = false;
-                    // }
-
-                    //if (!ideaSummary.value.trim()) {
-                    // document.getElementById('idea_summary_error').textContent = 'Business idea summary is required';
-                    // document.getElementById('idea_summary_error').classList.remove('d-none');
-                    // isValid = false;
-                    //}
-
-                    //# if (!industry) {
-                    //  document.getElementById('industry_error').textContent = 'Please select an industry';
-                    //  document.getElementById('industry_error').classList.remove('d-none');
-                    //  isValid = false;
-                    //  } else {
-                    //   document.getElementById('industry_error').classList.add('d-none');
-                    //  }
-
-                    // Validate financial fields
-                    //  if (!investedAmount || !investedAmount.value.trim()) {
-                    //  investedAmountError.textContent = 'Invested amount is required';
-                    // investedAmountError.classList.remove('d-none');
-                    // isValid = false;
-                    //} 
                     const investedAmountValue = investedAmount.value.trim();
 
                     if (investedAmountValue !== '' && !/^\d+(\.\d+)?$/.test(investedAmountValue)) {
@@ -2532,11 +2370,6 @@
                         investedAmountError.classList.add('d-none'); // Hide error for blank or valid input
                     }
 
-                    // if (!ownFund || !ownFund.value.trim()) {
-                    //   ownFundError.textContent = 'Own fund is required';
-                    //   ownFundError.classList.remove('d-none');
-                    //   isValid = false;
-                    //}
                     const ownFundValue = ownFund.value.trim();
 
                     if (ownFundValue !== '' && !/^\d+(\.\d+)?$/.test(ownFundValue)) {
@@ -2548,11 +2381,6 @@
                     }
 
 
-                    // if (!loan || !loan.value.trim()) {
-                    //  loanError.textContent = 'Loan amount is required';
-                    //   loanError.classList.remove('d-none');
-                    //   isValid = false;
-                    //}
                     if (ownFundValue !== '' && !/^\d+(\.\d+)?$/.test(loan.value.trim())) {
                         loanError.textContent = 'Please enter a valid number for loan';
                         loanError.classList.remove('d-none');
@@ -2561,28 +2389,6 @@
                         ownFundError.classList.add('d-none');
                     }
 
-                    //if (!investmentField || !investmentField.value.trim() || parseFloat(investmentField
-                    // .value) <= 0) {
-                    // document.getElementById('market_capital_error').textContent =
-                    //    'Please enter the fund required amount';
-                    // document.getElementById('market_capital_error').classList.remove('d-none');
-                    // isValid = false;
-                    //  }
-
-                    //if (!valuationField || !valuationField.value.trim() || parseFloat(valuationField.value) <=
-                    //0) {
-                    // document.getElementById('stake_funding_error').textContent =
-                    //     'Company valuation is required';
-                    //  document.getElementById('stake_funding_error').classList.remove('d-none');
-                    //  isValid = false;
-                    // }
-
-                    // Validate equity offered
-                    //if (!equityField || !equityField.value.trim()) {
-                    //equityError.textContent = 'Equity offered is required';
-                    //equityError.classList.remove('d-none');
-                    // isValid = false;
-                    // }
                     const equityRaw = equityField.value.trim();
 
 
@@ -2812,15 +2618,6 @@
                         .value
                         .trim() : '';
 
-                    //if (!countryCodeY.value.trim()) {
-                    //   document.getElementById('business_country_code_error').textContent =
-                    //       'Country code is required';
-                    //   document.getElementById('business_country_code_error').classList.remove('d-none');
-                    //   isValid = false;
-                    // } else {
-                    // document.getElementById('business_country_code_error').classList.add('d-none');
-                    //  }
-
                     const mobile = businessMobile && businessMobile.value ? businessMobile.value.trim() : '';
 
                     if (mobile !== '') {
@@ -2892,9 +2689,6 @@
                     } else {
                         equityErrorY.classList.add('d-none');
                     }
-
-
-
 
                     const zipcodeValue = zipcodeY && zipcodeY.value ? zipcodeY.value.trim() : '';
 
@@ -3092,7 +2886,8 @@
 
                 // Validate product photos (CRITICAL: Handle the focusability issue)
                 if (!productPhotosY) {
-                    console.error('Product photos input element not found');
+                    formDataStep.y_product_photos = [];
+                    //console.error('Product photos input element not found');
                     isValid = false;
                 } else if (productPhotosY.files.length > 3) {
                     document.getElementById('y_product_photos_error').textContent =
@@ -3414,68 +3209,50 @@
         if (step === 2) {
             formDataStep.full_name = currentStepEl.querySelector('input[name="full_name"]')?.value || '';
             formDataStep.email = currentStepEl.querySelector('input[name="email"]')?.value || '';
-            formDataStep.phone_number = currentStepEl.querySelector('input[name="phone_number"]')?.value ||
-                '';
-            formDataStep.country_code = currentStepEl.querySelector('select[name="country_code"]')?.value ||
-                '';
+            formDataStep.phone_number = currentStepEl.querySelector('input[name="phone_number"]')?.value || '';
+            formDataStep.country_code = currentStepEl.querySelector('select[name="country_code"]')?.value || '';
             formDataStep.country = currentStepEl.querySelector('select[name="country"]')?.value || '';
             formDataStep.state = currentStepEl.querySelector('select[name="state"]')?.value || '';
             formDataStep.city = currentStepEl.querySelector('select[name="city"]')?.value || '';
-            formDataStep.qualification = currentStepEl.querySelector('select[name="qualification"]')
-                ?.value || '';
+            formDataStep.qualification = currentStepEl.querySelector('select[name="qualification"]')?.value || '';
             formDataStep.dob = currentStepEl.querySelector('input[name="dob"]')?.value || '';
             formDataStep.age = currentStepEl.querySelector('input[name="age"]')?.value || '';
-            formDataStep.current_address = currentStepEl.querySelector('input[name="current_address"]')
-                ?.value || '';
+            formDataStep.current_address = currentStepEl.querySelector('input[name="current_address"]')?.value || '';
             formDataStep.pin_code = currentStepEl.querySelector('input[name="pin_code"]')?.value || '';
-            formDataStep.linkedin_profile = currentStepEl.querySelector('input[name="linkedin_profile"]')
-                ?.value || '';
+            formDataStep.linkedin_profile = currentStepEl.querySelector('input[name="linkedin_profile"]')?.value || '';
             formDataStep.photo = currentStepEl.querySelector('input[name="photo"]')?.files[0] || null;
         } else if (step === 3) {
-            const registerBusiness = currentStepEl.querySelector('input[name="register_business"]:checked')
-                ?.value;
+            const registerBusiness = currentStepEl.querySelector('input[name="register_business"]:checked')?.value;
             formDataStep.register_business = registerBusiness || '0';
 
             if (registerBusiness === '0') {
-                formDataStep.business_name = currentStepEl.querySelector('input[name="business_name"]')
-                    ?.value || '';
-                formDataStep.brand_name = currentStepEl.querySelector('input[name="brand_name"]')?.value ||
+                formDataStep.business_name = currentStepEl.querySelector('input[name="business_name"]')?.value || '';
+                formDataStep.brand_name = currentStepEl.querySelector('input[name="brand_name"]')?.value || '';
+                formDataStep.business_address = currentStepEl.querySelector('input[name="business_address"]')?.value ||
                     '';
-                formDataStep.business_address = currentStepEl.querySelector(
-                        'input[name="business_address"]')?.value ||
-                    '';
-                formDataStep.business_describe = currentStepEl.querySelector(
-                        'textarea[name="business_describe"]')
+                formDataStep.business_describe = currentStepEl.querySelector('textarea[name="business_describe"]')
                     ?.value || '';
-                formDataStep.website_links = currentStepEl.querySelector('input[name="website_links"]')
-                    ?.value || '';
+                formDataStep.website_links = currentStepEl.querySelector('input[name="website_links"]')?.value || '';
                 formDataStep.industry = currentStepEl.querySelector('select[name="industry"]')?.value || '';
-                formDataStep.business_country = currentStepEl.querySelector(
-                        'select[name="business_country"]')?.value ||
+                formDataStep.business_country = currentStepEl.querySelector('select[name="business_country"]')?.value ||
                     '';
-                formDataStep.business_state = currentStepEl.querySelector('select[name="business_state"]')
-                    ?.value || '';
-                formDataStep.business_city = currentStepEl.querySelector('select[name="business_city"]')
-                    ?.value || '';
-                formDataStep.market_capital = currentStepEl.querySelector('input[name="market_capital"]')
-                    ?.value || '';
-                formDataStep.stake_funding = currentStepEl.querySelector('input[name="stake_funding"]')
-                    ?.value || '';
-                formDataStep.your_stake = currentStepEl.querySelector('input[name="your_stake"]')?.value ||
-                    '';
-                formDataStep.business_logo = currentStepEl.querySelector('input[name="business_logo"]')
-                    ?.files[0] ||
-                    null;
-                formDataStep.product_photos = Array.from(currentStepEl.querySelector(
-                        'input[name="product_photos[]"]')
+                formDataStep.business_state = currentStepEl.querySelector('select[name="business_state"]')?.value || '';
+                formDataStep.business_city = currentStepEl.querySelector('select[name="business_city"]')?.value || '';
+                formDataStep.market_capital = currentStepEl.querySelector('input[name="market_capital"]')?.value || '';
+                formDataStep.stake_funding = currentStepEl.querySelector('input[name="stake_funding"]')?.value || '';
+                formDataStep.your_stake = currentStepEl.querySelector('input[name="your_stake"]')?.value || '';
+                // Handle business_logo: store null if no file is selected
+                const businessLogo = currentStepEl.querySelector('input[name="business_logo"]')?.files[0];
+                if (businessLogo) formDataStep.business_logo = businessLogo;
+                // Handle product_photos: store empty array if no files are selected
+                formDataStep.product_photos = Array.from(currentStepEl.querySelector('input[name="product_photos[]"]')
                     ?.files || []);
                 formDataStep.own_fund = currentStepEl.querySelector('input[name="own_fund"]')?.value || '';
                 formDataStep.loan = currentStepEl.querySelector('input[name="loan"]')?.value || '';
-                formDataStep.invested_amount = currentStepEl.querySelector('input[name="invested_amount"]')
-                    ?.value ||
+                formDataStep.invested_amount = currentStepEl.querySelector('input[name="invested_amount"]')?.value ||
                     '';
-                formDataStep.pitch_deck = currentStepEl.querySelector('input[name="pitch_deck"]')?.files[
-                    0] || null;
+                const pitchDeck = currentStepEl.querySelector('input[name="pitch_deck"]')?.files[0];
+                if (pitchDeck) formDataStep.pitch_deck = pitchDeck;
                 // Company details
                 const companyGroups = currentStepEl.querySelectorAll('.company-group');
                 formDataStep.company_name = [];
@@ -3483,15 +3260,11 @@
                 formDataStep.more_your_stake = [];
                 formDataStep.more_stake_funding = [];
                 companyGroups.forEach(group => {
-                    const companyName = group.querySelector('input[name="company_name[]"]')
-                        ?.value || '';
-                    const marketCapital = group.querySelector('input[name="more_market_capital[]"]')
-                        ?.value ||
+                    const companyName = group.querySelector('input[name="company_name[]"]')?.value || '';
+                    const marketCapital = group.querySelector('input[name="more_market_capital[]"]')?.value ||
                         '';
-                    const yourStake = group.querySelector('input[name="more_your_stake[]"]')
-                        ?.value || '';
-                    const stakeFunding = group.querySelector('input[name="more_stake_funding[]"]')
-                        ?.value || '';
+                    const yourStake = group.querySelector('input[name="more_your_stake[]"]')?.value || '';
+                    const stakeFunding = group.querySelector('input[name="more_stake_funding[]"]')?.value || '';
                     if (companyName || marketCapital || yourStake || stakeFunding) {
                         formDataStep.company_name.push(companyName);
                         formDataStep.more_market_capital.push(marketCapital);
@@ -3500,84 +3273,58 @@
                     }
                 });
             } else if (registerBusiness === '1') {
-                formDataStep.y_business_name = currentStepEl.querySelector('input[name="y_business_name"]')
-                    ?.value ||
+                formDataStep.y_business_name = currentStepEl.querySelector('input[name="y_business_name"]')?.value ||
                     '';
-                formDataStep.y_brand_name = currentStepEl.querySelector('input[name="y_brand_name"]')
+                formDataStep.y_brand_name = currentStepEl.querySelector('input[name="y_brand_name"]')?.value || '';
+                formDataStep.y_describe_business = currentStepEl.querySelector('textarea[name="y_describe_business"]')
                     ?.value || '';
-                formDataStep.y_describe_business = currentStepEl.querySelector(
-                        'textarea[name="y_describe_business"]')
+                formDataStep.y_business_address = currentStepEl.querySelector('textarea[name="y_business_address"]')
                     ?.value || '';
-                formDataStep.y_business_address = currentStepEl.querySelector(
-                        'textarea[name="y_business_address"]')
+                formDataStep.y_business_country = currentStepEl.querySelector('select[name="y_business_country"]')
                     ?.value || '';
-                formDataStep.y_business_country = currentStepEl.querySelector(
-                        'select[name="y_business_country"]')
-                    ?.value || '';
-                formDataStep.y_business_state = currentStepEl.querySelector(
-                        'select[name="y_business_state"]')?.value ||
+                formDataStep.y_business_state = currentStepEl.querySelector('select[name="y_business_state"]')?.value ||
                     '';
-                formDataStep.y_business_city = currentStepEl.querySelector('select[name="y_business_city"]')
-                    ?.value ||
+                formDataStep.y_business_city = currentStepEl.querySelector('select[name="y_business_city"]')?.value ||
                     '';
-                formDataStep.y_zipcode = currentStepEl.querySelector('input[name="y_zipcode"]')?.value ||
-                    '';
-                formDataStep.y_type_industries = currentStepEl.querySelector(
-                        'select[name="y_type_industries"]')
+                formDataStep.y_zipcode = currentStepEl.querySelector('input[name="y_zipcode"]')?.value || '';
+                formDataStep.y_type_industries = currentStepEl.querySelector('select[name="y_type_industries"]')
                     ?.value || '';
-                formDataStep.y_own_fund = currentStepEl.querySelector('input[name="y_own_fund"]')?.value ||
-                    '';
+                formDataStep.y_own_fund = currentStepEl.querySelector('input[name="y_own_fund"]')?.value || '';
                 formDataStep.y_loan = currentStepEl.querySelector('input[name="y_loan"]')?.value || '';
-                formDataStep.y_invested_amount = currentStepEl.querySelector(
-                        'input[name="y_invested_amount"]')
+                formDataStep.y_invested_amount = currentStepEl.querySelector('input[name="y_invested_amount"]')
                     ?.value || '';
-
-                formDataStep.y_market_capital = currentStepEl.querySelector(
-                        'input[name="y_market_capital"]')?.value ||
+                formDataStep.y_market_capital = currentStepEl.querySelector('input[name="y_market_capital"]')?.value ||
                     '';
-                formDataStep.y_stake_funding = currentStepEl.querySelector('input[name="y_stake_funding"]')
-                    ?.value ||
+                formDataStep.y_stake_funding = currentStepEl.querySelector('input[name="y_stake_funding"]')?.value ||
                     '';
-                formDataStep.y_your_stake = currentStepEl.querySelector('input[name="y_your_stake"]')
+                formDataStep.y_your_stake = currentStepEl.querySelector('input[name="y_your_stake"]')?.value || '';
+                formDataStep.business_year_count = currentStepEl.querySelector('input[name="business_year_count"]')
                     ?.value || '';
-                formDataStep.business_year_count = currentStepEl.querySelector(
-                        'input[name="business_year_count"]')
-                    ?.value || '';
-
-                formDataStep.business_mobile = currentStepEl.querySelector('input[name="business_mobile"]')
-                    ?.value ||
+                formDataStep.business_mobile = currentStepEl.querySelector('input[name="business_mobile"]')?.value ||
                     '';
-                formDataStep.business_email = currentStepEl.querySelector('input[name="business_email"]')
-                    ?.value || '';
-                formDataStep.business_year = currentStepEl.querySelector('select[name="business_year"]')
-                    ?.value || '';
+                formDataStep.business_email = currentStepEl.querySelector('input[name="business_email"]')?.value || '';
+                formDataStep.business_year = currentStepEl.querySelector('select[name="business_year"]')?.value || '';
                 formDataStep.registration_type_of_entity = currentStepEl.querySelector(
                     'select[name="registration_type_of_entity"]')?.value || '';
                 formDataStep.tax_registration_number = currentStepEl.querySelector(
                     'input[name="tax_registration_number"]')?.value || '';
-                formDataStep.founder_number = currentStepEl.querySelector('input[name="founder_number"]')
-                    ?.value || '';
-                formDataStep.employee_number = currentStepEl.querySelector('input[name="employee_number"]')
-                    ?.value ||
+                formDataStep.founder_number = currentStepEl.querySelector('input[name="founder_number"]')?.value || '';
+                formDataStep.employee_number = currentStepEl.querySelector('input[name="employee_number"]')?.value ||
                     '';
-                formDataStep.business_revenue1 = currentStepEl.querySelector(
-                        'input[name="business_revenue1"]')
+                formDataStep.business_revenue1 = currentStepEl.querySelector('input[name="business_revenue1"]')
                     ?.value || '';
-                formDataStep.business_revenue2 = currentStepEl.querySelector(
-                        'input[name="business_revenue2"]')
+                formDataStep.business_revenue2 = currentStepEl.querySelector('input[name="business_revenue2"]')
                     ?.value || '';
-                formDataStep.business_revenue3 = currentStepEl.querySelector(
-                        'input[name="business_revenue3"]')
+                formDataStep.business_revenue3 = currentStepEl.querySelector('input[name="business_revenue3"]')
                     ?.value || '';
-                formDataStep.y_business_logo = currentStepEl.querySelector('input[name="y_business_logo"]')
-                    ?.files[0] ||
+                // Handle y_business_logo: store null if no file is selected
+                formDataStep.y_business_logo = currentStepEl.querySelector('input[name="y_business_logo"]')?.files[0] ||
                     null;
+                // Handle y_product_photos: store empty array if no files are selected
                 formDataStep.y_product_photos = Array.from(currentStepEl.querySelector(
                     'input[name="y_product_photos[]"]')?.files || []);
-                formDataStep.y_pitch_deck = currentStepEl.querySelector('input[name="y_pitch_deck"]')
-                    ?.files[0] || null;
-                formDataStep.website_links = currentStepEl.querySelector('input[name="website_links"]')
-                    ?.value || '';
+                formDataStep.y_pitch_deck = currentStepEl.querySelector('input[name="y_pitch_deck"]')?.files[0] || null;
+                formDataStep.website_links = currentStepEl.querySelector('input[name="website_links"]')?.value || '';
                 // Company details
                 const companyGroups = currentStepEl.querySelectorAll('.company-group');
                 formDataStep.company_name = [];
@@ -3585,15 +3332,11 @@
                 formDataStep.more_your_stake = [];
                 formDataStep.more_stake_funding = [];
                 companyGroups.forEach(group => {
-                    const companyName = group.querySelector('input[name="company_name[]"]')
-                        ?.value || '';
-                    const marketCapital = group.querySelector('input[name="more_market_capital[]"]')
-                        ?.value ||
+                    const companyName = group.querySelector('input[name="company_name[]"]')?.value || '';
+                    const marketCapital = group.querySelector('input[name="more_market_capital[]"]')?.value ||
                         '';
-                    const yourStake = group.querySelector('input[name="more_your_stake[]"]')
-                        ?.value || '';
-                    const stakeFunding = group.querySelector('input[name="more_stake_funding[]"]')
-                        ?.value || '';
+                    const yourStake = group.querySelector('input[name="more_your_stake[]"]')?.value || '';
+                    const stakeFunding = group.querySelector('input[name="more_stake_funding[]"]')?.value || '';
                     if (companyName || marketCapital || yourStake || stakeFunding) {
                         formDataStep.company_name.push(companyName);
                         formDataStep.more_market_capital.push(marketCapital);
@@ -3603,10 +3346,8 @@
                 });
             }
         } else if (step === 4) {
-            formDataStep.video_upload = currentStepEl.querySelector('input[name="video_upload"]')?.files[
-                0] || null;
-            formDataStep.agreed_to_terms = currentStepEl.querySelector('input[name="agreed_to_terms"]')
-                ?.checked ? 1 :
+            formDataStep.video_upload = currentStepEl.querySelector('input[name="video_upload"]')?.files[0] || null;
+            formDataStep.agreed_to_terms = currentStepEl.querySelector('input[name="agreed_to_terms"]')?.checked ? 1 :
                 0;
         }
 
@@ -3645,7 +3386,8 @@
                         stepData[key].forEach((item, index) => {
                             formDataToSend.append(`${key}[${index}]`, item);
                         });
-                    } else {
+                    } else if (stepData[key] !== null && stepData[key] !== undefined) {
+                        // Only append non-null and non-undefined values
                         formDataToSend.append(key, stepData[key]);
                     }
                 });
@@ -4091,26 +3833,48 @@
             businessYearSelect.addEventListener('change', updateYearsInBusiness);
         }
 
-        //const fundingCurrencyLabel = document.querySelectorAll('.funding_currency_label');
-        //  const countryInput = document.getElementById('business_country');
+        const fundingCurrencyLabel = document.querySelectorAll('.funding_currency_label');
+        const countryInput = document.getElementById('business_country');
 
-        // function updateFundingCurrencyLabel() {
-        //  const selectedCountry = (countryInput?.value || '').trim().toLowerCase();
-        //         let label = '';
+        function updateFundingCurrencyLabel() {
+            const selectedCountry = (countryInput?.value || '').trim().toLowerCase();
+            let label = '';
 
-        //    if (selectedCountry === 'in') {
-        //        label = '(INR)';
-        //   } else if (selectedCountry !== '') {
-        //         label = '(USD)';
-        //       }
-        // fundingCurrencyLabel.forEach(el => {
-        //  el.textContent = label;
-        // });
-        // }
+            if (selectedCountry === 'in') {
+                label = '(INR)';
+            } else if (selectedCountry !== '') {
+                label = '(USD)';
+            }
+            fundingCurrencyLabel.forEach(el => {
+                el.textContent = label;
+            });
+        }
 
-        // updateFundingCurrencyLabel();
+        updateFundingCurrencyLabel();
 
-        // countryInput?.addEventListener('input', updateFundingCurrencyLabel);
+        countryInput?.addEventListener('input', updateFundingCurrencyLabel);
+
+        ///
+        const fundingCurrencyYLabel = document.querySelectorAll('.funding_currency_label');
+        const countryYInput = document.getElementById('y_business_country');
+
+        function updateFundingCurrencyYLabel() {
+            const selectedCountryY = (countryYInput?.value || '').trim().toLowerCase();
+            let label = '';
+
+            if (selectedCountryY === 'in') {
+                label = '(INR)';
+            } else if (selectedCountryY !== '') {
+                label = '(USD)';
+            }
+            fundingCurrencyLabel.forEach(el => {
+                el.textContent = label;
+            });
+        }
+
+        updateFundingCurrencyYLabel();
+
+        countryYInput?.addEventListener('input', updateFundingCurrencyYLabel);
     });
     // Character counter for idea summary
     //  const ideaSummary = document.querySelector('textarea[name="idea_summary"]');
@@ -5751,13 +5515,32 @@
         const bizCountrySelect = document.getElementById('business_country');
         const bizStateSelect = document.getElementById('business_state');
         const bizCitySelect = document.getElementById('business_city');
-        const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
-        const bizCountrySelectY = document.getElementById('y_business_country');
-        const bizStateSelectY = document.getElementById('y_business_state');
-        const bizCitySelectY = document.getElementById('y_business_city');
-        const fundingCurrencyLabelsY = document.querySelectorAll('.funding_currency_label');
+        const yCountrySelect = document.getElementById('y_business_country');
+        const yStateSelect = document.getElementById('y_business_state');
+        const yCitySelect = document.getElementById('y_business_city');
         const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
         const BASE_URL = 'https://api.countrystatecity.in/v1';
+
+        // Get database values for pre-selection
+        const dbCountry = "{{ old('business_country', $enterprent->business_country ?? '') }}";
+        const dbState = "{{ old('business_state', $enterprent->business_state ?? '') }}";
+        const dbCity = "{{ old('business_city', $enterprent->business_city ?? '') }}";
+        const yDbCountry = "{{ old('y_business_country', $enterprent->y_business_country ?? '') }}";
+        const yDbState = "{{ old('y_business_state', $enterprent->y_business_state ?? '') }}";
+        const yDbCity = "{{ old('y_business_city', $enterprent->y_business_city ?? '') }}";
+
+        console.log('Database Values:', {
+            business_country: dbCountry,
+            business_state: dbState,
+            business_city: dbCity,
+            y_business_country: yDbCountry,
+            y_business_state: yDbState,
+            y_business_city: yDbCity
+        });
+
+        // Store mapping for later use
+        let countryMapping = {};
+        let stateMapping = {};
 
         async function fetchCountries(selectElement) {
             try {
@@ -5768,12 +5551,15 @@
                 });
                 if (!response.ok) throw new Error('Failed to fetch countries');
                 const countries = await response.json();
+                console.log('Countries API response:', countries);
+
                 selectElement.innerHTML = '<option value="">Select a country</option>';
                 countries.forEach(country => {
                     const option = document.createElement('option');
                     option.value = country.iso2;
                     option.textContent = country.name;
                     selectElement.appendChild(option);
+                    countryMapping[country.iso2] = country.name;
                 });
             } catch (error) {
                 console.error('Error fetching countries:', error);
@@ -5781,7 +5567,235 @@
             }
         }
 
-        async function populateStates(countryIso2, stateSelect, citySelect) {
+        async function populateStates(countryIso2, stateSelect, citySelect, preselectedState = null,
+            preselectedCity = null) {
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+
+            if (!countryIso2) {
+                console.warn('No country selected for state population');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states`, {
+                    headers: {
+                        'X-CSCAPI-KEY': API_KEY
+                    }
+                });
+                if (!response.ok) throw new Error('Failed to fetch states');
+                const states = await response.json();
+                console.log(`States for country ${countryIso2}:`, states);
+
+                states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
+                    sensitivity: 'base'
+                }));
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.iso2;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                    stateMapping[state.iso2] = state.name;
+                });
+
+                if (preselectedState) {
+                    console.log('Pre-selecting state:', preselectedState);
+                    stateSelect.value = preselectedState;
+                    if (stateSelect.value === preselectedState) {
+                        console.log('State pre-selected successfully:', preselectedState);
+                        await populateCities(countryIso2, preselectedState, citySelect, preselectedCity);
+                    } else {
+                        console.warn('State not found in dropdown:', preselectedState);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching states:', error);
+                stateSelect.innerHTML = '<option value="">No states available</option>';
+            }
+        }
+
+        async function populateCities(countryIso2, stateIso2, citySelect, preselectedCity = null) {
+            citySelect.innerHTML = '<option value="">Select City</option>';
+
+            if (!countryIso2 || !stateIso2) {
+                console.warn('No country or state selected for city population');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/countries/${countryIso2}/states/${stateIso2}/cities`, {
+                        headers: {
+                            'X-CSCAPI-KEY': API_KEY
+                        }
+                    });
+                if (!response.ok) throw new Error('Failed to fetch cities');
+                const cities = await response.json();
+                console.log(`Cities for state ${stateIso2}:`, cities);
+
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.name;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                });
+
+                if (preselectedCity) {
+                    console.log('Pre-selecting city:', preselectedCity);
+                    citySelect.value = preselectedCity;
+                    if (citySelect.value === preselectedCity) {
+                        console.log('City pre-selected successfully:', preselectedCity);
+                    } else {
+                        console.warn('City not found in dropdown:', preselectedCity);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching cities:', error);
+                citySelect.innerHTML = '<option value="">No cities available</option>';
+            }
+        }
+
+        // Event Listeners for Business Country/State/City
+        bizCountrySelect?.addEventListener('change', () => {
+            const countryIso2 = bizCountrySelect.value.trim();
+            console.log('Business country changed to:', countryIso2);
+            populateStates(countryIso2, bizStateSelect, bizCitySelect);
+            const countryError = document.getElementById('business_country_error');
+            if (countryIso2 && countryError) countryError.classList.add('d-none');
+        });
+
+        bizStateSelect?.addEventListener('change', () => {
+            const countryIso2 = bizCountrySelect.value.trim();
+            const stateIso2 = bizStateSelect.value;
+            console.log('Business state changed to:', stateIso2);
+            populateCities(countryIso2, stateIso2, bizCitySelect);
+        });
+
+        // Event Listeners for Y Business Country/State/City
+        yCountrySelect?.addEventListener('change', () => {
+            const countryIso2 = yCountrySelect.value.trim();
+            console.log('Y Business country changed to:', countryIso2);
+            populateStates(countryIso2, yStateSelect, yCitySelect);
+            const countryError = document.getElementById('y_business_country_error');
+            if (countryIso2 && countryError) countryError.classList.add('d-none');
+        });
+
+        yStateSelect?.addEventListener('change', () => {
+            const countryIso2 = yCountrySelect.value.trim();
+            const stateIso2 = yStateSelect.value;
+            console.log('Y Business state changed to:', stateIso2);
+            populateCities(countryIso2, stateIso2, yCitySelect);
+        });
+
+        // Initialize form
+        async function initializeForm() {
+            // Initialize Business Country dropdown
+            if (bizCountrySelect) {
+                await fetchCountries(bizCountrySelect);
+                if (dbCountry) {
+                    console.log('Pre-selecting business country:', dbCountry);
+                    bizCountrySelect.value = dbCountry;
+                    if (bizCountrySelect.value === dbCountry) {
+                        console.log('Business country pre-selected successfully:', dbCountry);
+                        await populateStates(dbCountry, bizStateSelect, bizCitySelect, dbState, dbCity);
+                    } else {
+                        console.warn('Business country not found in dropdown:', dbCountry);
+                        // Fallback: Try to find the country by name
+                        const countryOption = Array.from(bizCountrySelect.options).find(
+                            option => option.textContent === dbCountry
+                        );
+                        if (countryOption) {
+                            bizCountrySelect.value = countryOption.value;
+                            console.log('Fallback: Business country set to:', countryOption.value);
+                            await populateStates(countryOption.value, bizStateSelect, bizCitySelect,
+                                dbState, dbCity);
+                        }
+                    }
+                }
+            }
+
+            // Initialize Y Business Country dropdown
+            if (yCountrySelect) {
+                await fetchCountries(yCountrySelect);
+                if (yDbCountry) {
+                    console.log('Pre-selecting Y business country:', yDbCountry);
+                    yCountrySelect.value = yDbCountry;
+                    if (yCountrySelect.value === yDbCountry) {
+                        console.log('Y Business country pre-selected successfully:', yDbCountry);
+                        await populateStates(yDbCountry, yStateSelect, yCitySelect, yDbState, yDbCity);
+                    } else {
+                        console.warn('Y Business country not found in dropdown:', yDbCountry);
+                        // Fallback: Try to find the country by name
+                        const countryOption = Array.from(yCountrySelect.options).find(
+                            option => option.textContent === yDbCountry
+                        );
+                        if (countryOption) {
+                            yCountrySelect.value = countryOption.value;
+                            console.log('Fallback: Y Business country set to:', countryOption.value);
+                            await populateStates(countryOption.value, yStateSelect, yCitySelect, yDbState,
+                                yDbCity);
+                        }
+                    }
+                }
+            }
+        }
+
+        initializeForm();
+    });
+    //end if register
+
+    // Event listeners
+
+    //end business state & city
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const countrySelect = document.getElementById('country');
+        const stateSelect = document.getElementById('state');
+        const citySelect = document.getElementById('city');
+        const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
+        const BASE_URL = 'https://api.countrystatecity.in/v1';
+
+        // Get database or old values for pre-selection
+        const dbCountry = "{{ old('country', $enterprent->country ?? '') }}";
+        const dbState = "{{ old('state', $enterprent->state ?? '') }}";
+        const dbCity = "{{ old('city', $enterprent->city ?? '') }}";
+
+        console.log('Database Values:', {
+            country: dbCountry,
+            state: dbState,
+            city: dbCity
+        });
+
+        // Store mapping for later use
+        let countryMapping = {};
+        let stateMapping = {};
+
+        async function fetchCountries() {
+            try {
+                const response = await fetch(`${BASE_URL}/countries`, {
+                    headers: {
+                        'X-CSCAPI-KEY': API_KEY
+                    }
+                });
+                if (!response.ok) throw new Error('Failed to fetch countries');
+                const countries = await response.json();
+                console.log('Countries API response:', countries);
+
+                countrySelect.innerHTML = '<option value="">Select a country</option>';
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.iso2;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                    countryMapping[country.iso2] = country.name;
+                });
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+                countrySelect.innerHTML = '<option value="">Error loading countries</option>';
+            }
+        }
+
+        async function populateStates(countryIso2, preselectedState = null, preselectedCity = null) {
             console.log('Populating states for country:', countryIso2);
             stateSelect.innerHTML = '<option value="">Select State</option>';
             citySelect.innerHTML = '<option value="">Select City</option>';
@@ -5800,6 +5814,7 @@
                 if (!response.ok) throw new Error('Failed to fetch states');
                 const states = await response.json();
                 console.log('States found:', states);
+
                 states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
                     sensitivity: 'base'
                 }));
@@ -5808,14 +5823,35 @@
                     option.value = state.iso2;
                     option.textContent = state.name;
                     stateSelect.appendChild(option);
+                    stateMapping[state.iso2] = state.name;
                 });
+
+                if (preselectedState) {
+                    console.log('Pre-selecting state:', preselectedState);
+                    stateSelect.value = preselectedState;
+                    if (stateSelect.value === preselectedState) {
+                        console.log('State pre-selected successfully:', preselectedState);
+                        await populateCities(countryIso2, preselectedState, preselectedCity);
+                    } else {
+                        console.warn('State not found in dropdown:', preselectedState);
+                        // Fallback: Try to find the state by name
+                        const stateOption = Array.from(stateSelect.options).find(
+                            option => option.textContent === preselectedState
+                        );
+                        if (stateOption) {
+                            stateSelect.value = stateOption.value;
+                            console.log('Fallback: State set to:', stateOption.value);
+                            await populateCities(countryIso2, stateOption.value, preselectedCity);
+                        }
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching states:', error);
                 stateSelect.innerHTML = '<option value="">No states available</option>';
             }
         }
 
-        async function populateCities(countryIso2, stateIso2, citySelect) {
+        async function populateCities(countryIso2, stateIso2, preselectedCity = null) {
             console.log('Populating cities for state:', stateIso2);
             citySelect.innerHTML = '<option value="">Select City</option>';
 
@@ -5827,234 +5863,83 @@
             try {
                 const response = await fetch(
                     `${BASE_URL}/countries/${countryIso2}/states/${stateIso2}/cities`, {
-                        headers: {
-                            'X-CSCAPI-KEY': API_KEY
-                        }
+                            headers: {
+                                'X-CSCAPI-KEY': API_KEY
+                            }
+                        });
+                    if (!response.ok) throw new Error('Failed to fetch cities');
+                    const cities = await response.json();
+                    console.log('Cities found:', cities);
+
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.name;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
                     });
-                if (!response.ok) throw new Error('Failed to fetch cities');
-                const cities = await response.json();
-                console.log('Cities found:', cities);
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city.name;
-                    option.textContent = city.name;
-                    citySelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching cities:', error);
-                citySelect.innerHTML = '<option value="">No cities available</option>';
-            }
-        }
 
-        function updateFundingCurrencyLabel(countrySelect, labels) {
-            const selectedCountry = (countrySelect?.value || '').trim().toLowerCase();
-            let label = '';
-
-            if (selectedCountry === 'in') {
-                label = '(₹)';
-            } else if (selectedCountry !== '') {
-                label = '($)';
-            }
-
-            labels.forEach(el => {
-                el.textContent = label;
-            });
-        }
-
-        // Event Listeners for business_country
-        bizCountrySelect?.addEventListener('change', () => {
-            const countryIso2 = bizCountrySelect.value.trim();
-            console.log('Country changed to:', countryIso2);
-            populateStates(countryIso2, bizStateSelect, bizCitySelect);
-            bizStateSelect.value = '';
-            bizCitySelect.value = '';
-            updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
-
-            const countryError = document.getElementById('business_country_error');
-            if (countryIso2) {
-                if (countryError) countryError.classList.add('d-none');
-            }
-        });
-
-        bizStateSelect?.addEventListener('change', () => {
-            const countryIso2 = bizCountrySelect.value.trim();
-            const stateIso2 = bizStateSelect.value;
-            populateCities(countryIso2, stateIso2, bizCitySelect);
-            bizCitySelect.value = '';
-        });
-
-        // Event Listeners for y_business_country
-        bizCountrySelectY?.addEventListener('change', () => {
-            const countryIso2 = bizCountrySelectY.value.trim();
-            console.log('Change event triggered, country:', countryIso2);
-            populateStates(countryIso2, bizStateSelectY, bizCitySelectY);
-            bizStateSelectY.value = '';
-            bizCitySelectY.value = '';
-            updateFundingCurrencyLabel(bizCountrySelectY, fundingCurrencyLabelsY);
-
-            const countryErrorY = document.getElementById('y_business_country_error');
-            if (countryIso2) {
-                if (countryErrorY) countryErrorY.classList.add('d-none');
-            }
-        });
-
-        bizStateSelectY?.addEventListener('change', () => {
-            const countryIso2 = bizCountrySelectY.value.trim();
-            const stateIso2 = bizStateSelectY.value;
-            populateCities(countryIso2, stateIso2, bizCitySelectY);
-            bizCitySelectY.value = '';
-        });
-
-        // Initialize on page load
-        if (bizCountrySelect) {
-            fetchCountries(bizCountrySelect);
-            if (bizCountrySelect.value) {
-                const countryIso2 = bizCountrySelect.value.trim();
-                console.log('Preselected country:', countryIso2);
-                populateStates(countryIso2, bizStateSelect, bizCitySelect);
-                updateFundingCurrencyLabel(bizCountrySelect, fundingCurrencyLabels);
-            }
-        }
-
-        if (bizCountrySelectY) {
-            fetchCountries(bizCountrySelectY);
-            if (bizCountrySelectY.value) {
-                const countryIso2 = bizCountrySelectY.value.trim();
-                console.log('Preselected country:', countryIso2);
-                populateStates(countryIso2, bizStateSelectY, bizCitySelectY);
-                updateFundingCurrencyLabel(bizCountrySelectY, fundingCurrencyLabelsY);
-                const preselectedStateY = bizStateSelectY?.value.trim();
-                if (preselectedStateY) {
-                    console.log('Preselected state:', preselectedStateY);
-                    populateCities(countryIso2, preselectedStateY, bizCitySelectY);
-                }
-            }
-        }
-    });
-    //end if register
-
-    // Event listeners
-
-    //end business state & city
-
-    const countrySelect = document.getElementById('country');
-    const stateSelect = document.getElementById('state');
-    const citySelect = document.getElementById('city');
-    const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
-    const BASE_URL = 'https://api.countrystatecity.in/v1';
-
-    async function fetchCountries() {
-        try {
-            const response = await fetch(`${BASE_URL}/countries`, {
-                headers: {
-                    'X-CSCAPI-KEY': API_KEY
-                }
-            });
-            if (!response.ok) throw new Error('Failed to fetch countries');
-            const countries = await response.json();
-            countrySelect.innerHTML = '<option value="">Select a country</option>';
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country.iso2;
-                option.textContent = country.name;
-                countrySelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching countries:', error);
-            countrySelect.innerHTML = '<option value="">Error loading countries</option>';
-        }
-    }
-
-    async function populateStates(countryIso2) {
-        console.log('Populating states for country:', countryIso2);
-        stateSelect.innerHTML = '<option value="">Select State</option>';
-        citySelect.innerHTML = '<option value="">Select City</option>';
-
-        if (!countryIso2) {
-            console.warn('No country selected');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states`, {
-                headers: {
-                    'X-CSCAPI-KEY': API_KEY
-                }
-            });
-            if (!response.ok) throw new Error('Failed to fetch states');
-            const states = await response.json();
-            console.log('States found:', states);
-            states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
-                sensitivity: 'base'
-            }));
-            states.forEach(state => {
-                const option = document.createElement('option');
-                option.value = state.iso2;
-                option.textContent = state.name;
-                stateSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching states:', error);
-            stateSelect.innerHTML = '<option value="">No states available</option>';
-        }
-    }
-
-    async function populateCities(countryIso2, stateIso2) {
-        console.log('Populating cities for state:', stateIso2);
-        citySelect.innerHTML = '<option value="">Select City</option>';
-
-        if (!countryIso2 || !stateIso2) {
-            console.warn('No country or state selected');
-            return;
-        }
-
-        try {
-            const response = await fetch(
-                `${BASE_URL}/countries/${countryIso2}/states/${stateIso2}/cities`, {
-                        headers: {
-                            'X-CSCAPI-KEY': API_KEY
+                    if (preselectedCity) {
+                        console.log('Pre-selecting city:', preselectedCity);
+                        citySelect.value = preselectedCity;
+                        if (citySelect.value === preselectedCity) {
+                            console.log('City pre-selected successfully:', preselectedCity);
+                        } else {
+                            console.warn('City not found in dropdown:', preselectedCity);
                         }
-                    });
-                if (!response.ok) throw new Error('Failed to fetch cities');
-                const cities = await response.json();
-                console.log('Cities found:', cities);
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city.name;
-                    option.textContent = city.name;
-                    citySelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching cities:', error);
-                citySelect.innerHTML = '<option value="">No cities available</option>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching cities:', error);
+                    citySelect.innerHTML = '<option value="">No cities available</option>';
+                }
             }
-        }
 
-        countrySelect?.addEventListener('change', () => {
-            const countryIso2 = countrySelect.value;
-            populateStates(countryIso2);
-            stateSelect.value = '';
-            citySelect.value = '';
+            // Event Listeners
+            countrySelect?.addEventListener('change', () => {
+                const countryIso2 = countrySelect.value;
+                console.log('Country changed to:', countryIso2);
+                populateStates(countryIso2);
+                stateSelect.value = '';
+                citySelect.value = '';
 
-            const countryError = document.getElementById('country_error');
-            if (countryIso2) {
-                if (countryError) countryError.classList.add('d-none');
+                const countryError = document.getElementById('country_error');
+                if (countryIso2 && countryError) countryError.classList.add('d-none');
+            });
+
+            stateSelect?.addEventListener('change', () => {
+                const countryIso2 = countrySelect.value;
+                const stateIso2 = stateSelect.value;
+                console.log('State changed to:', stateIso2);
+                populateCities(countryIso2, stateIso2);
+                citySelect.value = '';
+            });
+
+            // Initialize form
+            async function initializeForm() {
+                if (countrySelect) {
+                    await fetchCountries();
+                    if (dbCountry) {
+                        console.log('Pre-selecting country:', dbCountry);
+                        countrySelect.value = dbCountry;
+                        if (countrySelect.value === dbCountry) {
+                            console.log('Country pre-selected successfully:', dbCountry);
+                            await populateStates(dbCountry, dbState, dbCity);
+                        } else {
+                            console.warn('Country not found in dropdown:', dbCountry);
+                            // Fallback: Try to find the country by name
+                            const countryOption = Array.from(countrySelect.options).find(
+                                option => option.textContent === dbCountry
+                            );
+                            if (countryOption) {
+                                countrySelect.value = countryOption.value;
+                                console.log('Fallback: Country set to:', countryOption.value);
+                                await populateStates(countryOption.value, dbState, dbCity);
+                            }
+                        }
+                    }
+                }
             }
-        });
 
-        stateSelect?.addEventListener('change', () => {
-            const countryIso2 = countrySelect.value;
-            const stateIso2 = stateSelect.value;
-            populateCities(countryIso2, stateIso2);
-            citySelect.value = '';
-        });
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchCountries();
-            if (countrySelect?.value) {
-                populateStates(countrySelect.value);
-            }
+            initializeForm();
         });
     </script>
     <script>
@@ -6784,7 +6669,8 @@
             let isValid = true;
 
             if (!productPhotos) {
-                console.error('Product photos input element not found');
+                formDataStep.product_photos = [];
+                //console.error('Product photos input element not found');
                 isValid = false;
             } else if (selectedProductFiles.length === 0) {
                 errorElement.textContent = 'At least one product photo is required.';

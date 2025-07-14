@@ -89,7 +89,11 @@ class Entrepreneur extends Model
         'remark_company_value',
         'remark_reason',
         'remark',
-        'video_upload'
+        'video_upload',
+        'business_logo_admin',
+        'y_business_logo_admin',
+        'product_photos_admin',
+        'y_product_photos_admin',
     ];
 
     protected $casts = [

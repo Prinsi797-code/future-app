@@ -559,7 +559,7 @@
                                     <input type="file" class="form-control" id="video_upload" name="video_upload"
                                         accept="video/mp4,video/x-m4v,video/avi,video/webm">
                                     <div class="text-danger mt-1 d-none" id="video_upload_error"></div>
-                                    <small class="text-muted">Upload one video file (MP4, AVI, or WebM, max 50MB)</small>
+                                    <small class="text-muted">Upload one video file (MP4, AVI, or WebM)</small>
                                     <input type="hidden" id="existing_video_url"
                                         value="{{ $entrepreneur->video_upload ?? '' }}">
                                     <div id="video_upload_preview" class="video-preview-container mt-2"></div>
@@ -1811,12 +1811,12 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set selected values for editing
-            @if (old('business_country', $enterprent->business_country ?? null))
-                document.getElementById('business_country').value =
-                    "{{ old('business_country', $enterprent->business_country) }}";
-            @endif
-        });
+        //document.addEventListener('DOMContentLoaded', function() {
+        // Set selected values for editing
+        // @if (old('business_country', $enterprent->business_country ?? null))
+        // document.getElementById('business_country').value =
+        //   "{{ old('business_country', $enterprent->business_country) }}";
+        //  @endif
+        //});
     </script>
 @endsection

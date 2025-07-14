@@ -373,7 +373,7 @@
                                     <div class="form-floating-custom">
                                         <label class="form-label">Full Name *</label>
                                         <input type="text" class="form-control" name="full_name"
-                                            value="{{ old('full_name', $investor->full_name ?? '') }}"
+                                            value="{{ old('full_name', $investo->full_name ?? '') }}"
                                             placeholder="Joey Tucker" required>
                                         <div class="text-danger mt-1 d-none" id="full_name_error"></div>
                                     </div>
@@ -394,14 +394,14 @@
                                             <select name="country_code" class="form-select" style="max-width: 120px;">
                                                 @foreach ($countries as $country)
                                                     <option value="{{ $country['code'] }}"
-                                                        {{ $country['code'] == old('country_code', $investor->country_code ?? '+91') ? 'selected' : '' }}>
+                                                        {{ $country['code'] == old('country_code', $investo->country_code ?? '+91') ? 'selected' : '' }}>
                                                         {{ $country['name'] }} ({{ $country['code'] }})
                                                     </option>
                                                 @endforeach
                                             </select>
                                             <input type="tel" class="form-control" name="phone_number"
                                                 placeholder="8529637410"
-                                                value="{{ old('phone_number', $investor->phone_number ?? '') }}"
+                                                value="{{ old('phone_number', $investo->phone_number ?? '') }}"
                                                 maxlength="12" required>
                                         </div>
                                         <div class="text-danger mt-1 d-none" id="phone_number_error"></div>
@@ -413,20 +413,20 @@
                                     <div class="form-floating-custom">
                                         <input type="text" class="form-control" name="current_address"
                                             id="current_address"
-                                            value="{{ old('current_address', $investor->current_address ?? '') }}"
+                                            value="{{ old('current_address', $investo->current_address ?? '') }}"
                                             placeholder="Nexora Ventures Inc.123 Market Street, Suite 200 San Francisco, CA 94105 United States">
                                         <label for="current_address">Residentail Address *</label>
                                         <div class="text-danger mt-1 d-none" id="current_address_error"></div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <div class="form-floating-custom">
                                         <select name="country" class="form-select" id="country" required>
                                             <option value="">Select a country</option>
                                             @foreach ($countries as $country)
                                                 <option value="{{ $country['name'] }}"
-                                                    {{ old('country', $investor->country ?? $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
+                                                    {{ old('country', $investo->country ?? $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
                                                     {{ $country['name'] }}
                                                 </option>
                                             @endforeach
@@ -440,7 +440,6 @@
                                     <div class="form-floating-custom">
                                         <select class="form-control" name="state" id="state" required>
                                             <option value="">Select State</option>
-                                            {{-- Dynamically filled via JS --}}
                                         </select>
                                         <label class="form-label">State *</label>
                                         <div class="text-danger mt-1 d-none" id="state_error"></div>
@@ -451,9 +450,40 @@
                                     <div class="form-floating-custom">
                                         <select class="form-control" name="city" id="city" required>
                                             <option value="">Select City</option>
-                                            {{-- Dynamically filled via JS --}}
                                         </select>
                                         <label class="form-label">City *</label>
+                                        <div class="text-danger mt-1 d-none" id="city_error"></div>
+                                    </div>
+                                </div> --}}
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating-custom">
+                                        <select name="country" class="form-select" id="country" required>
+                                            <option value="">Select a country</option>
+                                        </select>
+                                        <label for="country">Country *</label>
+                                        <div class="text-danger mt-1 d-none" id="country_error"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating-custom">
+                                        <select class="form-control" name="state" id="state" required>
+                                            <option value="">Select State</option>
+                                            {{-- Dynamically filled via JS --}}
+                                        </select>
+                                        <label class="state">State *</label>
+                                        <div class="text-danger mt-1 d-none" id="state_error"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating-custom">
+                                        <select class="form-control" name="city" id="city" required>
+                                            <option value="">Select City</option>
+                                            {{-- Dynamically filled via JS --}}
+                                        </select>
+                                        <label class="city">City *</label>
                                         <div class="text-danger mt-1 d-none" id="city_error"></div>
                                     </div>
                                 </div>
@@ -462,8 +492,7 @@
                                     <div class="form-floating-custom">
                                         <input type="text" pattern="[0-9]{5,6}" inputmode="numeric" maxlength="6"
                                             class="form-control" name="pin_code"
-                                            value="{{ old('pin_code', $investor->pin_code ?? '') }}"
-                                            placeholder="852741">
+                                            value="{{ old('pin_code', $investo->pin_code ?? '') }}" placeholder="852741">
                                         <label class="from-label">Pin/Zip Code *</label>
                                         <div class="text-danger mt-1 d-done" id="pin_code_error"></div>
                                     </div>
@@ -474,7 +503,7 @@
                                         <label class="form-label">Social Media Profile</label>
                                         <input type="url" class="form-control" name="linkedin_profile"
                                             id="linkedin_profile"
-                                            value="{{ old('linkedin_profile', $investor->linkedin_profile ?? '') }}"
+                                            value="{{ old('linkedin_profile', $investo->linkedin_profile ?? '') }}"
                                             placeholder="https://linkedin.com/in/your-profile">
                                     </div>
                                 </div>
@@ -483,7 +512,7 @@
                                     <div class="form-floating-custom">
                                         <label class="form-label">Date of Birth *</label>
                                         <input type="text" class="form-control" name="dob" id="dob"
-                                            value="{{ old('dob', $investor->dob ?? '') }}" placeholder="Select date"
+                                            value="{{ old('dob', $investo->dob ?? '') }}" placeholder="Select date"
                                             readonly>
                                         <div class="text-danger mt-1 d-none" id="dob_error"></div>
                                     </div>
@@ -496,7 +525,7 @@
                                                 <option value="">Select Qualification</option>
                                                 @foreach ($qualifications as $qualification)
                                                     <option value="{{ $qualification }}"
-                                                        {{ old('qualification', $investor->qualification ?? '') == $qualification ? 'selected' : '' }}>
+                                                        {{ old('qualification', $investo->qualification ?? '') == $qualification ? 'selected' : '' }}>
                                                         {{ $qualification }}
                                                     </option>
                                                 @endforeach
@@ -510,7 +539,7 @@
                                     <div class="form-floating-custom">
                                         <label class="form-label">Age</label>
                                         <input type="text" class="form-control" name="age" id="age"
-                                            value="{{ old('age', $investor->age ?? '') }}" placeholder="29" readonly>
+                                            value="{{ old('age', $investo->age ?? '') }}" placeholder="29" readonly>
                                     </div>
                                 </div>
 
@@ -524,11 +553,11 @@
                                         </label>
                                     </div>
                                     <div id="photo_preview" class="image-preview-container mt-2">
-                                        @if ($investor && $investor->photo)
-                                            <img src="{{ Storage::url($investor->photo) }}" alt="Saved Photo"
+                                        @if ($investo && $investo->photo)
+                                            <img src="{{ Storage::url($investo->photo) }}" alt="Saved Photo"
                                                 style="max-width: 100px;">
                                             <small class="form-text text-muted">
-                                                Current photo: <a href="{{ Storage::url($investor->photo) }}"
+                                                Current photo: <a href="{{ Storage::url($investo->photo) }}"
                                                     target="_blank">View</a>
                                             </small>
                                         @endif
@@ -553,27 +582,27 @@
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input" name="existing_company"
                                                     value="0" id="existing_company_no"
-                                                    {{ old('existing_company', $investor->existing_company ?? '0') == '0' ? 'checked' : '' }}>
+                                                    {{ old('existing_company', $investo->existing_company ?? '0') == '0' ? 'checked' : '' }}>
 
                                                 <label class="form-check-label" for="existing_company_no">No</label>
                                             </div>
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input" name="existing_company"
                                                     value="1" id="existing_company_yes"
-                                                    {{ old('existing_company', $investor->existing_company ?? '0') == '1' ? 'checked' : '' }}>
+                                                    {{ old('existing_company', $investo->existing_company ?? '0') == '1' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="existing_company_yes">Yes</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="company-fields"
-                                    style="display: {{ old('existing_company', $investor->existing_company ?? '0') == '1' ? 'block' : 'none' }};">
+                                    style="display: {{ old('existing_company', $investo->existing_company ?? '0') == '1' ? 'block' : 'none' }};">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating-custom">
                                                 <label class="form-label">Company Name *</label>
                                                 <input type="text" class="form-control" name="organization_name"
-                                                    value="{{ old('organization_name', $investor->organization_name ?? '') }}"
+                                                    value="{{ old('organization_name', $investo->organization_name ?? '') }}"
                                                     placeholder="XYZ Enterprises">
                                                 <div class="text-danger mt-1 d-none" id="organization_name_error"></div>
                                             </div>
@@ -581,7 +610,7 @@
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="company_address"
-                                                    value="{{ old('company_address', $investor->company_address ?? '') }}"
+                                                    value="{{ old('company_address', $investo->company_address ?? '') }}"
                                                     placeholder="Nexora Ventures Inc.123 Market Street, Suite 200 San Francisco, CA 94105 United States">
                                                 <label class="form-label" id="company_address">Business Address *</label>
                                                 <div class="text-danger mt-1 d-none" id="company_address_error">
@@ -595,7 +624,7 @@
                                                     <option value="">Select a country</option>
                                                     @foreach ($countries as $country)
                                                         <option value="{{ $country['name'] }}"
-                                                            {{ old('company_country', $investor->company_country ?? $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
+                                                            {{ old('company_country', $investo->company_country ?? $autoDetectedCountry) == $country['name'] ? 'selected' : '' }}>
                                                             {{ $country['name'] }}
                                                         </option>
                                                     @endforeach
@@ -628,7 +657,7 @@
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating-custom">
                                                 <input type="text" class="form-control" name="company_zipcode"
-                                                    value="{{ old('company_zipcode', $investor->company_zipcode ?? '') }}"
+                                                    value="{{ old('company_zipcode', $investo->company_zipcode ?? '') }}"
                                                     placeholder="852741">
                                                 <label class="form-label" id="company_zipcode_label">Business Pin / Zip
                                                     Code
@@ -641,7 +670,7 @@
                                             <div class="form-floating-custom">
                                                 <label class="form-label">Email Address *</label>
                                                 <input type="email" class="form-control" name="professional_email"
-                                                    value="{{ old('professional_email', $investor->professional_email ?? '') }}"
+                                                    value="{{ old('professional_email', $investo->professional_email ?? '') }}"
                                                     placeholder="xyz@gmail.com">
                                                 <div class="text-danger mt-1 d-none" id="professional_email_error"></div>
                                             </div>
@@ -652,7 +681,7 @@
                                                 <label class="form-label">Website </label>
                                                 <input type="text" class="form-control" name="website"
                                                     placeholder="https://xyz.com"
-                                                    value="{{ old('website', $investor->website ?? '') }}">
+                                                    value="{{ old('website', $investo->website ?? '') }}">
                                             </div>
                                         </div>
 
@@ -661,7 +690,7 @@
                                                 <label class="form-label">Business Tax Registration Number *</label>
                                                 <input type="text" class="form-control" name="tax_registration_number"
                                                     id="tax_registration_number" placeholder="SC123456"
-                                                    value="{{ old('tax_registration_number', $investor->tax_registration_number ?? '') }}">
+                                                    value="{{ old('tax_registration_number', $investo->tax_registration_number ?? '') }}">
                                                 <div class="text-danger mt-1 d-none" id="tax_registration_number_error">
                                                 </div>
                                             </div>
@@ -674,7 +703,7 @@
                                                     <option value="">Select Your Postion</option>
                                                     @foreach ($designations as $designation)
                                                         <option value="{{ $designation }}"
-                                                            {{ old('designation', $investor->designation ?? '') == $designation ? 'selected' : '' }}>
+                                                            {{ old('designation', $investo->designation ?? '') == $designation ? 'selected' : '' }}>
                                                             {{ $designation }}
                                                         </option>
                                                     @endforeach
@@ -692,14 +721,14 @@
                                                 style="max-width: 120px;">
                                                 @foreach ($countries as $country)
                                                     <option value="{{ $country['code'] }}"
-                                                        {{ old('company_country_code', $investor->company_country_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                        {{ old('company_country_code', $investo->company_country_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
                                                         {{ $country['name'] }} ({{ $country['code'] }})
                                                     </option>
                                                 @endforeach
                                             </select>
                                             <input type="tel" class="form-control" name="professional_phone"
                                                 placeholder="9638527410"
-                                                value="{{ old('professional_phone', $investor->professional_phone ?? '') }}"
+                                                value="{{ old('professional_phone', $investo->professional_phone ?? '') }}"
                                                 maxlength="12">
                                         </div>
                                         <div class="text-danger mt-1 d-none" id="professional_phone_error"></div>
@@ -716,7 +745,7 @@
                                             <option value="">Years of an Investment Experience *</option>
                                             @foreach ($investmentExperince as $experince)
                                                 <option value="{{ $experince }}"
-                                                    {{ old('investment_experince', $investor->investment_experince ?? '') == $experince ? 'selected' : '' }}>
+                                                    {{ old('investment_experince', $investo->investment_experince ?? '') == $experince ? 'selected' : '' }}>
                                                     {{ $experince }}
                                                 </option>
                                             @endforeach
@@ -733,7 +762,7 @@
                                             <option value="">Select Investor</option>
                                             @foreach ($investorTypes as $type)
                                                 <option value="{{ $type }}"
-                                                    {{ old('investor_type', $investor->investor_type ?? '') == $type ? 'selected' : '' }}>
+                                                    {{ old('investor_type', $investo->investor_type ?? '') == $type ? 'selected' : '' }}>
                                                     {{ $type }}
                                                 </option>
                                             @endforeach
@@ -750,7 +779,7 @@
                                             <option value="">Select Investment Range</option>
                                             @foreach ($investmentRanges as $range)
                                                 <option value="{{ $range }}"
-                                                    {{ old('investment_range', $investor->investment_range ?? '') == $range ? 'selected' : '' }}>
+                                                    {{ old('investment_range', $investo->investment_range ?? '') == $range ? 'selected' : '' }}>
                                                     {{ $range }}
                                                 </option>
                                             @endforeach
@@ -771,7 +800,7 @@
                                             <option value="">Select Stages</option>
                                             @foreach ($startupStages as $stage)
                                                 <option value="{{ $stage }}"
-                                                    {{ in_array($stage, old('preferred_startup_stage', $investor ? ($investor->preferred_startup_stage ? json_decode($investor->preferred_startup_stage, true) : []) : [])) ? 'selected' : '' }}>
+                                                    {{ in_array($stage, old('preferred_startup_stage', $investo ? ($investo->preferred_startup_stage ? json_decode($investo->preferred_startup_stage, true) : []) : [])) ? 'selected' : '' }}>
                                                     {{ $stage }}
                                                 </option>
                                             @endforeach
@@ -791,12 +820,12 @@
                                                 </label>
                                             </div>
                                             <div id="business_logo_preview" class="image-preview-container mt-2">
-                                                @if ($investor && $investor->business_logo)
-                                                    <img src="{{ Storage::url($investor->business_logo) }}"
+                                                @if ($investo && $investo->business_logo)
+                                                    <img src="{{ Storage::url($investo->business_logo) }}"
                                                         alt="Business Logo" style="max-width: 100px;">
                                                     <small class="form-text text-muted">
                                                         Current logo: <a
-                                                            href="{{ Storage::url($investor->business_logo) }}"
+                                                            href="{{ Storage::url($investo->business_logo) }}"
                                                             target="_blank">View</a>
                                                     </small>
                                                 @endif
@@ -818,10 +847,10 @@
                                                 </label>
                                             </div>
                                             <div id="investor_profile_preview" class="pdf-preview-container mt-2">
-                                                @if ($investor && $investor->investor_profile)
+                                                @if ($investo && $investo->investor_profile)
                                                     <small class="form-text text-muted">
                                                         Current profile: <a
-                                                            href="{{ Storage::url($investor->investor_profile) }}"
+                                                            href="{{ Storage::url($investo->investor_profile) }}"
                                                             target="_blank">View</a>
                                                     </small>
                                                 @endif
@@ -865,7 +894,7 @@
                                             <option value="">Preferred Industries * (Select multiple)</option>
                                             @foreach ($industries as $industry)
                                                 <option value="{{ $industry }}"
-                                                    {{ in_array($industry, old('preferred_industries', $investor ? ($investor->preferred_industries ? json_decode($investor->preferred_industries, true) : []) : [])) ? 'selected' : '' }}>
+                                                    {{ in_array($industry, old('preferred_industries', $investo ? ($investo->preferred_industries ? json_decode($investo->preferred_industries, true) : []) : [])) ? 'selected' : '' }}>
                                                     {{ $industry }}
                                                 </option>
                                             @endforeach
@@ -895,7 +924,7 @@
                                             <option value="">Preferred Industries * (Select multiple)</option>
                                             @foreach ($geographies as $geography)
                                                 <option value="{{ $geography }}"
-                                                    {{ in_array($geography, old('preferred_geographies', $investor ? ($investor->preferred_geographies ? json_decode($investor->preferred_geographies, true) : []) : [])) ? 'selected' : '' }}>
+                                                    {{ in_array($geography, old('preferred_geographies', $investo ? ($investo->preferred_geographies ? json_decode($investo->preferred_geographies, true) : []) : [])) ? 'selected' : '' }}>
                                                     {{ $geography }}
                                                 </option>
                                             @endforeach
@@ -1132,10 +1161,6 @@
         })
     </script>
     <script>
-        document.querySelector('input[name="professional_phone"]').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, ''); // remove non-digits
-        });
-
         function validateEquityPercentage(input) {
             let value = input.value;
 
@@ -1258,6 +1283,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const existingCompanyRadios = document.querySelectorAll('input[name="existing_company"]');
             const companyFields = document.querySelectorAll('.company-fields');
+            const professionalPhone = document.querySelector(
+                'input[name="professional_phone"]'); // Separate reference
 
             // Set initial state - hide fields when "No" is selected (default)
             const initialValue = document.querySelector('input[name="existing_company"]:checked').value;
@@ -1275,7 +1302,11 @@
 
                             // Add required attribute back to company fields
                             const requiredFields = field.querySelectorAll(
-                                // 'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="professional_phone"] section[name="designation"] input[name="investor_profile"]'
+                                //  'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], ' +
+                                //'select[name="company_country"], select[name="company_state"], select[name="company_city"], ' +
+                                //  'input[name="tax_registration_number"], input[name="business_logo"], ' +
+                                //  'select[name="company_country_code"], input[name="investor_profile"], ' +
+                                //  'input[name="professional_email"], input[name="website"], select[name="designation"]'
                             );
                             requiredFields.forEach(reqField => {
                                 reqField.setAttribute('required', 'required');
@@ -1288,13 +1319,24 @@
 
                             // Remove required attribute from company fields to prevent validation errors
                             const requiredFields = field.querySelectorAll(
-                                //'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="investor_profile"]'
+                                // 'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], ' +
+                                //  'select[name="company_country"], select[name="company_state"], select[name="company_city"], ' +
+                                //  'input[name="tax_registration_number"], input[name="business_logo"], ' +
+                                //  'select[name="company_country_code"], input[name="investor_profile"], ' +
+                                //  'input[name="professional_email"], input[name="website"], select[name="designation"]'
                             );
                             requiredFields.forEach(reqField => {
                                 reqField.removeAttribute('required');
                                 reqField.value = ''; // Clear the value as well
                             });
                         });
+
+                        // Optionally clear professional_phone value if desired, but keep it enabled
+                        if (professionalPhone) {
+                            professionalPhone.removeAttribute(
+                                'required'); // Remove required if it was added elsewhere
+                            // Do not clear value unless intended: professionalPhone.value = '';
+                        }
 
                         // Clear error messages when fields are hidden
                         const errorIds = [
@@ -1308,8 +1350,7 @@
                             'tax_registration_number_error',
                             'business_logo_error',
                             'investor_profile_error',
-                            'designation_error',
-                            ''
+                            'designation_error'
                         ];
 
                         errorIds.forEach(id => {
@@ -1324,130 +1365,218 @@
 
             // Set initial state for required attributes
             if (initialValue === '0') {
-                // Remove required from company fields initially since "No" is selected by default
                 companyFields.forEach(field => {
                     const requiredFields = field.querySelectorAll(
-                        'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], select[name="company_country"], select[name="company_state"], select[name="company_city"], input[name="tax_registration_number"], input[name="business_logo"], select[name="company_country_code"], input[name="professional_phone"]'
+                        // 'input[name="organization_name"], input[name="company_address"], input[name="company_zipcode"], ' +
+                        //  'select[name="company_country"], select[name="company_state"], select[name="company_city"], ' +
+                        //  'input[name="tax_registration_number"], input[name="business_logo"], ' +
+                        //  'select[name="company_country_code"], input[name="investor_profile"], ' +
+                        //  'input[name="professional_email"], input[name="website"], select[name="designation"]'
                     );
                     requiredFields.forEach(reqField => {
                         reqField.removeAttribute('required');
                     });
                 });
-            }
-        });
 
-        const countrySelect = document.getElementById('country');
-        const stateSelect = document.getElementById('state');
-        const citySelect = document.getElementById('city');
-        const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
-        const BASE_URL = 'https://api.countrystatecity.in/v1';
-
-        async function fetchCountries() {
-            try {
-                const response = await fetch(`${BASE_URL}/countries`, {
-                    headers: {
-                        'X-CSCAPI-KEY': API_KEY
-                    }
-                });
-                if (!response.ok) throw new Error('Failed to fetch countries');
-                const countries = await response.json();
-                countrySelect.innerHTML = '<option value="">Select a country</option>';
-                countries.forEach(country => {
-                    const option = document.createElement('option');
-                    option.value = country.iso2;
-                    option.textContent = country.name;
-                    countrySelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching countries:', error);
-                countrySelect.innerHTML = '<option value="">Error loading countries</option>';
-            }
-        }
-
-        async function populateStates(countryIso2) {
-            console.log('Populating states for country:', countryIso2);
-            stateSelect.innerHTML = '<option value="">Select State</option>';
-            citySelect.innerHTML = '<option value="">Select City</option>';
-
-            if (!countryIso2) {
-                console.warn('No country selected');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states`, {
-                    headers: {
-                        'X-CSCAPI-KEY': API_KEY
-                    }
-                });
-                if (!response.ok) throw new Error('Failed to fetch states');
-                const states = await response.json();
-                console.log('States found:', states);
-                states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
-                    sensitivity: 'base'
-                }));
-                states.forEach(state => {
-                    const option = document.createElement('option');
-                    option.value = state.iso2;
-                    option.textContent = state.name;
-                    stateSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching states:', error);
-                stateSelect.innerHTML = '<option value="">No states available</option>';
-            }
-        }
-
-        async function populateCities(countryIso2, stateIso2) {
-            console.log('Populating cities for state:', stateIso2);
-            citySelect.innerHTML = '<option value="">Select City</option>';
-
-            if (!countryIso2 || !stateIso2) {
-                console.warn('No country or state selected');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states/${stateIso2}/cities`, {
-                    headers: {
-                        'X-CSCAPI-KEY': API_KEY
-                    }
-                });
-                if (!response.ok) throw new Error('Failed to fetch cities');
-                const cities = await response.json();
-                console.log('Cities found:', cities);
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city.name;
-                    option.textContent = city.name;
-                    citySelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching cities:', error);
-                citySelect.innerHTML = '<option value="">No cities available</option>';
-            }
-        }
-
-        // Event Listeners for Country and State
-        countrySelect?.addEventListener('change', () => {
-            const countryName = countrySelect.value.trim();
-            populateStates(countryName);
-            stateSelect.value = '';
-            citySelect.value = '';
-
-            const countryError = document.getElementById('country_error');
-            if (countryName && countryName !== '') {
-                if (countryError) {
-                    countryError.classList.add('d-none');
+                if (professionalPhone) {
+                    professionalPhone.removeAttribute(
+                        'required'); // Ensure it’s not required initially if not company-specific
                 }
             }
         });
 
-        stateSelect?.addEventListener('change', () => {
-            const countryName = countrySelect.value.trim();
-            const stateName = stateSelect.value;
-            populateCities(countryName, stateName);
-            citySelect.value = '';
+        document.addEventListener('DOMContentLoaded', function() {
+            const countrySelect = document.getElementById('country');
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
+            const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
+            const BASE_URL = 'https://api.countrystatecity.in/v1';
+
+            // Get database or old values for pre-selection
+            const dbCountry = "{{ old('country', $investo->country ?? '') }}";
+            const dbState = "{{ old('state', $investo->state ?? '') }}";
+            const dbCity = "{{ old('city', $investo->city ?? '') }}";
+
+            console.log('Database Values:', {
+                country: dbCountry,
+                state: dbState,
+                city: dbCity
+            });
+
+            // Store mapping for later use
+            let countryMapping = {};
+            let stateMapping = {};
+
+            async function fetchCountries() {
+                try {
+                    const response = await fetch(`${BASE_URL}/countries`, {
+                        headers: {
+                            'X-CSCAPI-KEY': API_KEY
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch countries');
+                    const countries = await response.json();
+                    console.log('Countries API response:', countries);
+
+                    countrySelect.innerHTML = '<option value="">Select a country</option>';
+                    countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country.iso2;
+                        option.textContent = country.name;
+                        countrySelect.appendChild(option);
+                        countryMapping[country.iso2] = country.name;
+                    });
+                } catch (error) {
+                    console.error('Error fetching countries:', error);
+                    countrySelect.innerHTML = '<option value="">Error loading countries</option>';
+                }
+            }
+
+            async function populateStates(countryIso2, preselectedState = null, preselectedCity = null) {
+                console.log('Populating states for country:', countryIso2);
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                citySelect.innerHTML = '<option value="">Select City</option>';
+
+                if (!countryIso2) {
+                    console.warn('No country selected');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${BASE_URL}/countries/${countryIso2}/states`, {
+                        headers: {
+                            'X-CSCAPI-KEY': API_KEY
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch states');
+                    const states = await response.json();
+                    console.log('States found:', states);
+
+                    states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
+                        sensitivity: 'base'
+                    }));
+                    states.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state.iso2;
+                        option.textContent = state.name;
+                        stateSelect.appendChild(option);
+                        stateMapping[state.iso2] = state.name;
+                    });
+
+                    if (preselectedState) {
+                        console.log('Pre-selecting state:', preselectedState);
+                        stateSelect.value = preselectedState;
+                        if (stateSelect.value === preselectedState) {
+                            console.log('State pre-selected successfully:', preselectedState);
+                            await populateCities(countryIso2, preselectedState, preselectedCity);
+                        } else {
+                            console.warn('State not found in dropdown:', preselectedState);
+                            // Fallback: Try to find the state by name
+                            const stateOption = Array.from(stateSelect.options).find(
+                                option => option.textContent === preselectedState
+                            );
+                            if (stateOption) {
+                                stateSelect.value = stateOption.value;
+                                console.log('Fallback: State set to:', stateOption.value);
+                                await populateCities(countryIso2, stateOption.value, preselectedCity);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching states:', error);
+                    stateSelect.innerHTML = '<option value="">No states available</option>';
+                }
+            }
+
+            async function populateCities(countryIso2, stateIso2, preselectedCity = null) {
+                console.log('Populating cities for state:', stateIso2);
+                citySelect.innerHTML = '<option value="">Select City</option>';
+
+                if (!countryIso2 || !stateIso2) {
+                    console.warn('No country or state selected');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}/countries/${countryIso2}/states/${stateIso2}/cities`, {
+                            headers: {
+                                'X-CSCAPI-KEY': API_KEY
+                            }
+                        });
+                    if (!response.ok) throw new Error('Failed to fetch cities');
+                    const cities = await response.json();
+                    console.log('Cities found:', cities);
+
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.name;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+
+                    if (preselectedCity) {
+                        console.log('Pre-selecting city:', preselectedCity);
+                        citySelect.value = preselectedCity;
+                        if (citySelect.value === preselectedCity) {
+                            console.log('City pre-selected successfully:', preselectedCity);
+                        } else {
+                            console.warn('City not found in dropdown:', preselectedCity);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching cities:', error);
+                    citySelect.innerHTML = '<option value="">No cities available</option>';
+                }
+            }
+
+            // Event Listeners
+            countrySelect?.addEventListener('change', () => {
+                const countryIso2 = countrySelect.value;
+                console.log('Country changed to:', countryIso2);
+                populateStates(countryIso2);
+                stateSelect.value = '';
+                citySelect.value = '';
+
+                const countryError = document.getElementById('country_error');
+                if (countryIso2 && countryError) countryError.classList.add('d-none');
+            });
+
+            stateSelect?.addEventListener('change', () => {
+                const countryIso2 = countrySelect.value;
+                const stateIso2 = stateSelect.value;
+                console.log('State changed to:', stateIso2);
+                populateCities(countryIso2, stateIso2);
+                citySelect.value = '';
+            });
+
+            // Initialize form
+            async function initializeForm() {
+                if (countrySelect) {
+                    await fetchCountries();
+                    if (dbCountry) {
+                        console.log('Pre-selecting country:', dbCountry);
+                        countrySelect.value = dbCountry;
+                        if (countrySelect.value === dbCountry) {
+                            console.log('Country pre-selected successfully:', dbCountry);
+                            await populateStates(dbCountry, dbState, dbCity);
+                        } else {
+                            console.warn('Country not found in dropdown:', dbCountry);
+                            // Fallback: Try to find the country by name
+                            const countryOption = Array.from(countrySelect.options).find(
+                                option => option.textContent === dbCountry
+                            );
+                            if (countryOption) {
+                                countrySelect.value = countryOption.value;
+                                console.log('Fallback: Country set to:', countryOption.value);
+                                await populateStates(countryOption.value, dbState, dbCity);
+                            }
+                        }
+                    }
+                }
+            }
+
+            initializeForm();
         });
 
         // On page load, populate countries and states if country is preselected
@@ -2101,7 +2230,6 @@
             console.log("=== Next Button Clicked ===");
             console.log("Current step:", currentStep);
 
-            // पहले पिछले step का data save करें (अगर कोई है)
             if (currentStep > 1) {
                 const stepToSave = currentStep - 1;
                 console.log("First saving data for previous step:", stepToSave);
@@ -2155,7 +2283,7 @@
                         throw new Error('CSRF token is empty');
                     }
 
-                    const response = await fetch('{{ route('save-step-data') }}', {
+                    const response = await fetch('{{ route('investor-save-step-data') }}', {
                         method: 'POST',
                         body: formDataToSend,
                         headers: {
@@ -3812,6 +3940,14 @@
             const API_KEY = 'WmtRc2MzTzhLRnltNGNmSjljT3RqakROckhSOFFQSTZqMXBGbVlNUw==';
             const BASE_URL = 'https://api.countrystatecity.in/v1';
 
+            // Preloaded values from Blade
+            const yDbCountry = "{{ old('company_country', $investo->company_country ?? '') }}";
+            const yDbState = "{{ old('company_state', $investo->company_state ?? '') }}";
+            const yDbCity = "{{ old('company_city', $investo->company_city ?? '') }}";
+
+            let countryMapping = {};
+            let stateMapping = {};
+
             async function fetchCountries() {
                 try {
                     const response = await fetch(`${BASE_URL}/countries`, {
@@ -3823,11 +3959,18 @@
                     const countries = await response.json();
                     bizCountrySelect.innerHTML = '<option value="">Select a country</option>';
                     countries.forEach(country => {
+                        countryMapping[country.iso2] = country.name; // Map ISO2 to name
                         const option = document.createElement('option');
                         option.value = country.iso2;
                         option.textContent = country.name;
                         bizCountrySelect.appendChild(option);
                     });
+
+                    // Set preselected country if available
+                    if (yDbCountry && countryMapping[yDbCountry]) {
+                        bizCountrySelect.value = yDbCountry;
+                        populateStates(yDbCountry); // Trigger state population
+                    }
                 } catch (error) {
                     console.error('Error fetching countries:', error);
                     bizCountrySelect.innerHTML = '<option value="">Error loading countries</option>';
@@ -3856,12 +3999,20 @@
                     states.sort((a, b) => a.name.localeCompare(b.name, 'en', {
                         sensitivity: 'base'
                     }));
+                    bizStateSelect.innerHTML = '<option value="">Select State</option>';
                     states.forEach(state => {
+                        stateMapping[state.iso2] = state.name; // Map ISO2 to name
                         const option = document.createElement('option');
                         option.value = state.iso2;
                         option.textContent = state.name;
                         bizStateSelect.appendChild(option);
                     });
+
+                    // Set preselected state if available
+                    if (yDbState && stateMapping[yDbState]) {
+                        bizStateSelect.value = yDbState;
+                        populateCities(countryIso2, yDbState); // Trigger city population
+                    }
                 } catch (error) {
                     console.error('Error fetching states:', error);
                     bizStateSelect.innerHTML = '<option value="">No states available</option>';
@@ -3887,12 +4038,18 @@
                     if (!response.ok) throw new Error('Failed to fetch cities');
                     const cities = await response.json();
                     console.log('Cities found:', cities);
+                    bizCitySelect.innerHTML = '<option value="">Select City</option>';
                     cities.forEach(city => {
                         const option = document.createElement('option');
                         option.value = city.name;
                         option.textContent = city.name;
                         bizCitySelect.appendChild(option);
                     });
+
+                    // Set preselected city if available
+                    if (yDbCity) {
+                        bizCitySelect.value = yDbCity;
+                    }
                 } catch (error) {
                     console.error('Error fetching cities:', error);
                     bizCitySelect.innerHTML = '<option value="">No cities available</option>';
@@ -3941,14 +4098,8 @@
             // On page load, populate countries and states if country is preselected
             if (bizCountrySelect) {
                 fetchCountries();
-                if (bizCountrySelect.value && bizCountrySelect.value !== '') {
-                    const countryCode = bizCountrySelect.value.trim();
-                    console.log('Preselected country:', countryCode);
-                    populateStates(countryCode);
-                    updateFundingCurrencyLabel();
-                }
+                updateFundingCurrencyLabel(); // Update currency label initially
             }
-            //end yes business state, city
         });
     </script>
     <script>

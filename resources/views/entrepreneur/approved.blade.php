@@ -350,26 +350,55 @@ function formatNumber($number)
                 <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-4 row-cols-lg-3 g-4 mb-3">
                     @foreach ($approvedEntrepreneurs as $entrepreneur)
                         @php
-                            $images = json_decode(
-                                $entrepreneur->register_business == 1
-                                    ? $entrepreneur->y_product_photos
-                                    : $entrepreneur->product_photos,
-                                true,
-                            );
-                            $firstImage = $images[0] ?? 'default.jpg';
-                            $logo =
-                                $entrepreneur->register_business == 1
-                                    ? $entrepreneur->y_business_logo ?? 'default_logo.png'
-                                    : $entrepreneur->business_logo ?? 'default_logo.png';
+                            // Determine which photos to use based on register_business
+                            if ($entrepreneur->register_business == 1) {
+                                $photosField = $entrepreneur->y_product_photos_admin ?? $entrepreneur->y_product_photos;
+                            } else {
+                                $photosField = $entrepreneur->product_photos_admin ?? $entrepreneur->product_photos;
+                            }
+
+                            // Handle JSON string or array formats
+                            $images = [];
+                            if (is_string($photosField)) {
+                                if (json_decode($photosField, true) !== null) {
+                                    $images = json_decode($photosField, true);
+                                } else {
+                                    $images = !empty($photosField) ? explode(',', $photosField) : [];
+                                }
+                            } elseif (is_array($photosField)) {
+                                $images = $photosField;
+                            }
+
+                            // Clean up image paths
+                            $images = array_map(function ($path) {
+                                return ltrim(str_replace(['\/', '\\'], '/', trim($path)), '/');
+                            }, array_filter($images, fn($path) => !empty($path)));
+
+                            // Only set $firstImage if images exist, otherwise leave it unset
+                            $firstImage = !empty($images) ? $images[0] : null;
+
+                            \Log::info('Image Path for Entrepreneur ' . $entrepreneur->id, [
+                                'register_business' => $entrepreneur->register_business,
+                                'photosField' => $photosField,
+                                'images' => $images,
+                                'firstImage' => $firstImage,
+                            ]);
+
+                            // Determine and normalize logo
+                            if ($entrepreneur->register_business == 1) {
+                                $logo =
+                                    $entrepreneur->y_business_logo_admin ?? ($entrepreneur->y_business_logo ?? null);
+                            } else {
+                                $logo = $entrepreneur->business_logo_admin ?? ($entrepreneur->business_logo ?? null);
+                            }
+                            $logo = $logo ? ltrim(str_replace(['\/', '\\'], '/', $logo), '/') : null;
+
                             $videoUrl = $entrepreneur->pitch_video ?? '#';
 
-                            $interestedInvestorsCount = \App\Models\Interest::where(
-                                'entrepreneur_id',
-                                $entrepreneur->id,
-                            )->count();
-
-                            // Get highest remarks from remark_entrepreneur table
-                            $highestRemark = \App\Models\Interest::where('entrepreneur_id', $entrepreneur->id)
+                            // Use cached or eager-loaded data
+                            $interestedInvestorsCount = $entrepreneur->interests()->count();
+                            $highestRemark = $entrepreneur
+                                ->interests()
                                 ->selectRaw(
                                     'MAX(your_stake) as max_stake, MAX(market_capital) as max_capital, MAX(company_value) as max_value',
                                 )
@@ -377,7 +406,6 @@ function formatNumber($number)
 
                             $currency = $entrepreneur->country === 'IN' ? '₹' : '$';
 
-                            // Use the new formatting function
                             $marketCapital =
                                 $entrepreneur->register_business == 1
                                     ? $entrepreneur->y_market_capital
@@ -391,10 +419,8 @@ function formatNumber($number)
                                     ? $entrepreneur->y_your_stake
                                     : $entrepreneur->your_stake;
 
-                            // Use the new formatting function
                             $marketCapitalFormatted = formatNumber($marketCapital);
                             $stakeFundingFormatted = formatNumber($stakeFunding);
-
                             $highestRemarkMaxCapitalFormatted =
                                 $interestedInvestorsCount > 0 && $highestRemark->max_capital
                                     ? formatNumber($highestRemark->max_capital)
@@ -410,13 +436,28 @@ function formatNumber($number)
                                 onclick="window.open('{{ $videoUrl }}', '_blank')"
                                 style="cursor: pointer; border: none;">
                                 <div class="position-relative">
-                                    <img src="{{ asset('storage/' . $firstImage) }}" class="card-img-top rounded-top-3"
-                                        style="height: 180px; object-fit: cover;" alt="Business Image">
+                                    @if ($firstImage)
+                                        <img src="{{ asset('storage/' . $firstImage) }}" class="card-img-top rounded-top-3"
+                                            style="height: 180px; object-fit: cover;" alt="Business Image" loading="lazy">
+                                    @else
+                                        <!-- Optional: Add a placeholder or hide the image area -->
+                                        <div
+                                            style="height: 180px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                            No Image Available
+                                        </div>
+                                    @endif
 
-                                    <!-- Logo Overlay - Moved to below the image, under the men -->
                                     <div class="position-absolute" style="bottom: -20px; right: 10px;">
-                                        <img src="{{ asset('storage/' . $logo) }}" alt="Logo"
-                                            style="height: 50px; width: 50px; object-fit: contain; border-radius: 6px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        @if ($logo)
+                                            <img src="{{ asset('storage/' . $logo) }}" alt="Logo"
+                                                style="height: 50px; width: 50px; object-fit: contain; border-radius: 6px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+                                                loading="lazy">
+                                        @else
+                                            <!-- Optional: Add a placeholder or hide the logo area -->
+                                            <div
+                                                style="height: 50px; width: 50px; background-color: #f8f9fa; border-radius: 6px;">
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -432,20 +473,15 @@ function formatNumber($number)
                                                 style="color: red;"></i>{{ $entrepreneur->state }},
                                             {{ $entrepreneur->country }}</span>
                                         @if ($entrepreneur->approved)
-                                            @php
-                                                $createdAt = \Carbon\Carbon::parse($entrepreneur->created_at);
-                                                $daysSinceCreated = now()->diffInDays($createdAt);
-                                                $daysLeft = max(0, 60 - $daysSinceCreated);
-                                            @endphp
                                             <div class="px-3 pb-2 lg fw-bold text-center">
-                                                - {{ $daysLeft }} day{{ $daysLeft !== 1 ? 's' : '' }} Left
+                                                - {{ $entrepreneur->days_left }}
+                                                day{{ $entrepreneur->days_left !== 1 ? 's' : '' }} Left
                                             </div>
                                         @endif
                                     </div>
                                 </div>
                                 <hr class="m-0">
 
-                                <!-- Updated Card Footer with Dynamic Currency -->
                                 <div class="d-flex justify-content-between w-100 mt-3 px-2 mb-3"
                                     style="gap: 5px; flex-wrap: nowrap;">
                                     <div class="flex-fill text-center">
@@ -470,23 +506,21 @@ function formatNumber($number)
 
                                 <div class="card-footer border-top-0 p-3" style="background-color: #EEEEEF !important;">
                                     <div class="d-flex flex-column align-items-center">
-                                        <!-- Interested Investors Section -->
                                         <div class="d-flex justify-content-center text-center">
                                             <div>
                                                 <div class="fw-bold text-muted">Interested Investors</div>
                                                 <div class="d-flex align-items-center gap-2 justify-content-center">
                                                     <span class="range-indicator"
                                                         style="display: inline-block; width: 200px; height: 10px; border-radius: 5px; background: linear-gradient(to right, 
-                                            {{ $interestedInvestorsCount <= 2 ? '#ff0000' : ($interestedInvestorsCount <= 5 ? '#ffa500' : '#00ff00') }},
-                                            {{ $interestedInvestorsCount <= 2 ? '#ff3333' : ($interestedInvestorsCount <= 5 ? '#ffcc00' : '#33ff33') }});
-                                            transition: all 0.3s ease;">
+                                        {{ $interestedInvestorsCount <= 2 ? '#ff0000' : ($interestedInvestorsCount <= 5 ? '#ffa500' : '#00ff00') }},
+                                        {{ $interestedInvestorsCount <= 2 ? '#ff3333' : ($interestedInvestorsCount <= 5 ? '#ffcc00' : '#33ff33') }});
+                                        transition: all 0.3s ease;">
                                                     </span>
                                                     {{ $interestedInvestorsCount }}
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- Stats in a Single Line with Better Formatting -->
                                         <div class="d-flex justify-content-between w-100 mt-3 px-2"
                                             style="gap: 5px; flex-wrap: nowrap;">
                                             <div class="flex-fill text-center">

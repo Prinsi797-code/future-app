@@ -33,7 +33,8 @@ class InvestorController extends Controller
             return redirect()->route('mobile.form');
         }
         // Fetch saved investor data
-        $investor = DummyInvestor::where('user_id', $user_id)->first();
+        $investo = DummyInvestor::where('user_id', $user_id)->first();
+        Log::info('Investor Data in showForm', ['investo' => $investo ? $investo->toArray() : 'null']);
         $countries = [
             ['code' => '+91', 'name' => 'IN'],
             ['code' => '+1', 'name' => 'USA'],
@@ -140,7 +141,7 @@ class InvestorController extends Controller
 
         $userEmail = $user->email;
 
-        return view('investor.form', compact('user', 'userEmail', 'qualifications', 'countries', 'country', 'designations', 'investmentExperince', 'autoDetectedCountry', 'investorTypes', 'investmentRanges', 'industries', 'startupStages', 'geographies', 'investor'));
+        return view('investor.form', compact('user', 'userEmail', 'qualifications', 'countries', 'country', 'designations', 'investmentExperince', 'autoDetectedCountry', 'investorTypes', 'investmentRanges', 'industries', 'startupStages', 'geographies', 'investo'));
     }
 
     private function detectCountryFromPhone($phoneNumber)
@@ -1328,8 +1329,8 @@ class InvestorController extends Controller
                 return response()->json(['message' => 'User not authenticated'], 401);
             }
 
-            $investor = Investor::where('user_id', $user->id)->first();
-            if (!$investor) {
+            $investo = DummyInvestor::where('user_id', $user->id)->first();
+            if (!$investo) {
                 Log::info('No data found in investors for user_id: ' . $user->id);
                 return response()->json(['message' => 'No saved data found', 'data' => [], 'completed_steps' => []], 200);
             }
@@ -1359,8 +1360,8 @@ class InvestorController extends Controller
             ];
 
             foreach ($step2Fields as $field) {
-                if (!is_null($investor->$field)) {
-                    $stepData['step2'][$field] = $investor->$field;
+                if (!is_null($investo->$field)) {
+                    $stepData['step2'][$field] = $investo->$field;
                 }
             }
 
@@ -1387,16 +1388,16 @@ class InvestorController extends Controller
                 'investor_profile'
             ];
             foreach ($step3Fields as $field) {
-                if (!is_null($investor->$field)) {
-                    if ($field === 'preferred_startup_stage' && $investor->$field) {
-                        $stepData['step3'][$field] = json_decode($investor->$field, true);
+                if (!is_null($investo->$field)) {
+                    if ($field === 'preferred_startup_stage' && $investo->$field) {
+                        $stepData['step3'][$field] = json_decode($investo->$field, true);
                     } else {
-                        $stepData['step3'][$field] = $investor->$field;
+                        $stepData['step3'][$field] = $investo->$field;
                     }
                 }
             }
             // Only include company-specific fields if existing_company is '1'
-            if ($investor->existing_company !== '1') {
+            if ($investo->existing_company !== '1') {
                 $companyFields = [
                     'organization_name',
                     'company_address',
@@ -1429,23 +1430,23 @@ class InvestorController extends Controller
                 'stake_funding'
             ];
             foreach ($step4Fields as $field) {
-                if (!is_null($investor->$field)) {
-                    if (in_array($field, ['preferred_industries', 'preferred_geographies', 'company_name', 'market_capital', 'your_stake', 'stake_funding']) && $investor->$field) {
-                        $stepData['step4'][$field] = json_decode($investor->$field, true);
+                if (!is_null($investo->$field)) {
+                    if (in_array($field, ['preferred_industries', 'preferred_geographies', 'company_name', 'market_capital', 'your_stake', 'stake_funding']) && $investo->$field) {
+                        $stepData['step4'][$field] = json_decode($investo->$field, true);
                     } else {
-                        $stepData['step4'][$field] = $investor->$field;
+                        $stepData['step4'][$field] = $investo->$field;
                     }
                 }
             }
             // Only include company-related fields if actively_investing is true
-            if (!$investor->actively_investing) {
+            if (!$investo->actively_investing) {
                 unset($stepData['step4']['company_name']);
                 unset($stepData['step4']['market_capital']);
                 unset($stepData['step4']['your_stake']);
                 unset($stepData['step4']['stake_funding']);
             }
 
-            $completedSteps = $investor->completed_steps ? json_decode($investor->completed_steps, true) : [];
+            $completedSteps = $investo->completed_steps ? json_decode($investo->completed_steps, true) : [];
 
             Log::info('Retrieved step data for user_id: ' . $user->id, [
                 'data' => $stepData,
