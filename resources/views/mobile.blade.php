@@ -689,7 +689,7 @@
                 </div>
             @endforeach
         </div>
-        @if (count($approvedEntrepreneurs) > 4)
+        @if (count($approvedEntrepreneurs) > 3)
             <div class="text-center mt-4 mb-4">
                 <a href="{{ route('search') }}" class="btn btn-primary">View More</a>
             </div>

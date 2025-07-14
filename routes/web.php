@@ -50,7 +50,6 @@ Route::post('/set-role', [AuthController::class, 'setRole'])->name('set.role');
 Route::get('/investor/form/{user_id}', [InvestorController::class, 'showForm'])->name('investor.form');
 Route::post('/investor/store', [InvestorController::class, 'store'])->name('investor.store');
 
-
 //serach route
 Route::get('/search', [EntrepreneurController::class, 'approvedEntrepreneurs'])->name('search');
 Route::post('/entrepreneur/toggle-approval', [EntrepreneurController::class, 'toggleApproval'])->name('entrepreneur.toggleApproval');

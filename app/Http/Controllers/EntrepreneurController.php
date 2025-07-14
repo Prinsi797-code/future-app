@@ -710,9 +710,16 @@ class EntrepreneurController extends Controller
     {
         $query = Entrepreneur::where('approved', 1);
 
-        // Filter: Already Funded
+        // Filter: Already Funded and with interested investors having offers
         if ($request->filter === 'alreadyfunded') {
-            $query->where('interested', 1);
+            $query->whereHas('interests', function ($q) {
+                $q->whereNotNull('market_capital')
+                    ->whereNotNull('your_stake')
+                    ->whereNotNull('company_value')
+                    ->where('market_capital', '!=', 'N/A')
+                    ->where('your_stake', '!=', 'N/A')
+                    ->where('company_value', '!=', 'N/A');
+            });
         }
 
         // Search Inputs: name, country, market_capital
@@ -727,34 +734,11 @@ class EntrepreneurController extends Controller
 
         $query->orderBy('created_at', 'desc');
 
-        // if ($request->filled('name')) {
-        //     $query->where('full_name', 'like', '%' . $request->name . '%');
-        // }
-
-        // if ($request->filled('country')) {
-        //     $query->where('country', 'like', '%' . $request->country . '%');
-        // }
-
-        // if ($request->filled('industry')) {
-        //     $query->where('industry', 'like', '%' . $request->industry . '%');
-        // }
-
-        // if ($request->filled('funding_requirement')) {
-        //     $query->where('funding_requirement', 'like', '%' . $request->funding_requirement . '%');
-        // }
-
-        // if ($request->filled('business_describe')) {
-        //     $query->where('business_describe', 'like', '%' . $request->business_describe . '%');
-        // }
-
-        // Use paginate instead of get, set 10 per page or as needed
-        // $approvedEntrepreneurs = $query->paginate(4);
-        $approvedEntrepreneurs = $query->paginate(30)->appends($request->all());
-        // Keep the query string so filters persist on pagination links
-        $approvedEntrepreneurs->appends($request->all());
+        $approvedEntrepreneurs = $query->paginate(5)->appends($request->all());
 
         return view('entrepreneur.approved', compact('approvedEntrepreneurs'));
     }
+
 
     public function toggleApproval(Request $request)
     {
