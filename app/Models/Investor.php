@@ -54,7 +54,9 @@ class Investor extends Model
         'qualification',
         'photo',
         'age',
-        'existing_company'
+        'existing_company',
+        'business_logo_admin',
+        'photo_admin',
     ];
 
     protected $casts = [

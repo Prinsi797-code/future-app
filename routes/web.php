@@ -85,6 +85,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/admin/update-pitch-video', [EntrepreneurController::class, 'updatePitchVideo'])->name('admin.update.pitch_video');
     Route::post('/admin/update-product-logo', [EntrepreneurController::class, 'updateProductLogo'])->name('admin.update.product_logo');
 
+    Route::post('/admin/update-investor-photo-logo', [InvestorController::class, 'updatePhotosLogo'])->name('admin.update.photo.logo');
+
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     // Route::post('/logout', function () {
     //     Auth::logout();

@@ -611,6 +611,7 @@
                                 <th scope="col" style="min-width: 130px;">Preferred Stage</th>
                                 <th scope="col" style="min-width: 100px;">Profile</th>
                                 <th scope="col" style="min-width: 80px;">Approved</th>
+                                <th scope="col" style="min-width: 80px;">Product/Logo</th>
                                 <th scope="col" style="min-width: 100px;">Action</th>
                             </tr>
                         </thead>
@@ -697,6 +698,14 @@
                                                 type="checkbox" role="switch" data-id="{{ $investor->id }}"
                                                 {{ $investor->approved ? 'checked' : '' }}>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" data-id="{{ $investor->id }}"
+                                            data-business-logo="{{ $investor->business_logo_admin }}"
+                                            data-photo="{{ $investor->photo_admin }}" data-bs-toggle="modal"
+                                            data-bs-target="#InvestorphotoLogo">
+                                            Products/Logo
+                                        </button>
                                     </td>
 
                                     <td>
@@ -790,11 +799,244 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="InvestorphotoLogo" tabindex="-1" aria-labelledby="InvestorphotoLogoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="InvestorphotoLogoForm" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="investor_id" id="InvestorphotoLogoInvestorId">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="InvestorphotoLogoLabel">Update Photos & Logo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3" id="businessLogoSection">
+                            <label for="businessLogo" class="form-label">Business Logo</label>
+                            <input type="file" class="form-control" id="businessLogo" name="business-logo-admin"
+                                accept="image/*">
+                            <div id="businessLogoPreview" class="mt-2">
+                                <img id="businessLogoImg" src="" alt="Business Logo Preview"
+                                    style="max-width: 200px; display: none;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="productPhotosSection">
+                            <label for="productPhotos" class="form-label">Photos</label>
+                            <input type="file" class="form-control" id="productPhotos" name="photo_admin"
+                                accept="image/*" multiple>
+                            <div id="productPhotosPreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        //photos, logo update 
+        document.addEventListener('DOMContentLoaded', function() {
+            const productLogoModal = document.getElementById('InvestorphotoLogo');
+            productLogoModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const investorId = button.getAttribute('data-id');
+                const businessLogo = button.getAttribute('data-business-logo');
+                const productPhotos = button.getAttribute('data-photo');
+
+                console.log(`Investor ID: ${investorId}`);
+                console.log('Modal opened with data:', {
+                    investorId,
+                    businessLogo,
+                    productPhotos
+                });
+
+                // Set investor ID
+                document.getElementById('InvestorphotoLogoInvestorId').value = investorId;
+
+                // Handle existing business logo
+                const businessLogoImg = document.getElementById('businessLogoImg');
+                if (businessLogo && businessLogoImg) {
+                    businessLogoImg.src = `/storage/${businessLogo}`;
+                    businessLogoImg.style.display = 'block';
+                } else if (businessLogoImg) {
+                    businessLogoImg.style.display = 'none';
+                }
+
+                // Handle existing product photos
+                const productPhotosPreview = document.getElementById('productPhotosPreview');
+                if (productPhotosPreview && productPhotos) {
+                    productPhotosPreview.innerHTML = '';
+                    const photos = productPhotos.split(',');
+                    photos.forEach(photo => {
+                        if (photo.trim()) {
+                            const img = document.createElement('img');
+                            img.src = `/storage/${photo.trim()}`;
+                            img.alt = 'Product Photo';
+                            img.style.maxWidth = '100px';
+                            img.style.margin = '5px';
+                            productPhotosPreview.appendChild(img);
+                        }
+                    });
+                } else if (productPhotosPreview) {
+                    productPhotosPreview.innerHTML = '';
+                }
+            });
+
+            // File input event listeners
+            const businessLogoInput = document.getElementById('businessLogo');
+            if (businessLogoInput) {
+                businessLogoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    const preview = document.getElementById('businessLogoImg');
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.style.display = 'block';
+                        console.log('Business logo selected:', file.name);
+                    }
+                });
+            }
+
+            const productPhotosInput = document.getElementById('productPhotos');
+            if (productPhotosInput) {
+                productPhotosInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    const preview = document.getElementById('productPhotosPreview');
+                    preview.innerHTML = '';
+                    Array.from(files).forEach(file => {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = 'Product Photo Preview';
+                        img.style.maxWidth = '100px';
+                        img.style.margin = '5px';
+                        preview.appendChild(img);
+                    });
+                    console.log('Product photos selected:', Array.from(files).map(f => f.name));
+                });
+            }
+
+            // Form submission
+            document.getElementById('InvestorphotoLogoForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const form = e.target;
+                const formData = new FormData(form);
+                const investorId = document.getElementById('InvestorphotoLogoInvestorId').value;
+
+                if (!investorId) {
+                    console.error('Investor ID is missing.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Investor ID is missing.',
+                        confirmButtonColor: '#d33',
+                        customClass: {
+                            popup: 'rounded-3'
+                        }
+                    });
+                    return;
+                }
+
+                formData.append('investor_id', investorId);
+
+                console.log('Form data being sent:', Object.fromEntries(formData));
+
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+
+                submitButton.disabled = true;
+                submitButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+                fetch("{{ route('admin.update.photo.logo') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log('Fetch response status:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Server response:', data);
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+
+                        if (data.status === 'success') {
+                            const modalInstance = bootstrap.Modal.getInstance(document.getElementById(
+                                'InvestorphotoLogo'));
+                            if (modalInstance) modalInstance.hide();
+
+                            setTimeout(() => {
+                                const backdrop = document.querySelector('.modal-backdrop');
+                                if (backdrop) backdrop.remove();
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                document.body.style.paddingRight = '';
+                            }, 100);
+
+                            form.reset();
+
+                            // Reset previews
+                            const businessLogoImg = document.getElementById('businessLogoImg');
+                            const productPhotosPreview = document.getElementById(
+                                'productPhotosPreview');
+
+                            if (businessLogoImg) businessLogoImg.style.display = 'none';
+                            if (productPhotosPreview) productPhotosPreview.innerHTML = '';
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: data.message,
+                                confirmButtonColor: '#3085d6',
+                                customClass: {
+                                    popup: 'rounded-3'
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Something went wrong.',
+                                confirmButtonColor: '#d33',
+                                customClass: {
+                                    popup: 'rounded-3'
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonColor: '#d33',
+                            customClass: {
+                                popup: 'rounded-3'
+                            }
+                        });
+                    });
+            });
+        });
+
+        //end photos and logo
+
         $(document).on('change', '.toggle-approval', function() {
             const $this = $(this); // Store reference to the checkbox
             const investorId = $this.data('id');
@@ -921,18 +1163,18 @@
                         <div class="info-item"><span class="info-label">Professional Phone:</span> ${button.dataset.countrycode || ''} ${button.dataset.professionalphone || 'N/A'}</div>
                         <div class="info-item"><span class="info-label">Email:</span> ${button.dataset.email || 'N/A'}</div>
                                              ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                          <div class="info-item"><span class="info-label">Professional Email:</span> ${button.dataset.professionalemail || 'N/A'}</div>
-                                                                                                                                                                                                                                                        <div class="info-item"><span class="info-label">Website:</span> ${button.dataset.website ? `<a href="${button.dataset.website}" target="_blank" class="download-link">${button.dataset.website}</a>` : 'N/A'}</div>
-                                                                                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                                                                                                              <div class="info-item"><span class="info-label">Professional Email:</span> ${button.dataset.professionalemail || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Website:</span> ${button.dataset.website ? `<a href="${button.dataset.website}" target="_blank" class="download-link">${button.dataset.website}</a>` : 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                            ` : ''}
                     </div>
                 </div>
                 <div class="resume-section">
                     <h5 class="section-title mt-4">Professional Details</h5>
                     <div class="info-grid">
                      ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Designation:</span> ${button.dataset.designation || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Organization:</span> ${button.dataset.organization || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                                            ` : ''}
+                                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Designation:</span> ${button.dataset.designation || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Organization:</span> ${button.dataset.organization || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                                ` : ''}
                             <div class="info-item"><span class="info-label">Investment Experience:</span> ${button.dataset.investmentexperince || 'N/A'}</div>
                             <div class="info-item"><span class="info-label">Preferred Industries:</span> ${button.dataset.industries || 'N/A'}</div>
                             <div class="info-item"><span class="info-label">Preferred Geographies:</span> ${button.dataset.geographies || 'N/A'}</div>
@@ -940,35 +1182,35 @@
                         </div>
                     </div>
                     ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                                                                                    <div class="resume-section">
-                                                                                                                                                                                                                                                                                                        <h5 class="section-title mt-4">Company Information</h5>
-                                                                                                                                                                                                                                                                                                        <div class="info-grid">
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Address:</span> ${button.dataset.companyaddress || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Country:</span> ${button.dataset.companycountry || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company State:</span> ${button.dataset.companystate || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company City:</span> ${button.dataset.companycity || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Zipcode:</span> ${button.dataset.companyzipcode || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Company Country Code:</span> ${button.dataset.companycountrycode || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Tax Registration Number:</span> ${button.dataset.companytax || 'N/A'}</div>
-                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                    ` : ''}
+                                                                                                                                                                                                                                                                                                                                                                                        <div class="resume-section">
+                                                                                                                                                                                                                                                                                                                                                                                            <h5 class="section-title mt-4">Company Information</h5>
+                                                                                                                                                                                                                                                                                                                                                                                            <div class="info-grid">
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Company Address:</span> ${button.dataset.companyaddress || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Company Country:</span> ${button.dataset.companycountry || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Company State:</span> ${button.dataset.companystate || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Company City:</span> ${button.dataset.companycity || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Company Zipcode:</span> ${button.dataset.companyzipcode || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Company Country Code:</span> ${button.dataset.companycountrycode || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                                <div class="info-item"><span class="info-label">Tax Registration Number:</span> ${button.dataset.companytax || 'N/A'}</div>
+                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                        ` : ''}
                     <div class="resume-section">
                         <h5 class="section-title mt-4">Media</h5>
                         <div class="info-grid">
                          ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                                        <div class="info-item"><span class="info-label">Business Logo:</span>
-                                                                                                                                                                                                                                                            ${button.dataset.business_logo ? `<img src="/storage/investor_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : 'N/A'}
-                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Business Logo:</span>
+                                                                                                                                                                                                                                                                                                                                                ${button.dataset.business_logo ? `<img src="/storage/investor_logos/${button.dataset.business_logo.trim()}" alt="Business Logo" class="product-image">` : 'N/A'}
+                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                            ` : ''}
                             <div class="info-item"><span class="info-label">Investor Photo:</span>
                                 ${button.dataset.photo ? `<img src="/storage/investor_photo/${button.dataset.photo.trim()}" alt="Investor Photo" class="product-image">` : 'N/A'}
                             </div>
                              ${button.dataset.existing_company == '1' ? `
-                                                                                                                                                                                                                                                        <div class="info-item"><span class="info-label">Investor Profile:</span>
-                                                                                                                                                                                                                                                            ${button.dataset.investor_profile ? `<a href="/storage/investor_profile/${button.dataset.investor_profile.trim()}" download class="download-link">Download PDF</a>` : 'N/A'}
-                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                        ` : ''}
+                                                                                                                                                                                                                                                                                                                                            <div class="info-item"><span class="info-label">Investor Profile:</span>
+                                                                                                                                                                                                                                                                                                                                                ${button.dataset.investor_profile ? `<a href="/storage/investor_profile/${button.dataset.investor_profile.trim()}" download class="download-link">Download PDF</a>` : 'N/A'}
+                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                            ` : ''}
                         </div>
                     </div>
                 `;

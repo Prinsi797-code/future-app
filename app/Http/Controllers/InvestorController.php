@@ -11,6 +11,7 @@ use App\Models\DummyInvestor;
 use App\Models\Entrepreneur;
 use App\Models\Interest;
 use App\Models\InvestorCompany;
+use Faker\Core\File;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -726,7 +727,6 @@ class InvestorController extends Controller
                 $logo = $request->file('business_logo');
                 $logoName = time() . '_logo_' . $logo->getClientOriginalName();
                 $logoPath = $logo->storeAs('investor_logos', $logoName, 'public');
-                // Log::info('Business logo uploaded:', ['path' => $logoPath]);
             }
 
             $user = User::find($request->user_id);
@@ -1460,6 +1460,89 @@ class InvestorController extends Controller
         } catch (\Exception $e) {
             Log::error('Error retrieving step data: ' . $e->getMessage());
             return response()->json(['message' => 'Error retrieving step data'], 500);
+        }
+    }
+
+    public function updateProductLogo(Request $request)
+    {
+        // Log the raw input for debugging
+        Log::info('Update Product Logo Request (Raw):', ['input' => $request->all()]);
+
+        // Validate request
+        $validator = \Validator::make($request->all(), [
+            'investor_id' => 'required|exists:entrepreneurs,id',
+            'business_logo_admin' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'photo_admin.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ], [
+            'business_logo_admin.image' => 'The business logo must be an image.',
+            'business_logo_admin.mimes' => 'The business logo must be a file of type: jpeg, png, jpg, gif.',
+            'photo_admin.*.image' => 'The product photos must be images.',
+            'photo_admin.*.mimes' => 'The product photos must be files of type: jpeg, png, jpg, gif.',
+        ]);
+
+        if ($validator->fails()) {
+            Log::error('Validation failed:', ['errors' => $validator->errors()->all()]);
+            return response()->json(['status' => 'error', 'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all())], 422);
+        }
+
+        try {
+            $entrepreneur = Entrepreneur::find($request->investor_id);
+            if (!$entrepreneur) {
+                throw new \Exception('Entrepreneur not found.');
+            }
+
+            // Ensure storage directories exist and are writable
+            $directories = ['investor_logos', 'investor_photo'];
+            foreach ($directories as $dir) {
+                $path = storage_path('app/public/' . $dir);
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, 0777, true);
+                    Log::info('Created directory: ' . $path);
+                }
+                if (!File::isWritable($path)) {
+                    throw new \Exception('Directory ' . $path . ' is not writable.');
+                }
+            }
+
+            // Handle business logo upload
+            if ($request->hasFile('business_logo_admin')) {
+                Log::info('Storing business logo: ', ['file' => $request->file('business_logo_admin')->getClientOriginalName()]);
+                if ($entrepreneur->business_logo_admin) {
+                    Storage::delete('public/' . $entrepreneur->business_logo_admin);
+                }
+                $path = $request->file('business_logo_admin')->store('investor_logos', 'public');
+                Log::info('Business logo stored at: ', ['path' => $path]);
+                $entrepreneur->business_logo_admin = $path;
+            }
+
+            // Handle product photos upload
+            if ($request->hasFile('photo_admin')) {
+                Log::info('Storing product photos: ', ['count' => count($request->file('photo_admin'))]);
+                if ($entrepreneur->photo_admin) {
+                    $oldPhotos = explode(',', $entrepreneur->photo_admin);
+                    foreach ($oldPhotos as $photo) {
+                        Storage::delete('public/' . $photo);
+                    }
+                }
+                $photos = [];
+                foreach ($request->file('photo_admin') as $photo) {
+                    Log::info('Storing product photo: ', ['file' => $photo->getClientOriginalName()]);
+                    $path = $photo->store('investor_photo', 'public');
+                    Log::info('Product photo stored at: ', ['path' => $path]);
+                    $photos[] = $path;
+                }
+                $entrepreneur->photo_admin = implode(',', $photos);
+            }
+
+            if ($entrepreneur->save()) {
+                Log::info('Entrepreneur data saved successfully for ID: ', ['id' => $entrepreneur->id]);
+                return response()->json(['status' => 'success', 'message' => 'Product and logo data updated successfully.']);
+            } else {
+                throw new \Exception('Failed to save entrepreneur data.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating product logo: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['status' => 'error', 'message' => 'Failed to update product and logo data: ' . $e->getMessage()], 500);
         }
     }
 }

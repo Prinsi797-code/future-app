@@ -711,6 +711,54 @@
                                                 <div class="text-danger mt-1 d-none" id="designation_error"></div>
                                             </div>
                                         </div>
+                                        <div class="col-md-6 mb-3">
+                                            {{-- <div class="form-floating-custom"> --}}
+                                            <label for="pitch_deck" class="form-label">Upload Business Logo *</label>
+                                            <div class="file-upload-wrapper">
+                                                <input class="form-control" type="file" id="business_logo"
+                                                    name="business_logo">
+                                                <label for="business_logo" class="file-upload-label w-100">
+                                                </label>
+                                            </div>
+                                            <div id="business_logo_preview" class="image-preview-container mt-2">
+                                                @if ($investo && $investo->business_logo)
+                                                    <img src="{{ Storage::url($investo->business_logo) }}"
+                                                        alt="Business Logo" style="max-width: 100px;">
+                                                    <small class="form-text text-muted">
+                                                        Current logo: <a
+                                                            href="{{ Storage::url($investo->business_logo) }}"
+                                                            target="_blank">View</a>
+                                                    </small>
+                                                @endif
+                                            </div>
+                                            <div class="text-danger mt-1 d-none" id="business_logo_error"></div>
+                                            <small class="text-muted">Select 1 image (JPG, JPEG, PNG only, max 5MB)</small>
+                                            {{-- </div> --}}
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            {{-- <div class="form-floating-custom"> --}}
+                                            <label for="investor_profile" class="form-label">Upload Business
+                                                Profile</label>
+                                            <div class="file-upload-wrapper">
+                                                <input class="form-control" type="file" id="investor_profile"
+                                                    name="investor_profile" accept=".pdf"
+                                                    value="{{ old('investor_profile') }}">
+                                                <label for="investor_profile" class="file-upload-label w-100">
+                                                </label>
+                                            </div>
+                                            <div id="investor_profile_preview" class="pdf-preview-container mt-2">
+                                                @if ($investo && $investo->investor_profile)
+                                                    <small class="form-text text-muted">
+                                                        Current profile: <a
+                                                            href="{{ Storage::url($investo->investor_profile) }}"
+                                                            target="_blank">View</a>
+                                                    </small>
+                                                @endif
+                                            </div>
+                                            <div class="text-danger mt-1 d-none" id="investor_profile_error"></div>
+                                            <small class="text-muted">Select 1 PDF (pdf) </small>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -806,58 +854,6 @@
                                             @endforeach
                                         </select>
                                         <div class="text-danger mt-1 d-none" id="preferred_startup_stage_error"></div>
-                                    </div>
-                                </div>
-                                <div class="company-fields" style="display: none;">
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            {{-- <div class="form-floating-custom"> --}}
-                                            <label for="pitch_deck" class="form-label">Upload Business Logo *</label>
-                                            <div class="file-upload-wrapper">
-                                                <input class="form-control" type="file" id="business_logo"
-                                                    name="business_logo">
-                                                <label for="business_logo" class="file-upload-label w-100">
-                                                </label>
-                                            </div>
-                                            <div id="business_logo_preview" class="image-preview-container mt-2">
-                                                @if ($investo && $investo->business_logo)
-                                                    <img src="{{ Storage::url($investo->business_logo) }}"
-                                                        alt="Business Logo" style="max-width: 100px;">
-                                                    <small class="form-text text-muted">
-                                                        Current logo: <a
-                                                            href="{{ Storage::url($investo->business_logo) }}"
-                                                            target="_blank">View</a>
-                                                    </small>
-                                                @endif
-                                            </div>
-                                            <div class="text-danger mt-1 d-none" id="business_logo_error"></div>
-                                            <small class="text-muted">Select 1 image (JPG, JPEG, PNG only, max 5MB)</small>
-                                            {{-- </div> --}}
-                                        </div>
-
-                                        <div class="col-md-12 mb-3 mt-3">
-                                            {{-- <div class="form-floating-custom"> --}}
-                                            <label for="investor_profile" class="form-label">Upload Business
-                                                Profile</label>
-                                            <div class="file-upload-wrapper">
-                                                <input class="form-control" type="file" id="investor_profile"
-                                                    name="investor_profile" accept=".pdf"
-                                                    value="{{ old('investor_profile') }}">
-                                                <label for="investor_profile" class="file-upload-label w-100">
-                                                </label>
-                                            </div>
-                                            <div id="investor_profile_preview" class="pdf-preview-container mt-2">
-                                                @if ($investo && $investo->investor_profile)
-                                                    <small class="form-text text-muted">
-                                                        Current profile: <a
-                                                            href="{{ Storage::url($investo->investor_profile) }}"
-                                                            target="_blank">View</a>
-                                                    </small>
-                                                @endif
-                                            </div>
-                                            <div class="text-danger mt-1 d-none" id="investor_profile_error"></div>
-                                            <small class="text-muted">Select 1 PDF (max 5MB) </small>
-                                        </div>
                                     </div>
                                 </div>
                                 {{-- </div> --}}
@@ -1922,6 +1918,7 @@
                 const businessLogo = currentStepEl.querySelector('input[name="business_logo"]');
 
                 const companyCountryCode = currentStepEl.querySelector('select[name="company_country_code"]');
+                const investorProfile = currentStepEl.querySelector('input[name="investor_profile"]');
 
 
                 const allErrorIds = [
@@ -1930,6 +1927,7 @@
                     'business_logo_error', 'tax_registration_number_error', 'company_country_code_error',
                     'professional_phone_error', 'website_error', 'designation_error',
                     'investor_type_error', 'investment_range_error', 'preferred_startup_stage_error',
+                    'investor_profile_error',
                     'professional_email_error', 'investment_experince_error'
                 ];
 
@@ -2045,8 +2043,26 @@
                     } else {
                         document.getElementById('business_logo_error')?.classList.add('d-none');
                     }
-                }
 
+
+                    if (investorProfile.files.length > 0) {
+                        const file = investorProfile.files[0];
+                        const validMime = file.type === "application/pdf";
+                        const validExtension = file.name.toLowerCase().endsWith(".pdf");
+
+                        if (!validMime || !validExtension) {
+                            document.getElementById('investor_profile_error').textContent =
+                                'Only PDF files are allowed.';
+                            document.getElementById('investor_profile_error').classList.remove('d-none');
+                            isValid = false;
+                        } else if (file.size > 10 * 1024 * 1024) { // 10MB size check
+                            document.getElementById('investor_profile_error').textContent =
+                                'File size must be less than 10MB.';
+                            document.getElementById('investor_profile_error').classList.remove('d-none');
+                            isValid = false;
+                        }
+                    }
+                }
                 const mobile = professionalPhone.value.trim();
 
                 if (mobile !== '') {
@@ -2227,6 +2243,7 @@
         }
 
         document.getElementById('nextBtn').addEventListener('click', async function() {
+
             console.log("=== Next Button Clicked ===");
             console.log("Current step:", currentStep);
 
@@ -2337,6 +2354,7 @@
                     });
                 }
             }
+
         });
 
         document.addEventListener('DOMContentLoaded', async function() { // Changed to async
