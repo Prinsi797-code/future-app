@@ -11,7 +11,7 @@ use App\Models\DummyInvestor;
 use App\Models\Entrepreneur;
 use App\Models\Interest;
 use App\Models\InvestorCompany;
-use Faker\Core\File;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -1463,21 +1463,21 @@ class InvestorController extends Controller
         }
     }
 
-    public function updateProductLogo(Request $request)
+    public function updatePhotosLogo(Request $request)
     {
         // Log the raw input for debugging
         Log::info('Update Product Logo Request (Raw):', ['input' => $request->all()]);
 
         // Validate request
         $validator = \Validator::make($request->all(), [
-            'investor_id' => 'required|exists:entrepreneurs,id',
+            'investor_id' => 'required|exists:investors,id',
             'business_logo_admin' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'photo_admin.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ], [
             'business_logo_admin.image' => 'The business logo must be an image.',
             'business_logo_admin.mimes' => 'The business logo must be a file of type: jpeg, png, jpg, gif.',
-            'photo_admin.*.image' => 'The product photos must be images.',
-            'photo_admin.*.mimes' => 'The product photos must be files of type: jpeg, png, jpg, gif.',
+            'photo_admin.image' => 'The product photos must be images.',
+            'photo_admin.mimes' => 'The product photos must be files of type: jpeg, png, jpg, gif.',
         ]);
 
         if ($validator->fails()) {
@@ -1486,8 +1486,8 @@ class InvestorController extends Controller
         }
 
         try {
-            $entrepreneur = Entrepreneur::find($request->investor_id);
-            if (!$entrepreneur) {
+            $investor = Investor::find($request->investor_id);
+            if (!$investor) {
                 throw new \Exception('Entrepreneur not found.');
             }
 
@@ -1507,35 +1507,26 @@ class InvestorController extends Controller
             // Handle business logo upload
             if ($request->hasFile('business_logo_admin')) {
                 Log::info('Storing business logo: ', ['file' => $request->file('business_logo_admin')->getClientOriginalName()]);
-                if ($entrepreneur->business_logo_admin) {
-                    Storage::delete('public/' . $entrepreneur->business_logo_admin);
+                if ($investor->business_logo_admin) {
+                    Storage::delete('public/' . $investor->business_logo_admin);
                 }
                 $path = $request->file('business_logo_admin')->store('investor_logos', 'public');
                 Log::info('Business logo stored at: ', ['path' => $path]);
-                $entrepreneur->business_logo_admin = $path;
+                $investor->business_logo_admin = $path;
             }
 
-            // Handle product photos upload
             if ($request->hasFile('photo_admin')) {
-                Log::info('Storing product photos: ', ['count' => count($request->file('photo_admin'))]);
-                if ($entrepreneur->photo_admin) {
-                    $oldPhotos = explode(',', $entrepreneur->photo_admin);
-                    foreach ($oldPhotos as $photo) {
-                        Storage::delete('public/' . $photo);
-                    }
+                Log::info('Storing business logo: ', ['file' => $request->file('photo_admin')->getClientOriginalName()]);
+                if ($investor->photo_admin) {
+                    Storage::delete('public/' . $investor->photo_admin);
                 }
-                $photos = [];
-                foreach ($request->file('photo_admin') as $photo) {
-                    Log::info('Storing product photo: ', ['file' => $photo->getClientOriginalName()]);
-                    $path = $photo->store('investor_photo', 'public');
-                    Log::info('Product photo stored at: ', ['path' => $path]);
-                    $photos[] = $path;
-                }
-                $entrepreneur->photo_admin = implode(',', $photos);
+                $photos = $request->file('photo_admin')->store('investor_photo', 'public');
+                Log::info('Photos stored at: ', ['path' => $path]);
+                $investor->photo_admin = $photos;
             }
 
-            if ($entrepreneur->save()) {
-                Log::info('Entrepreneur data saved successfully for ID: ', ['id' => $entrepreneur->id]);
+            if ($investor->save()) {
+                Log::info('Investor data saved successfully for ID: ', ['id' => $investor->id]);
                 return response()->json(['status' => 'success', 'message' => 'Product and logo data updated successfully.']);
             } else {
                 throw new \Exception('Failed to save entrepreneur data.');
