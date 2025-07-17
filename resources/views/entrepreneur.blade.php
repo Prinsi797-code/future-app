@@ -569,9 +569,9 @@
                             class="btn btn-light {{ request('filter') == 'trending' ? 'active' : '' }}">
                             Trending
                         </a> --}}
-                        <a href="{{ route('admin.entrepreneurs', ['filter' => 'alreadyfunded']) }}" class="btn btn-light">
+                        {{-- <a href="{{ route('admin.entrepreneurs', ['filter' => 'alreadyfunded']) }}" class="btn btn-light">
                             Already Funded
-                        </a>
+                        </a> --}}
                     </div>
 
                     <!-- Search Form -->
@@ -846,7 +846,7 @@
             data-marketcapital="{{ $entrepreneurs->market_capital }}"
             data-yourstake="{{ $entrepreneurs->your_stake }}"
             data-stakefunding="{{ $entrepreneurs->stake_funding }}"
-            data-product_photos="{{ implode(',', json_decode($entrepreneurs->product_photos, true)) }}"
+            data-product_photos="{{ is_array(json_decode($entrepreneurs->product_photos, true)) ? implode(',', json_decode($entrepreneurs->product_photos, true)) : '' }}"
             data-business_logo="{{ str_replace('business_logos/', '', $entrepreneurs->business_logo) }}"
             data-pitch_deck="{{ str_replace('pitch_decks/', '', $entrepreneurs->pitch_deck) }}" @endif
                                             @if ($entrepreneurs->register_business == 1) data-employee_number="{{ $entrepreneurs->employee_number }}"
@@ -1468,7 +1468,7 @@
                             const businessLogoImg = document.getElementById('businessLogoImg');
                             const yBusinessLogoImg = document.getElementById('yBusinessLogoImg');
                             const productPhotosPreview = document.getElementById(
-                            'productPhotosPreview');
+                                'productPhotosPreview');
                             const yProductPhotosPreview = document.getElementById(
                                 'yProductPhotosPreview');
 

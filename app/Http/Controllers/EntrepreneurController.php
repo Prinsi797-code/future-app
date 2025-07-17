@@ -142,7 +142,8 @@ class EntrepreneurController extends Controller
         // $investmentRanges = $this->getInvestmentRanges($currencySymbol);
         $investmentRanges = $this->getInvestmentRanges($currencySymbol, $country);
         $userEmail = $user->email;
-        return view('entrepreneur.form', compact('user', 'userEmail', 'currencySymbol', 'countries', 'registratioTypes', 'qualifications', 'country', 'autoDetectedCountry', 'industries', 'investmentRanges', 'businessStages', 'enterprent'));
+        return view('entrepreneur.form-two', compact('user', 'userEmail', 'currencySymbol', 'countries', 'registratioTypes', 'qualifications', 'country', 'autoDetectedCountry', 'industries', 'investmentRanges', 'businessStages', 'enterprent'));
+        // return view('entrepreneur.form', compact( 'user', 'userEmail', 'currencySymbol', 'countries', 'registratioTypes', 'qualifications', 'country', 'autoDetectedCountry', 'industries', 'investmentRanges', 'businessStages', 'enterprent'));
     }
     private function detectCountryFromPhone($phoneNumber)
     {
@@ -362,8 +363,8 @@ class EntrepreneurController extends Controller
                 'your_stake' => 'nullable',
                 'stake_funding' => 'nullable',
                 'business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-                'product_photos' => 'nullable|array|min:1|max:3',
-                'product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+                'product_photos' => 'nullable|array|min:0|max:3',
+                'product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif',
                 'business_mobile' => 'nullable',
                 'business_email' => 'nullable',
                 'registration_type_of_entity' => 'nullable|string',
@@ -388,10 +389,10 @@ class EntrepreneurController extends Controller
                 'employee_number' => 'nullable',
                 'proposed_business_address' => 'nullable',
                 'brand_name' => 'nullable',
-                'y_business_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+                'y_business_logo' => 'nullable|image|mimes:jpg,jpeg,png',
                 'y_product_photos' => 'nullable|array|min:1|max:3',
                 'y_pitch_deck' => 'nullable',
-                'y_product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+                'y_product_photos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif',
                 'company_name' => 'nullable|array',
                 'more_market_capital' => 'nullable|array',
                 'more_your_stake' => 'nullable|array',
@@ -453,8 +454,26 @@ class EntrepreneurController extends Controller
             // Log::info('Business logo uploaded:', ['path' => $logoPath]);
         }
 
+        // if ($request->hasFile('y_product_photos')) {
+        //     foreach ($request->file('y_product_photos') as $index => $photoY) {
+        //         if ($photoY && $photoY->isValid()) {
+        //             $photoName = time() . '_photo_' . $index . '_' . $photoY->getClientOriginalName();
+        //             $photoPathY = $photoY->storeAs('y_product_photos', $photoName, 'public');
+        //             $productPhotosY[] = $photoPathY;
+        //             Log::info('Product photo uploaded:', ['index' => $index, 'path' => $photoPathY]);
+        //         } else {
+        //             Log::error('Invalid photo at index:', ['index' => $index]);
+        //         }
+        //     }
+        //     // Log::info('All product photos uploaded:', ['count' => count($productPhotos), 'paths' => $productPhotos]);
+        // } else {
+        //     Log::error('No product photos found in request');
+        // }
+        // Handle y_product_photos
         if ($request->hasFile('y_product_photos')) {
-            foreach ($request->file('y_product_photos') as $index => $photoY) {
+            $productPhotosY = [];
+            $files = is_array($request->file('y_product_photos')) ? $request->file('y_product_photos') : [$request->file('y_product_photos')];
+            foreach ($files as $index => $photoY) {
                 if ($photoY && $photoY->isValid()) {
                     $photoName = time() . '_photo_' . $index . '_' . $photoY->getClientOriginalName();
                     $photoPathY = $photoY->storeAs('y_product_photos', $photoName, 'public');
@@ -464,9 +483,10 @@ class EntrepreneurController extends Controller
                     Log::error('Invalid photo at index:', ['index' => $index]);
                 }
             }
-            // Log::info('All product photos uploaded:', ['count' => count($productPhotos), 'paths' => $productPhotos]);
+            Log::info('All y_product_photos uploaded:', ['count' => count($productPhotosY), 'paths' => $productPhotosY]);
         } else {
-            Log::error('No product photos found in request');
+            Log::warning('No y_product_photos found in request', ['files' => $request->allFiles()]);
+            $productPhotosY = [];
         }
         ///end 
 
@@ -493,9 +513,26 @@ class EntrepreneurController extends Controller
         }
 
         //Try multiple approaches for file detection
-        if ($request->hasFile('product_photos')) {
+        // if ($request->hasFile('product_photos')) {
 
-            foreach ($request->file('product_photos') as $index => $photo) {
+        //     foreach ($request->file('product_photos') as $index => $photo) {
+        //         if ($photo && $photo->isValid()) {
+        //             $photoName = time() . '_photo_' . $index . '_' . $photo->getClientOriginalName();
+        //             $photoPath = $photo->storeAs('product_photos', $photoName, 'public');
+        //             $productPhotos[] = $photoPath;
+        //             Log::info('Product photo uploaded:', ['index' => $index, 'path' => $photoPath]);
+        //         } else {
+        //             Log::error('Invalid photo at index:', ['index' => $index]);
+        //         }
+        //     }
+        //     // Log::info('All product photos uploaded:', ['count' => count($productPhotos), 'paths' => $productPhotos]);
+        // } else {
+        //     Log::error('No product photos found in request');
+        // }
+        $productPhotos = [];
+        if ($request->hasFile('product_photos')) {
+            $files = is_array($request->file('product_photos')) ? $request->file('product_photos') : [$request->file('product_photos')];
+            foreach ($files as $index => $photo) {
                 if ($photo && $photo->isValid()) {
                     $photoName = time() . '_photo_' . $index . '_' . $photo->getClientOriginalName();
                     $photoPath = $photo->storeAs('product_photos', $photoName, 'public');
@@ -505,9 +542,9 @@ class EntrepreneurController extends Controller
                     Log::error('Invalid photo at index:', ['index' => $index]);
                 }
             }
-            // Log::info('All product photos uploaded:', ['count' => count($productPhotos), 'paths' => $productPhotos]);
+            Log::info('All product_photos uploaded:', ['count' => count($productPhotos), 'paths' => $productPhotos]);
         } else {
-            Log::error('No product photos found in request');
+            Log::info('No product_photos found in request', ['files' => $request->allFiles()]);
         }
         try {
             $user = User::find($request->user_id);
@@ -558,7 +595,7 @@ class EntrepreneurController extends Controller
                 'your_stake' => $request->your_stake,
                 'stake_funding' => $request->stake_funding,
                 'business_logo' => $logoPath,
-                'product_photos' => json_encode($productPhotos),
+                'product_photos' => !empty($productPhotos) ? json_encode($productPhotos) : null,
                 'business_mobile' => $request->business_mobile,
                 'business_email' => $request->business_email,
                 'registration_type_of_entity' => $request->registration_type_of_entity,

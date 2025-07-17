@@ -473,13 +473,18 @@ function formatNumber($number)
                                                 style="color: red;"></i>{{ $entrepreneur->state }},
                                             {{ $entrepreneur->country }}</span>
                                         @if ($entrepreneur->approved)
+                                            @php
+                                                $createdAt = \Carbon\Carbon::parse($entrepreneur->created_at);
+                                                $daysSinceCreated = now()->diffInDays($createdAt);
+                                                $daysLeft = max(0, 90 - $daysSinceCreated);
+                                            @endphp
                                             <div class="px-3 pb-2 lg fw-bold text-center">
-                                                - {{ $entrepreneur->days_left }}
-                                                day{{ $entrepreneur->days_left !== 1 ? 's' : '' }} Left
+                                                - {{ $daysLeft }} day{{ $daysLeft !== 1 ? 's' : '' }} Left
                                             </div>
                                         @endif
                                     </div>
                                 </div>
+
                                 <hr class="m-0">
 
                                 <div class="d-flex justify-content-between w-100 mt-3 px-2 mb-3"
