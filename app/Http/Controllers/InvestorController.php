@@ -142,7 +142,8 @@ class InvestorController extends Controller
 
         $userEmail = $user->email;
 
-        return view('investor.form', compact('user', 'userEmail', 'qualifications', 'countries', 'country', 'designations', 'investmentExperince', 'autoDetectedCountry', 'investorTypes', 'investmentRanges', 'industries', 'startupStages', 'geographies', 'investo'));
+        // return view('investor.form', compact('user', 'userEmail', 'qualifications', 'countries', 'country', 'designations', 'investmentExperince', 'autoDetectedCountry', 'investorTypes', 'investmentRanges', 'industries', 'startupStages', 'geographies', 'investo'));
+        return view('investor.form-two', compact('user', 'userEmail', 'qualifications', 'countries', 'country', 'designations', 'investmentExperince', 'autoDetectedCountry', 'investorTypes', 'investmentRanges', 'industries', 'startupStages', 'geographies', 'investo'));
     }
 
     private function detectCountryFromPhone($phoneNumber)
@@ -652,12 +653,13 @@ class InvestorController extends Controller
     {
         Log::info('Investor form submission:', $request->all());
 
-        // 🔒 Check if user has already submitted investor form
+        // Check if user has already submitted investor form
         $existingInvestor = Investor::where('user_id', $request->user_id)->first();
         if ($existingInvestor) {
             Log::info('User already has investor profile:', ['user_id' => $request->user_id]);
             return redirect()->route('mobile.form')->with('success', 'You have already submitted your investor profile.');
         }
+
         try {
             $validatedData = $request->validate([
                 'user_id' => 'required|exists:users,id',
@@ -713,7 +715,6 @@ class InvestorController extends Controller
                 $passport = $request->file('photo');
                 $photos = time() . '_logo_' . $passport->getClientOriginalName();
                 $photo = $passport->storeAs('investor_photo', $photos, 'public');
-                // Log::info('Business logo uploaded:', ['path' => $logoPath]);
             }
 
             if ($request->hasFile('investor_profile')) {
@@ -739,12 +740,10 @@ class InvestorController extends Controller
                 'email' => $request->email,
                 'country' => $request->country,
                 'linkedin_profile' => $request->linkedin_profile ? 'https://' . parse_url($request->linkedin_profile, PHP_URL_HOST) : null,
-                // 'linkedin_profile' => $request->linkedin_profile,
                 'investor_type' => $request->investor_type,
                 'investment_range' => $request->investment_range,
                 'preferred_industries' => json_encode($request->preferred_industries ?? []),
                 'preferred_geographies' => json_encode($request->preferred_geographies ?? []),
-
                 'preferred_startup_stage' => json_encode($request->preferred_startup_stage ?? []),
                 'investment_experince' => $request->investment_experince,
                 'professional_phone' => $request->professional_phone,
@@ -775,7 +774,7 @@ class InvestorController extends Controller
                 'existing_company' => $request->existing_company,
             ]);
 
-            // 💾 Save company info only if actively investing
+            // Save company info only if actively investing
             if ($activelyInvesting) {
                 $companyNames = $request->company_name ?? [];
                 $marketCapitals = $request->market_capital ?? [];
@@ -784,12 +783,15 @@ class InvestorController extends Controller
 
                 foreach ($companyNames as $index => $companyName) {
                     if (!empty($companyName)) {
+                        // Clean the stake_funding value by removing commas
+                        $cleanValuation = isset($valuations[$index]) ? str_replace(',', '', $valuations[$index]) : null;
+
                         \App\Models\InvestorCompany::create([
                             'investor_id' => $investor->id,
                             'company_name' => $companyName,
                             'market_capital' => $marketCapitals[$index] ?? null,
                             'your_stake' => $stakes[$index] ?? null,
-                            'stake_funding' => $valuations[$index] ?? null,
+                            'stake_funding' => $cleanValuation,
                         ]);
                     }
                 }
@@ -855,7 +857,6 @@ class InvestorController extends Controller
             'your_stake' => $request->your_stake,
             'stake_funding' => $request->stake_funding,
         ]);
-
 
         // Send email notification to admin
         Mail::to('info@futuretaikun.com')->send(new InvestorNewCompanyNotification($company, $investor));

@@ -716,22 +716,9 @@
                     }
                 });
 
-                switch (currentSlide) {
-                    case 1:
-                        raisedAmount.textContent = '$30,000';
-                        break;
-                    case 2:
-                        raisedAmount.textContent = '$1,90,000';
-                        break;
-                    case 3:
-                        raisedAmount.textContent = '$50,000';
-                        break;
-                }
             }
-
             setInterval(checkSlide, 1000); // Check every second
         }
-
         document.addEventListener('DOMContentLoaded', updateRaisedAmount);
     </script>
 @endsection

@@ -710,6 +710,8 @@ class EntrepreneurController extends Controller
 
         if ($filter === 'alreadyfunded') {
             $query->where('interested', 1);
+        } elseif ($filter === 'approved') {
+            $query->where('approved', 1);
         } elseif ($filter === 'latest' || !$filter) {
             $query->orderByDesc('created_at'); // latest default
         } elseif ($filter === 'trending') {

@@ -1302,12 +1302,11 @@
             const yYourStakeInput = document.getElementById('y_your_stake');
 
             // File input and preview elements
-            // File input and preview elements
             const businessLogoInput = document.getElementById('business_logo');
-            const businessLogoPlaceholder = document.getElementById('logo-placeholder'); // Updated ID
+            const businessLogoPlaceholder = document.getElementById('logo-placeholder');
             const productPhotosInput = document.getElementById('product_photos');
             const yBusinessLogoInput = document.getElementById('y_business_logo');
-            const yBusinessLogoPlaceholder = document.getElementById('y-logo-placeholder'); // Updated ID
+            const yBusinessLogoPlaceholder = document.getElementById('y-logo-placeholder');
             const yProductPhotosInput = document.getElementById('y_product_photos');
 
             // Error elements
@@ -1315,7 +1314,6 @@
             const productPhotosError = document.getElementById('product_photos_error');
             const yBusinessLogoError = document.getElementById('y_business_logo_error');
             const yProductPhotosError = document.getElementById('y_product_photos_error');
-
             const fullNameError = document.getElementById('full_name_error');
             const countryError = document.getElementById('country_error');
             const stateError = document.getElementById('state_error');
@@ -1344,12 +1342,9 @@
             const businessRevenue1Error = document.getElementById('business_revenue1_error');
             const businessRevenue2Error = document.getElementById('business_revenue2_error');
             const yMarketCapitalError = document.getElementById('y_market_capital_error');
-            const yYourStakeError = document.getElementById('y_your_stake_error')
+            const yYourStakeError = document.getElementById('y_your_stake_error');
 
-            //const dobError = document.getElementById('dob_error');
-
-
-            // File upload and preview handler
+            const fundingCurrencyLabels = document.querySelectorAll('.funding_currency_label');
 
             // Default state: register_business = 0
             registerNo.checked = true;
@@ -1438,14 +1433,8 @@
                 businessDetailsSection.style.display = 'none';
 
                 const fileInputs = [businessLogoInput, productPhotosInput, yBusinessLogoInput, yProductPhotosInput];
-                const filePreviews = [businessLogoPreview, productPhotosPreview, yBusinessLogoPreview,
-                    yProductPhotosPreview
-                ];
                 fileInputs.forEach(input => {
                     if (input) input.value = '';
-                });
-                filePreviews.forEach(preview => {
-                    if (preview) preview.innerHTML = '';
                 });
 
                 const errorElements = document.querySelectorAll('.text-danger');
@@ -1463,57 +1452,54 @@
                 clearBtn.addEventListener('click', clearCurrentStep);
             }
 
-            // Validation function
+            // Validation function with scroll to first error
             function validateForm() {
                 let isValid = true;
+                let firstErrorElement = null;
 
+                // Helper function to set error and track first error
+                function setError(input, errorElement, message) {
+                    errorElement.textContent = message;
+                    errorElement.classList.remove('d-none');
+                    if (!firstErrorElement) {
+                        firstErrorElement = input;
+                    }
+                }
+
+                // Clear previous errors
+                const errorElements = document.querySelectorAll('.text-danger');
+                errorElements.forEach(error => {
+                    error.textContent = '';
+                    error.classList.add('d-none');
+                });
+
+                // Personal Information Validation
                 if (!fullNameInput.value.trim()) {
-                    fullNameError.textContent = 'Full Name is required';
-                    fullNameError.classList.remove('d-none');
+                    setError(fullNameInput, fullNameError, 'Full Name is required');
                     isValid = false;
-                } else {
-                    fullNameError.classList.add('d-none');
-                    fullNameError.textContent = '';
                 }
 
                 if (!countrySelect.value) {
-                    countryError.textContent = 'Country is required';
-                    countryError.classList.remove('d-none');
+                    setError(countrySelect, countryError, 'Country is required');
                     isValid = false;
-                } else {
-                    countryError.classList.add('d-none');
-                    countryError.textContent = '';
                 }
 
                 if (!stateSelect.value) {
-                    stateError.textContent = 'State is required';
-                    stateError.classList.remove('d-none');
+                    setError(stateSelect, stateError, 'State is required');
                     isValid = false;
-                } else {
-                    stateError.classList.add('d-none');
-                    stateError.textContent = '';
                 }
 
                 if (!citySelect.value) {
-                    cityError.textContent = 'City is required';
-                    cityError.classList.remove('d-none');
+                    setError(citySelect, cityError, 'City is required');
                     isValid = false;
-                } else {
-                    cityError.classList.add('d-none');
-                    cityError.textContent = '';
                 }
 
                 if (!pinCodeInput.value.trim()) {
-                    pinCodeError.textContent = 'Pin/Zip Code is required';
-                    pinCodeError.classList.remove('d-none');
+                    setError(pinCodeInput, pinCodeError, 'Pin/Zip Code is required');
                     isValid = false;
                 } else if (countrySelect.value === 'IN' && !/^\d{6}$/.test(pinCodeInput.value.trim())) {
-                    pinCodeError.textContent = 'Indian pin code must be exactly 6 digits';
-                    pinCodeError.classList.remove('d-none');
+                    setError(pinCodeInput, pinCodeError, 'Indian pin code must be exactly 6 digits');
                     isValid = false;
-                } else {
-                    pinCodeError.classList.add('d-none');
-                    pinCodeError.textContent = '';
                 }
 
                 if (dobInput.value) {
@@ -1525,244 +1511,149 @@
                         age--;
                     }
                     if (age < 18) {
-                        dobError.textContent = 'You must be at least 18 years old';
-                        dobError.classList.remove('d-none');
+                        setError(dobInput, dobError, 'You must be at least 18 years old');
                         isValid = false;
-                    } else {
-                        dobError.classList.add('d-none');
-                        dobError.textContent = '';
                     }
-                } else {
-                    dobError.classList.add('d-none');
-                    dobError.textContent = '';
                 }
+
                 const isRegistered = registerYes.checked;
 
+                // Unregistered Business Validation
                 if (!isRegistered) {
                     if (!businessNameInput.value.trim()) {
-                        businessNameError.textContent = 'Business Name is required';
-                        businessNameError.classList.remove('d-none');
+                        setError(businessNameInput, businessNameError, 'Business Name is required');
                         isValid = false;
-                    } else {
-                        businessNameError.classList.add('d-none');
-                        businessNameError.textContent = '';
                     }
 
                     if (!brandNameInput.value.trim()) {
-                        brandNameError.textContent = 'Brand Name is required';
-                        brandNameError.classList.remove('d-none');
+                        setError(brandNameInput, brandNameError, 'Brand Name is required');
                         isValid = false;
-                    } else {
-                        brandNameError.classList.add('d-none');
-                        brandNameError.textContent = '';
                     }
 
                     if (!businessDescribeInput.value.trim()) {
-                        businessDescribeError.textContent = 'Business description is required';
-                        businessDescribeError.classList.remove('d-none');
+                        setError(businessDescribeInput, businessDescribeError, 'Business description is required');
                         isValid = false;
-                    } else {
-                        businessDescribeError.classList.add('d-none');
-                        businessDescribeError.textContent = '';
                     }
 
                     if (!businessCountrySelect.value) {
-                        businessCountryError.textContent = 'Business Country is required';
-                        businessCountryError.classList.remove('d-none');
+                        setError(businessCountrySelect, businessCountryError, 'Business Country is required');
                         isValid = false;
-                    } else {
-                        businessCountryError.classList.add('d-none');
-                        businessCountryError.textContent = '';
                     }
 
                     if (!businessStateSelect.value) {
-                        businessStateError.textContent = 'Business State is required';
-                        businessStateError.classList.remove('d-none');
+                        setError(businessStateSelect, businessStateError, 'Business State is required');
                         isValid = false;
-                    } else {
-                        businessStateError.classList.add('d-none');
-                        businessStateError.textContent = '';
                     }
 
                     if (!businessCitySelect.value) {
-                        businessCityError.textContent = 'Business City is required';
-                        businessCityError.classList.remove('d-none');
+                        setError(businessCitySelect, businessCityError, 'Business City is required');
                         isValid = false;
-                    } else {
-                        businessCityError.classList.add('d-none');
-                        businessCityError.textContent = '';
                     }
 
                     if (!ownFundInput.value.trim()) {
-                        ownFundError.textContent = 'Own Fund is required';
-                        ownFundError.classList.remove('d-none');
+                        setError(ownFundInput, ownFundError, 'Own Fund is required');
                         isValid = false;
-                    } else {
-                        ownFundError.classList.add('d-none');
-                        ownFundError.textContent = '';
                     }
 
                     if (!loanInput.value.trim()) {
-                        loanError.textContent = 'Loan is required';
-                        loanError.classList.remove('d-none');
+                        setError(loanInput, loanError, 'Loan is required');
                         isValid = false;
-                    } else {
-                        loanError.classList.add('d-none');
-                        loanError.textContent = '';
                     }
 
                     if (!marketCapitalInput.value.trim()) {
-                        marketCapitalError.textContent = 'Fund Required is required';
-                        marketCapitalError.classList.remove('d-none');
+                        setError(marketCapitalInput, marketCapitalError, 'Fund Required is required');
                         isValid = false;
-                    } else {
-                        marketCapitalError.classList.add('d-none');
-                        marketCapitalError.textContent = '';
                     }
 
                     if (!yourStakeInput.value.trim()) {
-                        yourStakeError.textContent = 'Equity Offered is required';
-                        yourStakeError.classList.remove('d-none');
+                        setError(yourStakeInput, yourStakeError, 'Equity Offered is required');
                         isValid = false;
-                    } else {
-                        yourStakeError.classList.add('d-none');
-                        yourStakeError.textContent = '';
                     }
 
                     if (!stakeFundingInput.value.trim()) {
-                        stakeFundingError.textContent = 'Company Valuation is required';
-                        stakeFundingError.classList.remove('d-none');
+                        setError(stakeFundingInput, stakeFundingError, 'Company Valuation is required');
                         isValid = false;
-                    } else {
-                        stakeFundingError.classList.add('d-none');
-                        stakeFundingError.textContent = '';
                     }
 
                     if (businessLogoInput && !businessLogoInput.files.length) {
-                        businessLogoError.textContent = 'Business Logo is required';
-                        businessLogoError.classList.remove('d-none');
+                        setError(businessLogoInput, businessLogoError, 'Business Logo is required');
                         isValid = false;
-                    } else {
-                        businessLogoError.classList.add('d-none');
-                        businessLogoError.textContent = '';
                     }
                 } else {
+                    // Registered Business Validation
                     if (!yBusinessNameInput.value.trim()) {
-                        yBusinessNameError.textContent = 'Business Name is required';
-                        yBusinessNameError.classList.remove('d-none');
+                        setError(yBusinessNameInput, yBusinessNameError, 'Business Name is required');
                         isValid = false;
-                    } else {
-                        yBusinessNameError.classList.add('d-none');
-                        yBusinessNameError.textContent = '';
                     }
 
                     if (!yBrandNameInput.value.trim()) {
-                        yBrandNameError.textContent = 'Brand Name is required';
-                        yBrandNameError.classList.remove('d-none');
+                        setError(yBrandNameInput, yBrandNameError, 'Brand Name is required');
                         isValid = false;
-                    } else {
-                        yBrandNameError.classList.add('d-none');
-                        yBrandNameError.textContent = '';
                     }
 
                     if (!yDescribeBusinessInput.value.trim()) {
-                        yDescribeBusinessError.textContent = 'Business description is required';
-                        yDescribeBusinessError.classList.remove('d-none');
+                        setError(yDescribeBusinessInput, yDescribeBusinessError,
+                            'Business description is required');
                         isValid = false;
-                    } else {
-                        yDescribeBusinessError.classList.add('d-none');
-                        yDescribeBusinessError.textContent = '';
                     }
 
                     if (!yBusinessCountrySelect.value) {
-                        yBusinessCountryError.textContent = 'Business Country is required';
-                        yBusinessCountryError.classList.remove('d-none');
+                        setError(yBusinessCountrySelect, yBusinessCountryError, 'Business Country is required');
                         isValid = false;
-                    } else {
-                        yBusinessCountryError.classList.add('d-none');
-                        yBusinessCountryError.textContent = '';
                     }
 
                     if (!yBusinessStateSelect.value) {
-                        yBusinessStateError.textContent = 'Business State is required';
-                        yBusinessStateError.classList.remove('d-none');
+                        setError(yBusinessStateSelect, yBusinessStateError, 'Business State is required');
                         isValid = false;
-                    } else {
-                        yBusinessStateError.classList.add('d-none');
-                        yBusinessStateError.textContent = '';
                     }
 
                     if (!yBusinessCitySelect.value) {
-                        yBusinessCityError.textContent = 'Business City is required';
-                        yBusinessCityError.classList.remove('d-none');
+                        setError(yBusinessCitySelect, yBusinessCityError, 'Business City is required');
                         isValid = false;
-                    } else {
-                        yBusinessCityError.classList.add('d-none');
-                        yBusinessCityError.textContent = '';
                     }
 
                     if (!yOwnFundInput.value.trim()) {
-                        yOwnFundError.textContent = 'Own Fund is required';
-                        yOwnFundError.classList.remove('d-none');
+                        setError(yOwnFundInput, yOwnFundError, 'Own Fund is required');
                         isValid = false;
-                    } else {
-                        yOwnFundError.classList.add('d-none');
-                        yOwnFundError.textContent = '';
                     }
 
                     if (!yLoanInput.value.trim()) {
-                        yLoanError.textContent = 'Loan is required';
-                        yLoanError.classList.remove('d-none');
+                        setError(yLoanInput, yLoanError, 'Loan is required');
                         isValid = false;
-                    } else {
-                        yLoanError.classList.add('d-none');
-                        yLoanError.textContent = '';
                     }
 
                     if (!businessRevenue1Input.value.trim()) {
-                        businessRevenue1Error.textContent = 'Revenue from Sales is required';
-                        businessRevenue1Error.classList.remove('d-none');
+                        setError(businessRevenue1Input, businessRevenue1Error, 'Revenue from Sales is required');
                         isValid = false;
-                    } else {
-                        businessRevenue1Error.classList.add('d-none');
-                        businessRevenue1Error.textContent = '';
                     }
 
                     if (!businessRevenue2Input.value.trim()) {
-                        businessRevenue2Error.textContent = 'Gross Profit is required';
-                        businessRevenue2Error.classList.remove('d-none');
+                        setError(businessRevenue2Input, businessRevenue2Error, 'Gross Profit is required');
                         isValid = false;
-                    } else {
-                        businessRevenue2Error.classList.add('d-none');
-                        businessRevenue2Error.textContent = '';
                     }
 
                     if (!yMarketCapitalInput.value.trim()) {
-                        yMarketCapitalError.textContent = 'Fund Required is required';
-                        yMarketCapitalError.classList.remove('d-none');
+                        setError(yMarketCapitalInput, yMarketCapitalError, 'Fund Required is required');
                         isValid = false;
-                    } else {
-                        yMarketCapitalError.classList.add('d-none');
-                        yMarketCapitalError.textContent = '';
                     }
 
                     if (!yYourStakeInput.value.trim()) {
-                        yYourStakeError.textContent = 'Equity Offered is required';
-                        yYourStakeError.classList.remove('d-none');
+                        setError(yYourStakeInput, yYourStakeError, 'Equity Offered is required');
                         isValid = false;
-                    } else {
-                        yYourStakeError.classList.add('d-none');
-                        yYourStakeError.textContent = '';
                     }
 
                     if (yBusinessLogoInput && !yBusinessLogoInput.files.length) {
-                        yBusinessLogoError.textContent = 'Business Logo is required';
-                        yBusinessLogoError.classList.remove('d-none');
+                        setError(yBusinessLogoInput, yBusinessLogoError, 'Business Logo is required');
                         isValid = false;
-                    } else {
-                        yBusinessLogoError.classList.add('d-none');
-                        yBusinessLogoError.textContent = '';
                     }
+                }
+
+                // Scroll to the first error if validation fails
+                if (!isValid && firstErrorElement) {
+                    firstErrorElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
                 }
 
                 return isValid;
@@ -1862,6 +1753,31 @@
             initCountryDropdown(yBusinessCountrySelect, yBusinessStateSelect, yBusinessCitySelect,
                 '{{ old('y_business_country', $enterprent->y_business_country ?? '') }}',
                 '{{ old('y_business_state', $enterprent->y_business_state ?? '') }}');
+
+            // Update funding currency label based on active section
+            function updateFundingCurrencyLabel() {
+                const isRegistered = registerYes.checked;
+                const selectedCountry = isRegistered ? (yBusinessCountrySelect?.value || '').trim().toUpperCase() :
+                    (businessCountrySelect?.value || '').trim().toUpperCase();
+                let label = '';
+
+                if (selectedCountry === 'IN') {
+                    label = '(INR)';
+                } else if (selectedCountry !== '') {
+                    label = '(USD)';
+                }
+
+                fundingCurrencyLabels.forEach(el => {
+                    el.textContent = label;
+                });
+            }
+
+            // Initialize currency label on page load
+            updateFundingCurrencyLabel();
+
+            // Add event listeners for country selection changes
+            businessCountrySelect?.addEventListener('change', updateFundingCurrencyLabel);
+            yBusinessCountrySelect?.addEventListener('change', updateFundingCurrencyLabel);
 
             // File upload and preview handler
             function previewImage(input, previewContainer, maxFiles = 1, errorElement) {
@@ -2225,7 +2141,6 @@
             currentClickedSlot = 2;
             document.getElementById('product_photos').click();
         });
-
 
         // y product photos and lgo #
         let yCurrentClickedSlot = 0;

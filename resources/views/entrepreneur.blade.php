@@ -568,10 +568,15 @@
                         {{-- <a href="{{ route('admin.entrepreneurs', ['filter' => 'trending']) }}"
                             class="btn btn-light {{ request('filter') == 'trending' ? 'active' : '' }}">
                             Trending
-                        </a> --}}
-                        {{-- <a href="{{ route('admin.entrepreneurs', ['filter' => 'alreadyfunded']) }}" class="btn btn-light">
+                        </a>
+                        <a href="{{ route('admin.entrepreneurs', ['filter' => 'alreadyfunded']) }}"
+                            class="btn btn-light {{ request('filter') == 'alreadyfunded' ? 'active' : '' }}">
                             Already Funded
                         </a> --}}
+                        <a href="{{ route('admin.entrepreneurs', ['filter' => 'approved']) }}"
+                            class="btn btn-light {{ request('filter') == 'approved' ? 'active' : '' }}">
+                            Approved
+                        </a>
                     </div>
 
                     <!-- Search Form -->
